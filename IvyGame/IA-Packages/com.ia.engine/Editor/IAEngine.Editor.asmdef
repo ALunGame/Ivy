@@ -1,0 +1,18 @@
+{
+    "name": "IAEngine.Editor",
+    "rootNamespace": "",
+    "references": [
+        "GUID:50d625b9407d73e4cb2432a3091e9955"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
