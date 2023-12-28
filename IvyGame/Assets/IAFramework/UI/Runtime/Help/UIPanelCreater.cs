@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using IAEngine;
 
-namespace LCUI
+namespace IAUI
 {
     /// <summary>
     /// UIPanel创建

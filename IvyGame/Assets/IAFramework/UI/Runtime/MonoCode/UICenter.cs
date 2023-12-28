@@ -1,7 +1,7 @@
 ﻿using System;
 using UnityEngine;
 
-namespace LCUI
+namespace IAUI
 {
     /// <summary>
     /// UI中心

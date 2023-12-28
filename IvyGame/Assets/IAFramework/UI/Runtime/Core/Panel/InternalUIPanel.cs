@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace LCUI
+namespace IAUI
 {
     /// <summary>
     /// UI面板

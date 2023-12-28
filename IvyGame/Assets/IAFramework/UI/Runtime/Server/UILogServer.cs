@@ -1,6 +1,6 @@
 using IAServer;
 
-namespace LCUI
+namespace IAUI
 {
     public class UILogServer : LogServer
     {

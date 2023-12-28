@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace LCUI
+namespace IAUI
 {
     public class UICanvas : MonoBehaviour
     {

@@ -6,8 +6,8 @@ namespace IAFramework.Server.Procedure
     {
         protected override void OnEnter()
         {
-            base.OnEnter();
-            Owner.OnStartSuccess?.Invoke();
+            GameStartData.Instance.SendProcessTips("游戏初始化成功 !");
+            GameStartData.Instance.SetGameStartState(EGameStartState.Success);
         }
     }
 }

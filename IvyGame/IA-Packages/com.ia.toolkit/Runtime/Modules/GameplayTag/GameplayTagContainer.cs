@@ -191,7 +191,12 @@ namespace IAToolkit
             return true;
         }
 
+        public override int GetHashCode()
+        {
+            return base.GetHashCode();
+        }
+
         #endregion
-        
+
     }
 }

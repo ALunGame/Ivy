@@ -1,10 +1,9 @@
-﻿using System;
-using System.IO;
-using Cysharp.Threading.Tasks;
+﻿using Cysharp.Threading.Tasks;
+using IAFramework.StreamingAsset;
 using IAToolkit;
+using System.IO;
 using UnityEngine;
 using YooAsset;
-using IAFramework.StreamingAsset;
 
 namespace IAFramework.Server.Procedure
 {
@@ -12,7 +11,7 @@ namespace IAFramework.Server.Procedure
     {
         protected override void OnEnter()
         {
-            base.OnEnter();
+            GameStartData.Instance.SendProcessTips("初始化资源包！");
             InitPackage().Forget();
         }
 
@@ -23,54 +22,67 @@ namespace IAFramework.Server.Procedure
         
         private async UniTaskVoid InitPackage()
 		{
-			var playMode = Owner.AssetMode;
-			
-			// 创建默认的资源包
-			string packageName = "DefaultPackage";
-			var package = YooAssets.TryGetPackage(packageName);
-			if (package == null)
-			{
-				package = YooAssets.CreatePackage(packageName);
-				YooAssets.SetDefaultPackage(package);
-			}
-			
-			// 编辑器下的模拟模式
-			InitializationOperation initializationOperation = null;
-			if (playMode == EPlayMode.EditorSimulateMode)
-			{
-				var createParameters = new EditorSimulateModeParameters();
-				createParameters.SimulateManifestFilePath = EditorSimulateModeHelper.SimulateBuild(packageName);
-				initializationOperation = package.InitializeAsync(createParameters);
-			}
-			
-			// 单机运行模式
-			if (playMode == EPlayMode.OfflinePlayMode)
-			{
-				var createParameters = new OfflinePlayModeParameters();
-				initializationOperation = package.InitializeAsync(createParameters);
-			}
-			
-			// 联机运行模式
-			if (playMode == EPlayMode.HostPlayMode)
-			{
-				string defaultHostServer = GetHostServerURL();
-				string fallbackHostServer = GetHostServerURL();
-				var createParameters = new HostPlayModeParameters();
-				createParameters.BuildinQueryServices = new GameQueryServices();
-				createParameters.RemoteServices = new RemoteServices(defaultHostServer, fallbackHostServer);
-				initializationOperation = package.InitializeAsync(createParameters);
-			}
-			
-			await initializationOperation;
+			var playMode = Owner.PlayMode;
+            var packageName = Owner.PackageName;
+            var buildPipeline = Owner.BuildPipeline;
+
+            // 创建资源包裹类
+            var package = YooAssets.TryGetPackage(packageName);
+            if (package == null)
+                package = YooAssets.CreatePackage(packageName);
+
+            // 编辑器下的模拟模式
+            InitializationOperation initializationOperation = null;
+            if (playMode == EPlayMode.EditorSimulateMode)
+            {
+                var createParameters = new EditorSimulateModeParameters();
+                createParameters.SimulateManifestFilePath = EditorSimulateModeHelper.SimulateBuild(buildPipeline, packageName);
+                initializationOperation = package.InitializeAsync(createParameters);
+            }
+
+            // 单机运行模式
+            if (playMode == EPlayMode.OfflinePlayMode)
+            {
+                var createParameters = new OfflinePlayModeParameters();
+                createParameters.DecryptionServices = new FileStreamDecryption();
+                initializationOperation = package.InitializeAsync(createParameters);
+            }
+
+            // 联机运行模式
+            if (playMode == EPlayMode.HostPlayMode)
+            {
+                string defaultHostServer = GetHostServerURL();
+                string fallbackHostServer = GetHostServerURL();
+                var createParameters = new HostPlayModeParameters();
+                createParameters.DecryptionServices = new FileStreamDecryption();
+                createParameters.BuildinQueryServices = new GameQueryServices();
+                createParameters.RemoteServices = new RemoteServices(defaultHostServer, fallbackHostServer);
+                initializationOperation = package.InitializeAsync(createParameters);
+            }
+
+            // WebGL运行模式
+            if (playMode == EPlayMode.WebPlayMode)
+            {
+                string defaultHostServer = GetHostServerURL();
+                string fallbackHostServer = GetHostServerURL();
+                var createParameters = new WebPlayModeParameters();
+                createParameters.DecryptionServices = new FileStreamDecryption();
+                createParameters.BuildinQueryServices = new GameQueryServices();
+                createParameters.RemoteServices = new RemoteServices(defaultHostServer, fallbackHostServer);
+                initializationOperation = package.InitializeAsync(createParameters);
+            }
+
+            await initializationOperation;
 			
 			if (initializationOperation.Status == EOperationStatus.Succeed)
 			{
-				Fsm.ChangeState(typeof(GameStart_UpdateVersion));
+				Fsm.ChangeState(typeof(GameStart_UpdatePackageVersion));
 			}
 			else
 			{
 				Debug.LogError($"{initializationOperation.Error}");
-			}
+                GameStartData.Instance.SendPopTips("初始化资源包！失败", initializationOperation.Error);
+            }
 		}
 
 		/// <summary>
@@ -105,8 +117,72 @@ namespace IAFramework.Server.Procedure
 				return $"{hostServerIP}/CDN/PC/{appVersion}";
 #endif
 		}
-        
-        
+
+        /// <summary>
+        /// 资源文件流加载解密类
+        /// </summary>
+        private class FileStreamDecryption : IDecryptionServices
+        {
+            /// <summary>
+            /// 同步方式获取解密的资源包对象
+            /// 注意：加载流对象在资源包对象释放的时候会自动释放
+            /// </summary>
+            AssetBundle IDecryptionServices.LoadAssetBundle(DecryptFileInfo fileInfo, out Stream managedStream)
+            {
+                BundleStream bundleStream = new BundleStream(fileInfo.FileLoadPath, FileMode.Open, FileAccess.Read, FileShare.Read);
+                managedStream = bundleStream;
+                return AssetBundle.LoadFromStream(bundleStream, fileInfo.ConentCRC, GetManagedReadBufferSize());
+            }
+
+            /// <summary>
+            /// 异步方式获取解密的资源包对象
+            /// 注意：加载流对象在资源包对象释放的时候会自动释放
+            /// </summary>
+            AssetBundleCreateRequest IDecryptionServices.LoadAssetBundleAsync(DecryptFileInfo fileInfo, out Stream managedStream)
+            {
+                BundleStream bundleStream = new BundleStream(fileInfo.FileLoadPath, FileMode.Open, FileAccess.Read, FileShare.Read);
+                managedStream = bundleStream;
+                return AssetBundle.LoadFromStreamAsync(bundleStream, fileInfo.ConentCRC, GetManagedReadBufferSize());
+            }
+
+            private static uint GetManagedReadBufferSize()
+            {
+                return 1024;
+            }
+        }
+
+        /// <summary>
+        /// 资源文件偏移加载解密类
+        /// </summary>
+        private class FileOffsetDecryption : IDecryptionServices
+        {
+            /// <summary>
+            /// 同步方式获取解密的资源包对象
+            /// 注意：加载流对象在资源包对象释放的时候会自动释放
+            /// </summary>
+            AssetBundle IDecryptionServices.LoadAssetBundle(DecryptFileInfo fileInfo, out Stream managedStream)
+            {
+                managedStream = null;
+                return AssetBundle.LoadFromFile(fileInfo.FileLoadPath, fileInfo.ConentCRC, GetFileOffset());
+            }
+
+            /// <summary>
+            /// 异步方式获取解密的资源包对象
+            /// 注意：加载流对象在资源包对象释放的时候会自动释放
+            /// </summary>
+            AssetBundleCreateRequest IDecryptionServices.LoadAssetBundleAsync(DecryptFileInfo fileInfo, out Stream managedStream)
+            {
+                managedStream = null;
+                return AssetBundle.LoadFromFileAsync(fileInfo.FileLoadPath, fileInfo.ConentCRC, GetFileOffset());
+            }
+
+            private static ulong GetFileOffset()
+            {
+                return 32;
+            }
+        }
+
+
         /// <summary>
         /// 远端资源地址查询服务类
         /// </summary>
@@ -129,5 +205,31 @@ namespace IAFramework.Server.Procedure
                 return $"{_fallbackHostServer}/{fileName}";
             }
         }
+    }
+}
+
+
+/// <summary>
+/// 资源文件解密流
+/// </summary>
+public class BundleStream : FileStream
+{
+    public const byte KEY = 64;
+
+    public BundleStream(string path, FileMode mode, FileAccess access, FileShare share) : base(path, mode, access, share)
+    {
+    }
+    public BundleStream(string path, FileMode mode) : base(path, mode)
+    {
+    }
+
+    public override int Read(byte[] array, int offset, int count)
+    {
+        var index = base.Read(array, offset, count);
+        for (int i = 0; i < array.Length; i++)
+        {
+            array[i] ^= KEY;
+        }
+        return index;
     }
 }

@@ -343,13 +343,5 @@ namespace IAToolkit
         }
 
         const string c_EditorPrefsFoldoutKey = "CZToolKit.Core.Editors.Foldout.";
-
-        static int currentKeyboardControl = -1;
-
-        static bool editingArray = false;
-
-        static int savedArraySize = -1;
-
-        static int editingFieldHash;
     }
 }

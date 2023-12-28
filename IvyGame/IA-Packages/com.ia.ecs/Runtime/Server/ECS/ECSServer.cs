@@ -39,7 +39,7 @@ namespace IAECS.Server.ECS
             }
         }
 
-        public void Init()
+        public override void OnInit()
         {
             
         }
@@ -173,7 +173,7 @@ namespace IAECS.Server.ECS
         
         #endregion
 
-        public void Clear()
+        public override void OnClear()
         {
             entityCnf.Clear();
         }

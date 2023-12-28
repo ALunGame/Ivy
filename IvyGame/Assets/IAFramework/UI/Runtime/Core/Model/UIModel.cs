@@ -1,7 +1,7 @@
 ﻿using IAEngine;
 using System.Collections.Generic;
 
-namespace LCUI
+namespace IAUI
 {
     public class UIModel
     {

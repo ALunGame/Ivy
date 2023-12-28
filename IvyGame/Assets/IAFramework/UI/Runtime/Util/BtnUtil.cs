@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
 
-namespace LCUI
+namespace IAUI
 {
     public static class BtnUtil
     {

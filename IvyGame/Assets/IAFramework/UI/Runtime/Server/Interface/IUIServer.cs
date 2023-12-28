@@ -1,4 +1,6 @@
-namespace LCUI
+using UnityEngine;
+
+namespace IAUI
 {
     public interface IUIServer
     {

@@ -1,4 +1,4 @@
-﻿namespace LCUI
+﻿namespace IAUI
 {
     public static class UILocate
     {
@@ -8,11 +8,15 @@
 
         public static UILogServer Log { get; private set; }
 
+        static UILocate()
+        {
+            Log = new UILogServer();
+        }
+
         public static void Init()
         {
             UI = new UIServer();
             UI.Init();
-            Log = new UILogServer();
         }
 
         public static void SetUICenter(UICenter uICenter)

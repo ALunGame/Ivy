@@ -1,7 +1,4 @@
-﻿using System.Collections;
-using UnityEngine;
-
-namespace LCUI
+﻿namespace IAUI
 {
     /// <summary>
     /// 界面显示规则

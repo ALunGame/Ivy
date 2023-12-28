@@ -1,4 +1,5 @@
 ﻿using System;
+using static Codice.CM.WorkspaceServer.WorkspaceTreeDataStore;
 
 namespace IAToolkit
 {
@@ -24,20 +25,20 @@ namespace IAToolkit
         /// 状态机
         /// </summary>
         protected Fsm<T> Fsm;
-        
+
         /// <summary>
         /// 上下文数据
         /// </summary>
         private FsmStateContext context;
         
-        protected T GetContext<T>() where T : FsmStateContext
+        protected TContext GetContext<TContext>() where TContext : FsmStateContext
         {
             if (context == null)
             {
                 return null;
             }
 
-            return context as T;
+            return context as TContext;
         }
 
         public void SetContext(FsmStateContext pContext)

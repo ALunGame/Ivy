@@ -9,18 +9,19 @@ namespace IAFramework.Server
 {
     public class GameStartServer : BaseServer
     {
-        /// <summary>
-        /// 资源模式
-        /// </summary>
-        public EPlayMode AssetMode { private set; get; }
+        public EPlayMode PlayMode { private set; get; }
+        public string PackageName { private set; get; }
+        public string BuildPipeline { private set; get; }
         
         //游戏开始流程
         private Fsm<GameStartServer> procedure;
 
-        //开始成功
-        public Action OnStartSuccess;
-        //开始失败
-        public Action<string> OnStartFail;
+        public void SetData(string packageName, string buildPipeline, EPlayMode playMode)
+        {
+            PackageName = packageName;
+            BuildPipeline = buildPipeline;
+            PlayMode = playMode;
+        }
 
         public override void OnInit()
         {
@@ -28,26 +29,24 @@ namespace IAFramework.Server
             {
                 new GameStart_Prepare(),
                 new GameStart_Initialize(),
-                new GameStart_UpdateVersion(),
-                new GameStart_UpdateManifest(),
-                new GameStart_CreateDownloader(),
-                new GameStart_DownloadFiles(),
-                new GameStart_ClearAssetCache(),
+                new GameStart_UpdatePackageVersion(),
+                new GameStart_UpdatePackageManifest(),
+                new GameStart_CreatePackageDownloader(),
+                new GameStart_DownloadPackageFiles(),
+                new GameStart_DownloadPackageOver(),
+                new GameStart_ClearPackageCache(),
                 new GameStart_Done(),
             });
         }
 
         public override void OnClear()
         {
-            OnStartSuccess = null;
-            OnStartFail = null;
-            procedure.Clear();
+            procedure?.Clear();
         }
 
-        public void Start(EPlayMode pAssetMode)
+        public void Start()
         {
-            AssetMode = pAssetMode;
-            procedure.Start(typeof(GameStart_Prepare));
+            procedure?.Start(typeof(GameStart_Prepare));
         }
     }
 }

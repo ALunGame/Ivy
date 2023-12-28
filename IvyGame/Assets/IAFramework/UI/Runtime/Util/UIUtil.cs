@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 
-namespace LCUI
+namespace IAUI
 {
     public static class UIUtil
     {

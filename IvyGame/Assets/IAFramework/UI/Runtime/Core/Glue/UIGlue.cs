@@ -1,4 +1,4 @@
-﻿namespace LCUI
+﻿namespace IAUI
 {
     public class UIGlue
     {

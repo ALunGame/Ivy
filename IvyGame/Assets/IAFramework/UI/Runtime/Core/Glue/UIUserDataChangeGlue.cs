@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace LCUI
+namespace IAUI
 {
     /// <summary>
     /// 绑定用户数据改变事件

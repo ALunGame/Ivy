@@ -4,13 +4,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace LCUI
+namespace IAUI
 {
     /// <summary>
     /// 界面枚举
     /// </summary>
-    public enum UIPanelDef
-    {
+    //public enum UIPanelDef
+    //{
 
-    }
+    //}
 }

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace LCUI
+namespace IAUI
 {
     public class UIUpdateGlue : UIGlue
     {

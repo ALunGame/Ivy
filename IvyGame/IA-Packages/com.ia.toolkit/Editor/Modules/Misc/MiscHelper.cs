@@ -375,6 +375,7 @@ namespace IAToolkit
                         folderPath = IOHelper.GetRelativePath(Environment.CurrentDirectory, folderPath);
                     }
                 }
+                //GUIUtility.ExitGUI();
             }
             EditorGUILayout.EndHorizontal();
             return folderPath;

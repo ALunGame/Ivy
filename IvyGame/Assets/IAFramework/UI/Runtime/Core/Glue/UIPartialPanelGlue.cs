@@ -2,7 +2,7 @@
 using IAFramework;
 using UnityEngine;
 
-namespace LCUI
+namespace IAUI
 {
     public class InternalUIPartialPanelGlue : UIGlue
     {
@@ -154,16 +154,14 @@ namespace LCUI
             }
         }
 
-
-        /// <summary>
-        /// 不跟随父界面时创建
-        /// </summary>
-        public void Create()
+        public TModel GetPanelModel<TModel>() where TModel : UIModel
         {
-            if (_FollowParent)
-                return;
-            _PartPanel = new T();
-            UIPanelCreater.CreateUIPanelTrans(_PartPanel,GetPartialPanelTrans());
+            if (_PartPanel == null)
+            {
+                _PartPanel = new T();
+                UIPanelCreater.CreateUIPanelTrans(_PartPanel, GetPartialPanelTrans());
+            }
+            return (TModel)_PartPanel.Model;
         }
 
         /// <summary>
@@ -173,8 +171,10 @@ namespace LCUI
         {
             if (_PartPanel == null)
             {
-                _PartPanel.Show();
+                _PartPanel = new T();
+                UIPanelCreater.CreateUIPanelTrans(_PartPanel, GetPartialPanelTrans());
             }
+            _PartPanel.Show();
         }
         
         
@@ -184,9 +184,8 @@ namespace LCUI
         public void Hide()
         {
             if (_PartPanel == null)
-            {
-                _PartPanel.Hide();
-            }
+                return;
+            _PartPanel.Hide();
         }
         
         /// <summary>
@@ -195,10 +194,9 @@ namespace LCUI
         public void Destroy()
         {
             if (_PartPanel == null)
-            {
-                _PartPanel.Destroy();
-                Clear();
-            }
+                return;
+            _PartPanel.Destroy();
+            Clear();
         }
     }
 }

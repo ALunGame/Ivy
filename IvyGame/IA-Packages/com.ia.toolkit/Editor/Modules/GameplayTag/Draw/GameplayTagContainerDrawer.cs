@@ -10,12 +10,8 @@ namespace IAToolkit
     public class GameplayTagContainerDrawer : ObjectDrawer
     {
         private GUIStyle lableStyle;
-        private GUIStyle verticalStyle;
-        
-        private float TagHeight = 25;
         private List<GameplayTagNode> nodes;
         private List<GameplayTagNode> rootNodes;
-        private bool show = true;
         private float height = 20;
 
         public override void OnInit()

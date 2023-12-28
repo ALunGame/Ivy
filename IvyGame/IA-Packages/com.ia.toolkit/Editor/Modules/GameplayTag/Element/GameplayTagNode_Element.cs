@@ -35,7 +35,13 @@ namespace IAToolkit
             toggle.style.height = 30;
     
             VisualElement checkMark = toggle.Q<VisualElement>(null, Toggle.checkmarkUssClassName);
-            checkMark.style.unityBackgroundScaleMode = ScaleMode.StretchToFill;
+            //checkMark.style.unityBackgroundScaleMode = ScaleMode.StretchToFill;
+
+            checkMark.style.backgroundPositionX = new BackgroundPosition(BackgroundPositionKeyword.Center);
+            checkMark.style.backgroundPositionY = new BackgroundPosition(BackgroundPositionKeyword.Center);
+            checkMark.style.backgroundRepeat = new BackgroundRepeat(Repeat.NoRepeat, Repeat.NoRepeat);
+            checkMark.style.backgroundSize = new BackgroundSize(BackgroundSizeType.Contain);
+
             checkMark.style.unitySliceLeft = 0;
             checkMark.style.unitySliceTop = 0;
             checkMark.style.unitySliceBottom = 0;

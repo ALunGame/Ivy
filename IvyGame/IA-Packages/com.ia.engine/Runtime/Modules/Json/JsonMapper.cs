@@ -521,7 +521,7 @@ namespace IAEngine
                             }
                             catch (Exception e)
                             {
-                                Debug.LogErrorFormat("序列化失败,字段{0}不可设置{1}>>>", prop_data.Info.Name, prop_data.Type);
+                                Debug.LogErrorFormat("序列化失败,字段{0}不可设置{1}>>>{2}", prop_data.Info.Name, prop_data.Type,e);
                                 continue;
                             }
                         }

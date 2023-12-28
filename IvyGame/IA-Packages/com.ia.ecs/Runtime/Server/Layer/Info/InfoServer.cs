@@ -44,7 +44,7 @@ namespace IAECS.Server.Layer
             return (T)SensorDict[key];
         }
         
-        public void Init()
+        public override void OnInit()
         {
             RegAllSensor();
         }

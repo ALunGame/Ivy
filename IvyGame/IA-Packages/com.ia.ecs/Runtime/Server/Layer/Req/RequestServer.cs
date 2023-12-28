@@ -1,11 +1,10 @@
 ﻿using IAECS.Config;
 using IAECS.Data;
 using IAECS.Layer.Request;
-using IAToolkit;
-using System;
-using System.Collections.Generic;
 using IAEngine;
 using IAServer;
+using System;
+using System.Collections.Generic;
 
 namespace IAECS.Server.Layer
 {
@@ -37,7 +36,7 @@ namespace IAECS.Server.Layer
             return RequestDict[key];
         }
         
-        public void Init()
+        public override void OnInit()
         {
             RegAllRequest();
         }

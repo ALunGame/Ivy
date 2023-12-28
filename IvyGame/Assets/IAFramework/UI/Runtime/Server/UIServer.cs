@@ -1,8 +1,9 @@
 using IAEngine;
 using System;
 using System.Collections.Generic;
+using UnityEngine;
 
-namespace LCUI
+namespace IAUI
 {
     public class UIServer : IUIServer
     {
@@ -28,12 +29,11 @@ namespace LCUI
             rules.Add(new UIStackRule(this));
             rules.Add(new UIHideOtherRule(this));
 
-            //TODO:
-            //foreach (UIPanelCfg uiPanelCnf in LCConfig.Config.UIPanelCfg.Values)
-            //{
-            //    Type uiPanlType = ReflectionHelper.GetType(uiPanelCnf.script);
-            //    panelTypeDict.Add(uiPanelCnf.id, uiPanlType);
-            //}
+            foreach (UIPanelCfg uiPanelCnf in IAConfig.Config.UIPanelCfg.Values)
+            {
+                Type uiPanlType = ReflectionHelper.GetType(uiPanelCnf.script);
+                panelTypeDict.Add(uiPanelCnf.id, uiPanlType);
+            }
         }
 
         public void Clear()
@@ -150,7 +150,7 @@ namespace LCUI
                 cachePanelDict.Remove(panelId);
 
             //尝试创建
-            CreatePanelTrans(panelId,panel);
+            CreatePanelTrans(panelId, panel);
 
             //调用显示
             panel.Show();
@@ -203,9 +203,7 @@ namespace LCUI
 
         public UIPanelCfg GetPanelCnf(UIPanelDef pPanelId)
         {
-            //TODO:
-            //return LCConfig.Config.UIPanelCfg[pPanelId];
-            return null;
+            return IAConfig.Config.UIPanelCfg[pPanelId];
         }
         
 

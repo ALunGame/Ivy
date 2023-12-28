@@ -1,10 +1,9 @@
 ﻿using IAECS.Data;
 using IAECS.Layer.Behavior;
-using System;
-using System.Collections.Generic;
 using IAEngine;
 using IAServer;
-using UnityEngine;
+using System;
+using System.Collections.Generic;
 
 namespace IAECS.Server.Layer
 {
@@ -12,7 +11,7 @@ namespace IAECS.Server.Layer
     {
         private Dictionary<RequestId, List<BehaviorTree>> BevDict = new Dictionary<RequestId, List<BehaviorTree>>();
         
-        public void Init()
+        public override void OnInit()
         {
             foreach (var item in Enum.GetValues(typeof(RequestId)))
             {
