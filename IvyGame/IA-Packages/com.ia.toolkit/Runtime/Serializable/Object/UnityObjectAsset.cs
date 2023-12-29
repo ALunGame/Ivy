@@ -19,6 +19,13 @@ namespace IAToolkit
     /// </summary>
     public class UnityObjectAsset
     {
+        public enum AssetType
+        {
+            GameObj,
+            AnimClip,
+            Sprite,
+        }
+
         [JsonIgnore]
         public UnityObject Obj;
         
@@ -37,13 +44,6 @@ namespace IAToolkit
         }
 
 #if UNITY_EDITOR
-
-        public enum AssetType
-        {
-            GameObj,
-            AnimClip,
-            Sprite,
-        }
 
         public UnityObject GetObj()
         {

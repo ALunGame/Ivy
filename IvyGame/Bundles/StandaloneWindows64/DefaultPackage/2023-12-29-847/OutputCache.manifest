@@ -1,0 +1,7 @@
+ManifestFileVersion: 0
+CRC: 1068980102
+AssetBundleManifest:
+  AssetBundleInfos:
+    Info_0:
+      Name: defaultpackage_assets_gameasset_ui_prefabs_test.bundle
+      Dependencies: {}

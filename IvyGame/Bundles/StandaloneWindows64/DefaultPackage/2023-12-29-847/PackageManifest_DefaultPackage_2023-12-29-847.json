@@ -1,0 +1,31 @@
+{
+    "FileVersion": "2.0.0",
+    "EnableAddressable": true,
+    "LocationToLower": false,
+    "IncludeAssetGUID": false,
+    "OutputNameStyle": 0,
+    "BuildPipeline": "BuiltinBuildPipeline",
+    "PackageName": "DefaultPackage",
+    "PackageVersion": "2023-12-29-847",
+    "AssetList": [
+        {
+            "Address": "Test",
+            "AssetPath": "Assets/GameAsset/UI/Prefabs/Test.prefab",
+            "AssetGUID": "",
+            "AssetTags": [],
+            "BundleID": 0
+        }
+    ],
+    "BundleList": [
+        {
+            "BundleName": "defaultpackage_assets_gameasset_ui_prefabs_test.bundle",
+            "UnityCRC": 3876526073,
+            "FileHash": "d17db9569e5bfd1365ec5326ef40bc62",
+            "FileCRC": "13c15bb6",
+            "FileSize": 1731,
+            "Encrypted": false,
+            "Tags": [],
+            "DependIDs": []
+        }
+    ]
+}

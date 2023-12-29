@@ -9,19 +9,9 @@ namespace IAUI
     {
         
         /// <summary>
-        /// 主界面
+        /// 主游戏界面
         /// </summary>
-        MainUIPanel,
-
-        /// <summary>
-        /// 对话选择界面
-        /// </summary>
-        BubbleDialogChoosePanel,
-
-        /// <summary>
-        /// 战斗界面
-        /// </summary>
-        FightUI,
+        MainGamePanel,
 
     }
 

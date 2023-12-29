@@ -1,5 +1,7 @@
 ﻿#if UNITY_EDITOR
-using UnityEditor;
+using UnityEditor; 
+#endif
+
 using UnityEngine;
 
 namespace IAToolkit
@@ -11,6 +13,8 @@ namespace IAToolkit
     {
 
     }
+
+#if UNITY_EDITOR
 
     [CustomPropertyDrawer(typeof(ReadOnlyAttribute))]
     public class ReadOnlyDrawer : PropertyDrawer
@@ -26,7 +30,6 @@ namespace IAToolkit
             EditorGUI.PropertyField(position, property, label, true);
             GUI.enabled = true;
         }
-    }
-}
-
+    } 
 #endif
+}

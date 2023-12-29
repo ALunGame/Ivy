@@ -1,0 +1,57 @@
+{
+    "Summary": {
+        "YooVersion": "",
+        "UnityVersion": "2022.3.16f1",
+        "BuildDate": "2023/12/29 14:08:48",
+        "BuildSeconds": 0,
+        "BuildTarget": 19,
+        "BuildMode": 0,
+        "BuildPipeline": "RawFileBuildPipeline",
+        "BuildPackageName": "RawFiles",
+        "BuildPackageVersion": "2023-12-29-848",
+        "UniqueBundleName": true,
+        "EnableAddressable": true,
+        "LocationToLower": false,
+        "IncludeAssetGUID": false,
+        "IgnoreDefaultType": false,
+        "AutoCollectShaders": true,
+        "EncryptionClassName": "null",
+        "FileNameStyle": 0,
+        "CompressOption": 0,
+        "DisableWriteTypeTree": false,
+        "IgnoreTypeTreeChanges": false,
+        "AssetFileTotalCount": 1,
+        "MainAssetTotalCount": 1,
+        "AllBundleTotalCount": 1,
+        "AllBundleTotalSize": 54,
+        "EncryptedBundleTotalCount": 0,
+        "EncryptedBundleTotalSize": 0
+    },
+    "AssetInfos": [
+        {
+            "Address": "TbUIPanelCfg",
+            "AssetPath": "Assets/GameAsset/Config/TbUIPanelCfg.cfg",
+            "AssetGUID": "e6dcbb8c44c716644abaff02afc163f8",
+            "AssetTags": [],
+            "MainBundleName": "rawfiles_assets_gameasset_config_tbuipanelcfg_cfg.rawfile",
+            "MainBundleSize": 54,
+            "DependAssets": []
+        }
+    ],
+    "BundleInfos": [
+        {
+            "BundleName": "rawfiles_assets_gameasset_config_tbuipanelcfg_cfg.rawfile",
+            "FileName": "f4e6fc9cad1e955e3e1d13a12d2d788f.rawfile",
+            "FileHash": "f4e6fc9cad1e955e3e1d13a12d2d788f",
+            "FileCRC": "aa02e930",
+            "FileSize": 54,
+            "Encrypted": false,
+            "Tags": [],
+            "DependBundles": [],
+            "AllBuiltinAssets": [
+                "Assets/GameAsset/Config/TbUIPanelCfg.cfg"
+            ]
+        }
+    ],
+    "IndependAssets": []
+}

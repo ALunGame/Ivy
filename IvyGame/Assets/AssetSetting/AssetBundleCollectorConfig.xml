@@ -1,0 +1,12 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root Version="2.4">
+  <Common AutoAddressable="True" LocationToLower="False" IncludeAssetGUID="False" UniqueBundleName="False" ShowPackageView="True" ShowEditorAlias="True" />
+  <Package PackageName="DefaultPackage" PackageDesc="">
+    <Group GroupActiveRule="EnableGroup" GroupName="UI" GroupDesc="" AssetTags="">
+      <Collector CollectPath="Assets/GameAsset/UI/Prefabs" CollectGUID="5d4e46094da58554e9c2b6d2c2199ab2" CollectType="MainAssetCollector" AddressRule="AddressByFileName" PackRule="PackSeparately" FilterRule="CollectPrefab" UserData="" AssetTags="" />
+    </Group>
+    <Group GroupActiveRule="EnableGroup" GroupName="Config" GroupDesc="" AssetTags="">
+      <Collector CollectPath="Assets/GameAsset/Config" CollectGUID="186aa456d55d61b47877effa6be020a1" CollectType="MainAssetCollector" AddressRule="AddressByFileName" PackRule="PackRawFile" FilterRule="CollectAll" UserData="" AssetTags="" />
+    </Group>
+  </Package>
+</root>

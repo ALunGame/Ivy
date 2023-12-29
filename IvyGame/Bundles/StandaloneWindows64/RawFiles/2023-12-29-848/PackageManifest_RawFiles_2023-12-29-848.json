@@ -1,0 +1,31 @@
+{
+    "FileVersion": "2.0.0",
+    "EnableAddressable": true,
+    "LocationToLower": false,
+    "IncludeAssetGUID": false,
+    "OutputNameStyle": 0,
+    "BuildPipeline": "RawFileBuildPipeline",
+    "PackageName": "RawFiles",
+    "PackageVersion": "2023-12-29-848",
+    "AssetList": [
+        {
+            "Address": "TbUIPanelCfg",
+            "AssetPath": "Assets/GameAsset/Config/TbUIPanelCfg.cfg",
+            "AssetGUID": "",
+            "AssetTags": [],
+            "BundleID": 0
+        }
+    ],
+    "BundleList": [
+        {
+            "BundleName": "rawfiles_assets_gameasset_config_tbuipanelcfg_cfg.rawfile",
+            "UnityCRC": 0,
+            "FileHash": "f4e6fc9cad1e955e3e1d13a12d2d788f",
+            "FileCRC": "aa02e930",
+            "FileSize": 54,
+            "Encrypted": false,
+            "Tags": [],
+            "DependIDs": []
+        }
+    ]
+}
