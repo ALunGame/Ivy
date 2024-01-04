@@ -392,5 +392,36 @@ namespace IAToolkit
         }
 
         #endregion
+
+        #region 执行批处理
+
+        private static Process CreateShellExProcess(string cmd, string args, string workingDir = "")
+        {
+            var pStartInfo = new ProcessStartInfo(cmd);
+            pStartInfo.Arguments = args;
+            pStartInfo.CreateNoWindow = false;
+            pStartInfo.UseShellExecute = true;
+            pStartInfo.RedirectStandardError = false;
+            pStartInfo.RedirectStandardInput = false;
+            pStartInfo.RedirectStandardOutput = false;
+            if (!string.IsNullOrEmpty(workingDir))
+                pStartInfo.WorkingDirectory = workingDir;
+            return Process.Start(pStartInfo);
+        
+        }
+
+        /// <summary>
+        /// 执行批处理
+        /// </summary>
+        /// <param name="batfile">批处理文件</param>
+        /// <param name="args">参数</param>
+        /// <param name="workingDir">工作目录</param>
+        public static void ExecuteBat(string batfile, string args, string workingDir = "")
+        {
+            var p = CreateShellExProcess(batfile, args, workingDir);
+            p.Close();
+        }
+
+        #endregion
     }
 }

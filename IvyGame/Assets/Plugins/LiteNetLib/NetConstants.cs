@@ -6,28 +6,28 @@
     public enum DeliveryMethod : byte
     {
         /// <summary>
-        /// Unreliable. Packets can be dropped, can be duplicated, can arrive without order.
+        /// 不可靠的。数据包可以被丢弃，可以被复制，可以没有顺序地到达。
         /// </summary>
         Unreliable = 4,
 
         /// <summary>
-        /// Reliable. Packets won't be dropped, won't be duplicated, can arrive without order.
+        /// 可靠的。包裹不会丢失，不会重复，可以不按顺序到达。
         /// </summary>
         ReliableUnordered = 0,
 
         /// <summary>
-        /// Unreliable. Packets can be dropped, won't be duplicated, will arrive in order.
+        /// 不可靠的。数据包可以丢弃，不会重复，会有序到达。
         /// </summary>
         Sequenced = 1,
 
         /// <summary>
-        /// Reliable and ordered. Packets won't be dropped, won't be duplicated, will arrive in order.
+        /// 可靠而有序。数据包不会丢失，不会重复，会有序到达。
         /// </summary>
         ReliableOrdered = 2,
 
         /// <summary>
-        /// Reliable only last packet. Packets can be dropped (except the last one), won't be duplicated, will arrive in order.
-        /// Cannot be fragmented
+        /// 唯一可靠的最后一个数据包。数据包可以丢弃(最后一个除外)，不会重复，将按顺序到达。
+        /// 不能分片
         /// </summary>
         ReliableSequenced = 3
     }
