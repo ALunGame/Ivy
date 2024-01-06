@@ -383,6 +383,7 @@ namespace LiteNetLib
             socket.SendBufferSize = NetConstants.SocketBufferSize;
             socket.Blocking = true;
 
+
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
                 try

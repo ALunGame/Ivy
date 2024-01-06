@@ -30,13 +30,17 @@ namespace Game.Network.Client
             userName = Environment.MachineName + " " + r.Next(100000);
 
             packetProcessor = new NetPacketProcessor();
+            packetProcessor.SubscribeReusable<DiscoveryPacket, IPEndPoint>(OnDiscoveryReceived);
 
             netManager = new NetManager(this)
             {
                 AutoRecycle = true,
-                IPv6Enabled = false
+                IPv6Enabled = false,
+                UnconnectedMessagesEnabled = true,
             };
             netManager.Start();
+
+            NetClientLocate.Init(this);
         }
 
         private void Update()
@@ -47,6 +51,39 @@ namespace Game.Network.Client
         private void OnDestroy()
         {
             netManager.Stop();
+        }
+
+        #endregion
+
+        #region 广播用于发现服务器
+
+        private Action<IPEndPoint> onDiscoveryServer;
+        public void Discovery(int port)
+        {
+            if (netManager == null)
+            {
+                return;
+            }
+            _cachedWriter.Reset();
+            _cachedWriter.Put((byte)PacketType.Discovery);
+            packetProcessor.Write(_cachedWriter, new DiscoveryPacket { DiscoveryStr = "CDiscovery" });
+            netManager.SendBroadcast(_cachedWriter, port);
+        }
+
+        public void SetDiscoveryCallBack(Action<IPEndPoint> onDiscoveryCallBack)
+        {
+            onDiscoveryServer = onDiscoveryCallBack;
+        }
+
+        /// <summary>
+        /// 寻找服务器
+        /// </summary>
+        /// <param name="packet"></param>
+        /// <param name="peer"></param>
+        private void OnDiscoveryReceived(DiscoveryPacket packet, IPEndPoint remoteEndPoint)
+        {
+            NetClientLocate.Log.Log("发现服务器》》》", remoteEndPoint, packet.DiscoveryStr);
+            onDiscoveryServer?.Invoke(remoteEndPoint);
         }
 
         #endregion
@@ -81,10 +118,10 @@ namespace Game.Network.Client
         #endregion
 
 
-        public void Connect(string ip, Action<DisconnectInfo> onDisconnected)
+        public void Connect(IPEndPoint endPoint, Action<DisconnectInfo> onDisconnected)
         {
             this.onDisconnected = onDisconnected;
-            netManager.Connect(ip, NetServer.ServerPort, NetServer.NetConnectKey);
+            netManager.Connect(endPoint, NetServer.NetConnectKey);
         }
 
 
@@ -149,6 +186,33 @@ namespace Game.Network.Client
             }
         }
 
+        /// <summary>
+        /// 当没有连接的时候，接受到消息
+        /// </summary>
+        /// <param name="remoteEndPoint"></param>
+        /// <param name="reader"></param>
+        /// <param name="messageType"></param>
+        public void OnNetworkReceiveUnconnected(IPEndPoint remoteEndPoint, NetPacketReader reader, UnconnectedMessageType messageType)
+        {
+            if (messageType == UnconnectedMessageType.BasicMessage)
+            {
+                byte packetType = reader.GetByte();
+                if (packetType >= NetworkGeneral.PacketTypesCount)
+                    return;
+
+                PacketType pt = (PacketType)packetType;
+                switch (pt)
+                {
+                    case PacketType.Discovery:
+                        packetProcessor.ReadAllPackets(reader, remoteEndPoint);
+                        break;
+                    default:
+                        Debug.Log("Unhandled packet: " + pt);
+                        break;
+                }
+            }
+        }
+
 
         /// <summary>
         /// 网络出错
@@ -163,9 +227,7 @@ namespace Game.Network.Client
         {
         }
 
-        public void OnNetworkReceiveUnconnected(IPEndPoint remoteEndPoint, NetPacketReader reader, UnconnectedMessageType messageType)
-        {
-        }
+
 
         public void OnConnectionRequest(ConnectionRequest request)
         {

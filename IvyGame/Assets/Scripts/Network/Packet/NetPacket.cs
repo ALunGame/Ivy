@@ -5,6 +5,11 @@ namespace Game.Network
     public enum PacketType : byte
     {
         /// <summary>
+        /// 客户端发现服务器
+        /// </summary>
+        Discovery,
+
+        /// <summary>
         /// 加入房间，连接开始
         /// </summary>
         JoinRoom,
@@ -13,6 +18,14 @@ namespace Game.Network
         /// Proto 数据
         /// </summary>
         Proto,
+    }
+
+    /// <summary>
+    /// 客户端发现服务器
+    /// </summary>
+    public class DiscoveryPacket
+    {
+        public string DiscoveryStr { get; set; }
     }
 
     /// <summary>

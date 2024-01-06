@@ -1,11 +1,9 @@
-﻿using Game.Network.SDispatcher;
-using LiteNetLib;
+﻿using LiteNetLib;
 using LiteNetLib.Utils;
 using ProtoBuf;
 using System;
 using System.Net;
 using System.Net.Sockets;
-using UnityEditor.Sprites;
 using UnityEngine;
 
 namespace Game.Network.Server
@@ -25,10 +23,12 @@ namespace Game.Network.Server
             DontDestroyOnLoad(gameObject);
 
             packetProcessor = new NetPacketProcessor();
+            packetProcessor.SubscribeReusable<DiscoveryPacket, IPEndPoint>(OnDiscoveryReceived);
             packetProcessor.SubscribeReusable<JoinPacket, NetPeer>(OnJoinReceived);
             netManager = new NetManager(this)
             {
-                AutoRecycle = true
+                AutoRecycle = true,
+                BroadcastReceiveEnabled = true
             };
 
             NetServerLocate.Init(this);
@@ -93,6 +93,7 @@ namespace Game.Network.Server
             if (netManager.IsRunning)
                 return;
             netManager.Start(ServerPort);
+            NetServerLocate.Log.Log("服务器启动成功：", ServerPort);
         }
 
         /// <summary>
@@ -122,6 +123,49 @@ namespace Game.Network.Server
                     Debug.Log("Unhandled packet: " + pt);
                     break;
             }
+        }
+
+        /// <summary>
+        /// 当没有连接的时候，接受到消息
+        /// </summary>
+        /// <param name="remoteEndPoint"></param>
+        /// <param name="reader"></param>
+        /// <param name="messageType"></param>
+        public void OnNetworkReceiveUnconnected(IPEndPoint remoteEndPoint, NetPacketReader reader, UnconnectedMessageType messageType)
+        {
+            if (messageType == UnconnectedMessageType.Broadcast)
+            {
+                byte packetType = reader.GetByte();
+                if (packetType >= NetworkGeneral.PacketTypesCount)
+                    return;
+
+                PacketType pt = (PacketType)packetType;
+                switch (pt)
+                {
+                    case PacketType.Discovery:
+                        NetServerLocate.Log.Log("客户端寻找服务器消息》》》", remoteEndPoint);
+                        packetProcessor.ReadAllPackets(reader, remoteEndPoint);
+                        break;
+                    default:
+                        Debug.Log("Unhandled packet: " + pt);
+                        break;
+                }
+            }
+        }
+
+        /// <summary>
+        /// 寻找服务器
+        /// </summary>
+        /// <param name="packet"></param>
+        /// <param name="peer"></param>
+        private void OnDiscoveryReceived(DiscoveryPacket packet, IPEndPoint remoteEndPoint)
+        {
+            Debug.Log("[S] Discovery packet received: " + packet.DiscoveryStr);
+
+            _cachedWriter.Reset();
+            _cachedWriter.Put((byte)PacketType.Discovery);
+            packetProcessor.Write(_cachedWriter, new DiscoveryPacket { DiscoveryStr = "SDiscovery" });
+            netManager.SendUnconnectedMessage(_cachedWriter, remoteEndPoint);
         }
 
         /// <summary>
@@ -177,9 +221,6 @@ namespace Game.Network.Server
             
         }
 
-        public void OnNetworkReceiveUnconnected(IPEndPoint remoteEndPoint, NetPacketReader reader, UnconnectedMessageType messageType)
-        {
-            
-        }
+
     }
 }
