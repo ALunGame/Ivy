@@ -22,7 +22,7 @@ public class TestNetServer : MonoBehaviour
     private float lastDiscoveryTime = 0.0f;
 
     private bool openDiscovery = false;
-    private int discoveryPort = NetServer.ServerPort;
+    private int discoveryPort = NetworkGeneral.ServerPort;
     private List<IPEndPoint> discoveredServers = new List<IPEndPoint>();
 
     private void Awake()
@@ -67,10 +67,5 @@ public class TestNetServer : MonoBehaviour
     {
         NetClientLocate.Log.Log("寻找服务器...",discoveryPort);
         netClient.Discovery(discoveryPort);
-
-
-
-
-
     }
 }

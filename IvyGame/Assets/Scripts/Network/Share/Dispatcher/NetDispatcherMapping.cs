@@ -1,6 +1,7 @@
 ﻿using ProtoBuf;
 using System.Collections.Generic;
 using System;
+using UnityEngine;
 
 namespace Game.Network
 {
@@ -18,7 +19,7 @@ namespace Game.Network
         {
             if (msgDict.ContainsKey(msgId))
             {
-                NetworkLocate.Log.LogError("注册派发器失败，重复消息号", msgId);
+                Debug.LogError($"注册派发器失败，重复消息号:{msgId}");
                 return;
             }
 

@@ -11,7 +11,6 @@ namespace Game.Network.Server
     internal class NetServer : MonoBehaviour, INetEventListener
     {
         public const string NetConnectKey = "IvyGame";
-        public const int ServerPort = 10515;
 
         private NetManager netManager;
         private NetPacketProcessor packetProcessor;
@@ -92,8 +91,8 @@ namespace Game.Network.Server
         {
             if (netManager.IsRunning)
                 return;
-            netManager.Start(ServerPort);
-            NetServerLocate.Log.Log("服务器启动成功：", ServerPort);
+            netManager.Start(NetworkGeneral.ServerPort);
+            NetServerLocate.Log.Log("服务器启动成功：", NetworkGeneral.ServerPort);
         }
 
         /// <summary>
@@ -191,12 +190,12 @@ namespace Game.Network.Server
 
         public void OnPeerConnected(NetPeer peer)
         {
-            NetworkLocate.Log.Log("[S] Player connected: ", peer.EndPoint);
+            NetServerLocate.Log.Log("[S] Player connected: ", peer.EndPoint);
         }
 
         public void OnPeerDisconnected(NetPeer peer, DisconnectInfo disconnectInfo)
         {
-            NetworkLocate.Log.Log("[S] Player disconnected: ", peer.EndPoint, disconnectInfo.Reason);
+            NetServerLocate.Log.Log("[S] Player disconnected: ", peer.EndPoint, disconnectInfo.Reason);
             NetServerLocate.TokenCenter.TokenLeave(peer);
         }
 
@@ -207,7 +206,7 @@ namespace Game.Network.Server
         /// <param name="socketError"></param>
         public void OnNetworkError(IPEndPoint endPoint, SocketError socketError)
         {
-            NetworkLocate.Log.LogError("[S] NetworkError: ", endPoint, socketError);
+            NetServerLocate.Log.LogError("[S] NetworkError: ", endPoint, socketError);
         }
 
         /// <summary>
