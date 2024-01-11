@@ -1,29 +1,11 @@
 ﻿using IAEngine;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 namespace Game.Network.Server
 {
-    internal class ServerGameAreaGrid
-    {
-        /// <summary>
-        /// 所属阵营
-        /// </summary>
-        public int Camp {  get; private set; }
-
-        /// <summary>
-        /// 在格子里的玩家Uid
-        /// </summary>
-        public int InGridPlayerUid { get; private set; }
-
-        public ServerGameAreaGrid()
-        {
-            Camp = 0;
-            InGridPlayerUid = 0;
-        }
-    }
-
     /// <summary>
     /// 游戏区域
     /// </summary>
@@ -40,6 +22,11 @@ namespace Game.Network.Server
         /// 区域
         /// </summary>
         public int[,] Area { get; private set; }
+
+        public Action<int, int, int> OnGridCampChange;
+
+        public Action<int, int, int> OnAddPlayerCaptureRecord;
+        public Action<int> OnRemovePlayerCaptureRecord;
 
         /// <summary>
         /// 玩家占领的格子 playeruid-x-y
@@ -76,6 +63,29 @@ namespace Game.Network.Server
             if (!PlayerCaptureGrid.ContainsKey(playerUid))
                 PlayerCaptureGrid.Add(playerUid, new Dictionary<int, List<int>>());
             return PlayerCaptureGrid[playerUid];
+        }
+
+        /// <summary>
+        /// 检测占领格子是不是连接
+        /// </summary>
+        /// <param name="posX"></param>
+        /// <param name="posY"></param>
+        /// <param name="captureGrids"></param>
+        /// <returns></returns>
+        private bool CheckCaptureGridHasPos(int posX, int posY, Dictionary<int, List<int>> captureGrids)
+        {
+            foreach (int x in captureGrids.Keys)
+            {
+                List<int> ylist = captureGrids[x];
+                foreach (int y in ylist)
+                {
+                    if (posX == x && posY == y)
+                    {
+                        return true;
+                    }
+                }
+            }
+            return false;
         }
 
         /// <summary>
@@ -138,6 +148,10 @@ namespace Game.Network.Server
                 Vector2Int tPos = removePos[i];
                 CapturePlayerGrid[tPos.x].Remove(tPos.y);
             }
+
+            OnRemovePlayerCaptureRecord?.Invoke(playerUid);
+
+            Debug.Log("删除占领记录>>>>");
         }
 
         /// <summary>
@@ -152,7 +166,8 @@ namespace Game.Network.Server
                 PlayerCaptureGrid.Add(playerUid, new Dictionary<int, List<int>>());
 
             if (!PlayerCaptureGrid[playerUid].ContainsKey(posX))
-                PlayerCaptureGrid[playerUid][posX].Add(posY);
+                PlayerCaptureGrid[playerUid].Add(posX, new List<int>());
+            PlayerCaptureGrid[playerUid][posX].Add(posY);
 
             if (!CapturePlayerGrid.ContainsKey(posX))
                 CapturePlayerGrid.Add(posX, new Dictionary<int, int>());
@@ -161,6 +176,7 @@ namespace Game.Network.Server
                 CapturePlayerGrid[posX][posY] = 0;
             CapturePlayerGrid[posX][posY] = playerUid;
 
+            OnAddPlayerCaptureRecord?.Invoke(playerUid, posX, posY);    
         }
 
         /// <summary>
@@ -243,7 +259,13 @@ namespace Game.Network.Server
                 return;
             }
 
+            if (Area[posX, posY] == camp) 
+            {
+                return;
+            }
+
             Area[posX, posY] = camp;
+            OnGridCampChange?.Invoke(posX, posY, camp);
         }
 
         /// <summary>
@@ -273,7 +295,7 @@ namespace Game.Network.Server
                     {
                         removePlayerUids.Add(oldPlayerUid);
                     }
-                    return;
+                    return removePlayerUids;
                 }
 
                 //5，占领区域
@@ -283,10 +305,10 @@ namespace Game.Network.Server
             else
             {
                 int oldPlayerUid = GetPlayerUidInCaptureGrid(posX, posY);
+                Dictionary<int, List<int>> captureGrids = GetPlayerCaptureGrid(playerUid);
                 //6，判断当前格子是自己，占领区域
-                if (oldPlayerUid == playerUid)
+                if (oldPlayerUid == playerUid && !CheckCaptureGridHasPos(posX, posY, captureGrids))
                 {
-                    Dictionary<int, List<int>> captureGrids = GetPlayerCaptureGrid(playerUid);
                     Dictionary<int, Vector2Int> captureArea = CalcCaptureGridArea(captureGrids);
                     removePlayerUids = CaptureGridArea(playerUid, serverPlayer.Camp, captureArea);
                 }

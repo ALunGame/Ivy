@@ -7,20 +7,31 @@ namespace Game.Network.Server
     /// </summary>
     internal class ServerGameRoom
     {
-        /// <summary>
-        /// 玩家
-        /// </summary>
-        public List<ServerPlayer> Players { get; private set; }
+        private List<ServerPlayer> players;
+        private int maxPlayerCnt;
+        private ServerGameMap map;
+
+        public ServerGameMap Map {  get { return map; } }
+
+
+        public void Create(byte mapWidth, byte mapHeight, int maxPlayerCnt)
+        {
+            map = new ServerGameMap();
+            map.Create(mapWidth, mapHeight);
+
+            players = new List<ServerPlayer>();
+            this.maxPlayerCnt = maxPlayerCnt;
+        }
 
         /// <summary>
-        /// 最大玩家数量
+        /// 添加玩家
         /// </summary>
-        public int MaxPlayerCnt { get; private set; }
-
-        /// <summary>
-        /// 游戏区域
-        /// </summary>
-        public ServerGameArea Area { get; private set; }
+        /// <param name="player"></param>
+        public void AddPlayer(ServerPlayer player)
+        {
+            players.Add(player);
+            Map.AddPlayer(player);
+        }
 
         /// <summary>
         /// 获得玩家
@@ -29,7 +40,7 @@ namespace Game.Network.Server
         /// <returns></returns>
         public ServerPlayer GetPlayer(int playerUid)
         {
-            foreach (var player in Players)
+            foreach (var player in players)
             {
                 if (player.Uid == playerUid) 
                     return player;
@@ -45,7 +56,7 @@ namespace Game.Network.Server
         public int GetPlayerPosAreaCamp(int playerUid)
         {
             ServerPlayer player = GetPlayer(playerUid);
-            return GetCampInAreaPos(player.PosX, player.PosY);
+            return GetCamp(player.Pos.x, player.Pos.y);
         }
 
         /// <summary>
@@ -54,9 +65,27 @@ namespace Game.Network.Server
         /// <param name="posX"></param>
         /// <param name="posY"></param>
         /// <returns></returns>
-        public int GetCampInAreaPos(int posX, int posY)
+        public int GetCamp(byte posX, byte posY)
         {
-            return Area.GetAreaCamp(posX, posY);
+            return map.GetPointCamp(posX, posY);
+        }
+
+
+        public bool TestPlayerMove(int playerUid, byte posX, byte posY)
+        {
+            ServerPlayer player = GetPlayer(playerUid);
+            if (player == null) 
+                return false;
+
+            if (player.Pos.Equals(posX,posY))
+                return false;
+
+            if (!map.CheckPointIsLegal(posX,posY))
+                return false;
+
+            player.SetPos(posX, posY);
+            map.OnPlayerMove(player);
+            return true;
         }
     }
 }

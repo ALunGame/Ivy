@@ -15,25 +15,26 @@
         /// <summary>
         /// 阵营Id
         /// </summary>
-        public int Camp { get; private set; }
+        public byte Camp { get; private set; }
 
-        public int PosX { get; private set; }
-        public int PosY { get; private set; }
+        /// <summary>
+        /// 位置
+        /// </summary>
+        public ServerPoint Pos { get; private set; }
 
-        public ServerPlayer(int uid, string name, int camp)
+        public ServerPlayer(int uid, string name, byte camp)
         {
             Uid = uid;
             Name = name;
             Camp = camp;
 
-            PosX = 0;
-            PosY = 0;
+            Pos = new ServerPoint();
         }
 
-        public void UpdatePos(int posX, int posY) 
+        public void SetPos(byte posX, byte posY) 
         {
-            PosX = posX;
-            PosY = posY;
+            Pos.x = posX;
+            Pos.y = posY;
         }
     }
 }
