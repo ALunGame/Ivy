@@ -13,11 +13,10 @@ namespace Game.Network.Server
 
         public ServerGameMap Map {  get { return map; } }
 
-
         public void Create(byte mapWidth, byte mapHeight, int maxPlayerCnt)
         {
             map = new ServerGameMap();
-            map.Create(mapWidth, mapHeight);
+            map.Create(mapWidth, mapHeight, this);
 
             players = new List<ServerPlayer>();
             this.maxPlayerCnt = maxPlayerCnt;
@@ -43,6 +42,22 @@ namespace Game.Network.Server
             foreach (var player in players)
             {
                 if (player.Uid == playerUid) 
+                    return player;
+            }
+            return null;
+        }
+
+        /// <summary>
+        /// 获取玩家
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <returns></returns>
+        public ServerPlayer GetPlayer(byte x, byte y)
+        {
+            foreach (var player in players)
+            {
+                if (player.Pos.x == x && player.Pos.y == y)
                     return player;
             }
             return null;

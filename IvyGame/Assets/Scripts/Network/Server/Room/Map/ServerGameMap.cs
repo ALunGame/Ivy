@@ -1,6 +1,10 @@
 ﻿using Game.AStar;
 using IAEngine;
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Drawing;
+using UnityEngine;
 
 namespace Game.Network.Server
 {
@@ -59,7 +63,7 @@ namespace Game.Network.Server
 
         public override string ToString()
         {
-            return $"x;{x} y:{y}";
+            return $"(x={x},y={y})";
         }
 
     }
@@ -68,6 +72,17 @@ namespace Game.Network.Server
     {
         public ServerPoint min = new ServerPoint(false);
         public ServerPoint max = new ServerPoint(false);
+
+        public ServerRect()
+        {
+            
+        }
+
+        public ServerRect(byte x, byte y, byte width, byte height)
+        {
+            min = new ServerPoint(x, y);
+            max = new ServerPoint(x + width - 1, y + height - 1);
+        }
 
         public void TryUpdateX(byte x)
         {
@@ -138,6 +153,11 @@ namespace Game.Network.Server
             max.isLegal = true ;
         }
 
+        public override string ToString()
+        {
+            return $"min:{min} max:{max}";
+        }
+
     }
 
     #region Delegate
@@ -177,6 +197,7 @@ namespace Game.Network.Server
 
     internal class ServerGameMap
     {
+        private ServerGameRoom room;
         private ServerPoint size;
 
         private byte[,] area;
@@ -198,7 +219,7 @@ namespace Game.Network.Server
         #endregion
 
         //创建
-        public void Create(byte width, byte height)
+        public void Create(byte width, byte height, ServerGameRoom pRoom)
         {
             size = new ServerPoint(width, height);
 
@@ -210,6 +231,8 @@ namespace Game.Network.Server
                     area[x, y] = 0;
                 }
             }
+
+            room = pRoom;
         }
 
         //添加玩家
@@ -304,6 +327,19 @@ namespace Game.Network.Server
             Evt_PointCampChange?.Invoke(posX, posY, camp);
         }
 
+        //改变区域阵营
+        public void ChangRectCamp(ServerRect rect, byte camp)
+        {
+            UnityEngine.Debug.Log($"改变区域阵营>>{rect}");
+            for (byte x = rect.min.x; x <= rect.max.x; x++)
+            {
+                for (byte y = rect.min.y; y <= rect.max.y; y++)
+                {
+                    ChangePointCamp(x, y, camp);
+                }
+            }
+        }
+
         //获得阵营区域水平轴区间
         public ServerRect GetCampRect(byte camp)
         {
@@ -314,6 +350,104 @@ namespace Game.Network.Server
         public PathGrid GetPathGrid(byte camp)
         {
             return campPathGridDict[camp];
+        }
+
+        //创建一个指定大小的占领区域
+        public List<ServerRect> CreateCampRect(byte width, byte height, byte checkCamp = Byte.MaxValue, int cnt = 4)
+        {
+            int currCnt = 0;
+            List<ServerRect> rects = new List<ServerRect>();
+
+            //TODO:改为字典把
+            Dictionary<byte, HashSet<byte>> usePointMap = new Dictionary<byte, HashSet<byte>>();
+
+            Dictionary<int, int> xMap = RandomHelper.GetRandomNumList(width, size.x - width);
+            Dictionary<int, int> yMap = RandomHelper.GetRandomNumList(height, size.y - height);
+
+            foreach (int key1 in xMap.Keys)
+            {
+                byte x = (byte)xMap[key1];
+                foreach (var key2 in yMap.Keys)
+                {
+                    byte y = (byte)yMap[key2];
+                    if (area[x, y] == 0 && area[x, y] != checkCamp)
+                    {
+                        if (CheckRectIsLegal(x, y, width, height, usePointMap))
+                        {
+                            ServerRect rect = new ServerRect(x, y, width, height);
+                            currCnt++;
+                            rects.Add(rect);
+
+                            if (currCnt >= cnt)
+                            {
+                                return rects;
+                            }
+                        }
+                    }
+                }
+            }
+
+            return rects;
+        }
+
+        private bool CheckRectIsLegal(byte posX, byte posY, byte width, byte height, Dictionary<byte, HashSet<byte>> usePointMap)
+        {
+            for (byte x = posX; x < posX + width; x++)
+            {
+                for (byte y = posY; y < posY + height; y++)
+                {
+                    if (CheckPointIsLegal(x,y) && area[x, y] != 0)
+                    {
+                        if (usePointMap.ContainsKey(x) && usePointMap[x].Contains(y))
+                        {
+                            return false;
+                        }
+                    }
+                }
+            }
+
+            for (byte x = posX; x < posX + width; x++)
+            {
+                for (byte y = posY; y < posY + height; y++)
+                {
+                    if (!usePointMap.ContainsKey(x))
+                        usePointMap.Add(x, new HashSet<byte>());
+                    usePointMap[x].Add(y);
+                }
+            }
+
+            return true;
+        }
+
+        //获得阵营中随机一个点
+        public ServerPoint GetRandomPointInCamp(byte camp)
+        {
+            ServerRect campRect = null;
+            if (campRectDict.ContainsKey(camp))
+                campRect = campRectDict[camp];
+
+            if (campRect == null)
+            {
+                return null;
+            }
+
+            for (byte x = campRect.min.x; x <= campRect.max.x; x++)
+            {
+                for (byte y = campRect.min.y; y <= campRect.max.y; y++)
+                {
+                    if (GetPointCamp(x,y) == camp)
+                    {
+                        int random = UnityEngine.Random.Range(0, 2);
+                        if (random == 1)
+                        {
+                            return new ServerPoint(x, y);
+                        }
+                    }
+                    
+                }
+            }
+
+            return null;
         }
 
         #region 事件触发
@@ -336,7 +470,17 @@ namespace Game.Network.Server
             //2，是自己的领地，区域占领
             if (currCamp == player.Camp)
             {
-                areaPoints = playerPath.CaptureArea();
+                areaPoints = playerPath.CaptureArea((x, y) =>
+                {
+                    ServerPlayer diePlayer = room.GetPlayer(x, y);
+                    if (diePlayer != null && diePlayer.Uid != player.Uid)
+                    {
+                        if (!diePlayerUids.Contains(diePlayer.Uid))
+                        {
+                            diePlayerUids.Add(diePlayer.Uid);
+                        }
+                    }
+                });
                 //自己路径清理
                 playerPathDict[player.Uid].Clear();
                 Evt_RemovePlayerPath?.Invoke(player.Uid);
@@ -346,7 +490,17 @@ namespace Game.Network.Server
                 //连接了，区域占领
                 if (currPlayerUid == player.Uid)
                 {
-                    areaPoints = playerPath.CaptureArea();
+                    areaPoints = playerPath.CaptureArea((x, y) =>
+                    {
+                        ServerPlayer diePlayer = room.GetPlayer(x, y);
+                        if (diePlayer != null && diePlayer.Uid != player.Uid)
+                        {
+                            if (!diePlayerUids.Contains(diePlayer.Uid))
+                            {
+                                diePlayerUids.Add(diePlayer.Uid);
+                            }
+                        }
+                    });
                     //自己路径清理
                     playerPathDict[player.Uid].Clear();
                     Evt_RemovePlayerPath?.Invoke(player.Uid);
@@ -356,23 +510,6 @@ namespace Game.Network.Server
                     playerPath.AddPoint(player.Pos.x, player.Pos.y);
 
                     Evt_AddPlayerPathPoint?.Invoke(player.Uid, player.Pos.x, player.Pos.y);
-                }
-            }
-
-            //收集死亡玩家
-            if (areaPoints.IsLegal())
-            {
-                for (int i = 0; i < areaPoints.Count; i++)
-                {
-                    ServerPoint point = areaPoints[i];
-                    int tPlayerUid = GetPlayerUidInPathPoint(point.x, point.y);
-                    if (tPlayerUid != -1 && currPlayerUid != player.Uid)
-                    {
-                        if (!diePlayerUids.Contains(tPlayerUid))
-                        {
-                            diePlayerUids.Add(tPlayerUid);
-                        }
-                    }
                 }
             }
 

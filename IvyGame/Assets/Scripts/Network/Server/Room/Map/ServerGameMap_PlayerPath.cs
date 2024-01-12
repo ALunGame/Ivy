@@ -1,5 +1,6 @@
 ﻿using Game.AStar;
 using IAEngine;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -26,8 +27,12 @@ namespace Game.Network.Server
         }
 
         //占领区域
-        public List<ServerPoint> CaptureArea()
+        public List<ServerPoint> CaptureArea(Action<byte,byte> changeCampCallBack)
         {
+            if (pathRect == null)
+            {
+                return null;
+            }
             List<ServerPoint> capturePoints = new List<ServerPoint>();
 
             //先将路径变为占领区域
@@ -36,6 +41,7 @@ namespace Game.Network.Server
                 foreach (byte y in pointDict[x])
                 {
                     capturePoints.Add(new ServerPoint(x, y));
+                    changeCampCallBack?.Invoke(x, y);
                     map.ChangePointCamp(x, y, camp);
                 }
             }
@@ -50,6 +56,7 @@ namespace Game.Network.Server
                         if(CheckPointCanCapture(x,y))
                         {
                             capturePoints.Add(new ServerPoint(x, y));
+                            changeCampCallBack?.Invoke(x, y);
                             map.ChangePointCamp(x, y, camp);
                         }
                     }
@@ -160,7 +167,7 @@ namespace Game.Network.Server
         public void Clear()
         {
             pointDict.Clear();
-            pathRect.Clear();
+            pathRect?.Clear();
         }
 
         /// <summary>
