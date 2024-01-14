@@ -147,6 +147,8 @@ namespace Game.Network.Server
             return true;
         }
 
+        //1，扩散法
+        //2，或者是找最近的一个不是该阵营的点寻路过去
         //检测俩点相连
         private bool CheckTowPointIsConnect(ServerPoint pointA, ServerPoint pointB)
         {
@@ -191,6 +193,19 @@ namespace Game.Network.Server
         public void AddPoint(ServerPoint point)
         {
             AddPoint(point.x, point.y);
+        }
+
+        /// <summary>
+        /// 删除路径点
+        /// </summary>
+        public void RemovePoint(ServerPoint removePoint, ServerPoint currPoint)
+        {
+            pathRect = map.GetCampRect(camp).Copy();
+            pathRect.TryUpdateX(currPoint.x);
+            pathRect.TryUpdateY(currPoint.y);
+
+            if (pointDict.ContainsKey(removePoint.x) && pointDict[removePoint.x].Contains(removePoint.y))
+                pointDict[removePoint.x].Remove(removePoint.y);
         }
 
         /// <summary>

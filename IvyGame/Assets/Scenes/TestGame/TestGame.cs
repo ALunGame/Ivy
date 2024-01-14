@@ -67,6 +67,7 @@ namespace Game.Network.Server.Test
             Room.Map.Evt_PointCampChange += OnGrdCampChange;
             Room.Map.Evt_KillPlayer += OnKillPlayer;
             Room.Map.Evt_AddPlayerPathPoint += OnAddPlayerCaptureRecord;
+            Room.Map.Evt_RemovePlayerPathPoint += OnRemovePlayerCaptureRecord;
             Room.Map.Evt_RemovePlayerPath += OnRemovePlayerCaptureRecord;
 
             SpArea = new MeshRenderer[AreaSize.x, AreaSize.y];
@@ -212,7 +213,7 @@ namespace Game.Network.Server.Test
                 newMesh.transform.SetParent(GridRoot);
                 newMesh.gameObject.name = oldMesh.gameObject.name;
                 SpArea[posX, posY] = newMesh;
-                Destroy(oldMesh);
+                Destroy(oldMesh.gameObject);
             }
         }
 
@@ -248,9 +249,26 @@ namespace Game.Network.Server.Test
         private void OnAddPlayerCaptureRecord(int playerUid, byte posX, byte posY)
         {
             MeshRenderer sp = Instantiate(Players[playerUid - 1].PlayerCaptureSp);
-            sp.gameObject.transform.position = new Vector3(posX, 0, posY);
+            sp.gameObject.transform.position = new Vector3(posX, 0.2f, posY);
             sp.gameObject.SetActive(true);
+            sp.gameObject.name = $"x;{posX}y:{posY}";
             PlayerCaptureSpDict[playerUid].Add(sp);
+        }
+
+        private void OnRemovePlayerCaptureRecord(int playerUid, byte posX, byte posY)
+        {
+            string key = $"x;{posX}y:{posY}";
+            
+            MeshRenderer sp = null;
+            List<MeshRenderer> splist = PlayerCaptureSpDict[playerUid];
+            for (int i = 0; i < splist.Count; i++)
+            {
+                if (splist[i].name == key)
+                {
+                    Destroy(splist[i]);
+                    splist.RemoveAt(i);
+                }
+            }
         }
 
         private void OnRemovePlayerCaptureRecord(int playerUid)

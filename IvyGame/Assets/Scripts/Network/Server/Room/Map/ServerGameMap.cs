@@ -186,6 +186,14 @@ namespace Game.Network.Server
     internal delegate void OnAddPlayerPathPoint(int playerUid, byte posX, byte posY);
 
     /// <summary>
+    /// 删除玩家路径委托
+    /// </summary>
+    /// <param name="playerUid"></param>
+    /// <param name="posX"></param>
+    /// <param name="posY"></param>
+    internal delegate void OnRemovePlayerPathPoint(int playerUid, byte posX, byte posY);
+
+    /// <summary>
     /// 移除玩家路径委托
     /// </summary>
     /// <param name="playerUid"></param>
@@ -214,6 +222,7 @@ namespace Game.Network.Server
         public event OnPointCampChange Evt_PointCampChange;
         public event OnKillPlayer Evt_KillPlayer;
         public event OnAddPlayerPathPoint Evt_AddPlayerPathPoint;
+        public event OnRemovePlayerPathPoint Evt_RemovePlayerPathPoint;
         public event OnRemovePlayerPath Evt_RemovePlayerPath;
 
         #endregion
@@ -457,6 +466,14 @@ namespace Game.Network.Server
             List<int> diePlayerUids = new List<int>();
             ServerGameMap_PlayerPath playerPath = playerPathDict[player.Uid];
             List<ServerPoint> areaPoints = null;
+
+            //后退
+            //if (player.LastPos != null && player.LastPos.Equals(player.Pos))
+            //{
+            //    playerPath.RemovePoint(player.Pos, player.LastPos);
+            //    Evt_RemovePlayerPathPoint?.Invoke(player.Uid, player.Pos.x, player.Pos.y);
+            //    return;
+            //}
 
             //判断有人
             int currPlayerUid = GetPlayerUidInPathPoint(player.Pos.x, player.Pos.y);

@@ -18,6 +18,11 @@
         public byte Camp { get; private set; }
 
         /// <summary>
+        /// 上一次位置
+        /// </summary>
+        public ServerPoint LastPos { get; private set; }
+
+        /// <summary>
         /// 位置
         /// </summary>
         public ServerPoint Pos { get; private set; }
@@ -33,6 +38,16 @@
 
         public void SetPos(byte posX, byte posY) 
         {
+            if (LastPos == null)
+            {
+                LastPos = new ServerPoint(false);
+            }
+            else
+            {
+                LastPos.isLegal = true;
+                LastPos.x = Pos.x;
+                LastPos.y = Pos.y;
+            }
             Pos.x = posX;
             Pos.y = posY;
         }
