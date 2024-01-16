@@ -10,8 +10,6 @@ namespace Game.Network.Server
 {
     internal class NetServer : MonoBehaviour, INetEventListener
     {
-        public const string NetConnectKey = "IvyGame";
-
         private NetManager netManager;
         private NetPacketProcessor packetProcessor;
 
@@ -19,8 +17,6 @@ namespace Game.Network.Server
 
         private void Awake()
         {
-            DontDestroyOnLoad(gameObject);
-
             packetProcessor = new NetPacketProcessor();
             packetProcessor.SubscribeReusable<DiscoveryPacket, IPEndPoint>(OnDiscoveryReceived);
             packetProcessor.SubscribeReusable<JoinPacket, NetPeer>(OnJoinReceived);
@@ -106,6 +102,7 @@ namespace Game.Network.Server
         public void OnNetworkReceive(NetPeer peer, NetPacketReader reader, byte channelNumber, DeliveryMethod deliveryMethod)
         {
             byte packetType = reader.GetByte();
+            Debug.LogWarning($"OnNetworkReceive>>>>{packetType}");
             if (packetType >= NetworkGeneral.PacketTypesCount)
                 return;
 
@@ -175,7 +172,7 @@ namespace Game.Network.Server
         private void OnJoinReceived(JoinPacket packet, NetPeer peer)
         {
             Debug.Log("[S] Join packet received: " + packet.UserName);
-            NetServerLocate.TokenCenter.TokenEnter(peer, packet);
+            //NetServerLocate.TokenCenter.TokenEnter(peer, packet);
         }
 
         /// <summary>
@@ -185,7 +182,7 @@ namespace Game.Network.Server
         /// <exception cref="NotImplementedException"></exception>
         public void OnConnectionRequest(ConnectionRequest request)
         {
-            request.AcceptIfKey(NetConnectKey);
+            request.AcceptIfKey(NetworkGeneral.NetConnectKey);
         }
 
         public void OnPeerConnected(NetPeer peer)

@@ -14,6 +14,7 @@ namespace Game.Network.Server
 
         private Dictionary<byte, HashSet<byte>> pointDict = new Dictionary<byte, HashSet<byte>>();
         private ServerRect pathRect;
+        private ServerRect containPathRect;
         private ServerPoint[] checkPoints = new ServerPoint[4];
 
         public ServerGameMap_PlayerPath(byte pCamp, ServerGameMap pMap)
@@ -24,6 +25,7 @@ namespace Game.Network.Server
             {
                 checkPoints[i] = new ServerPoint();
             }
+            containPathRect = new ServerRect();
         }
 
         //占领区域
@@ -63,9 +65,9 @@ namespace Game.Network.Server
                 }
             }
 
+            pathRect = null;
             return capturePoints;
         }
-
 
         //检测点是不是可以占领
         private bool CheckPointCanCapture(byte pointX, byte pointY)
@@ -76,7 +78,7 @@ namespace Game.Network.Server
             {
                 if (map.GetPointCamp(leftX, pointY) == camp)
                 {
-                    checkCnt ++;
+                    checkCnt++;
                     checkPoints[0] = new ServerPoint(leftX, pointY);
                     break;
                 }
@@ -119,36 +121,16 @@ namespace Game.Network.Server
                 return false;
             }
 
-            return CheckCheckPointsIsConnect();
+            ServerPoint pointA = new ServerPoint(pointX,pointY);
+            ServerPoint pointB = containPathRect.min.Copy();
+            if (pointB.Equals(pathRect.min))
+            {
+                pointB = containPathRect.max.Copy();
+            }
+
+            return !CheckTowPointIsConnect(pointA, pointB);
         }
 
-        private bool CheckCheckPointsIsConnect()
-        {
-            if (!CheckTowPointIsConnect(checkPoints[0], checkPoints[1]))
-            {
-                return false;
-            }
-
-            if (!CheckTowPointIsConnect(checkPoints[1], checkPoints[2]))
-            {
-                return false;
-            }
-
-            if (!CheckTowPointIsConnect(checkPoints[2], checkPoints[3]))
-            {
-                return false;
-            }
-
-            if (!CheckTowPointIsConnect(checkPoints[3], checkPoints[0]))
-            {
-                return false;
-            }
-
-            return true;
-        }
-
-        //1，扩散法
-        //2，或者是找最近的一个不是该阵营的点寻路过去
         //检测俩点相连
         private bool CheckTowPointIsConnect(ServerPoint pointA, ServerPoint pointB)
         {
@@ -162,7 +144,45 @@ namespace Game.Network.Server
 
         private bool CheckPathNodeNeedCheck(int x, int y)
         {
-            return pathRect.CheckContain((byte)x, (byte)y);
+            return containPathRect.CheckContain((byte)x, (byte)y);
+        }
+
+        //更新包围框
+        private void UpdateContainPathRect()
+        {
+            ServerPoint leftDownPoint = pathRect.min.Copy();
+            if (leftDownPoint.x <= 0)
+                leftDownPoint.x = 0;
+            else if (leftDownPoint.x >= map.Size.x)
+                leftDownPoint.x = map.Size.x;
+            else
+                leftDownPoint.x -= 1;
+
+            if (leftDownPoint.y <= 0)
+                leftDownPoint.y = 0;
+            else if (leftDownPoint.y >= map.Size.y)
+                leftDownPoint.y = map.Size.y;
+            else
+                leftDownPoint.y -= 1;
+
+            ServerPoint rightUpPoint = pathRect.max.Copy();
+            if (rightUpPoint.x <= 0)
+                rightUpPoint.x = 0;
+            else if (rightUpPoint.x >= map.Size.x)
+                rightUpPoint.x = map.Size.x;
+            else
+                rightUpPoint.x += 1;
+
+            if (rightUpPoint.y <= 0)
+                rightUpPoint.y = 0;
+            else if (rightUpPoint.y >= map.Size.y)
+                rightUpPoint.y = map.Size.y;
+            else
+                rightUpPoint.y += 1;
+
+            containPathRect.min = leftDownPoint;
+            containPathRect.max = rightUpPoint;
+
         }
 
         //清空区域
@@ -177,9 +197,12 @@ namespace Game.Network.Server
         /// </summary>
         public void AddPoint(byte posX, byte posY)
         {
-            pathRect = map.GetCampRect(camp).Copy();
+            if (pathRect == null)
+                pathRect = map.GetCampRect(camp).Copy();
             pathRect.TryUpdateX(posX);
             pathRect.TryUpdateY(posY);
+
+            UpdateContainPathRect();
 
             if (!pointDict.ContainsKey(posX))
                 pointDict.Add(posX, new HashSet<byte>());

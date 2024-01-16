@@ -1,12 +1,12 @@
 ﻿
 namespace Game.Network.SDispatcher
 {
-    public class SDispatcherMapping : NetDispatcherMapping
+    internal class SDispatcherMapping : NetServerDispatcherMapping
     {
-        public SDispatcherMapping()
+        internal SDispatcherMapping()
         {
             
-            AddDispatcher(new SPlayerMsgDispatcher(this));
+            AddDispatcher(new SRoomMsgDispatcher(this));
 
         }
     }

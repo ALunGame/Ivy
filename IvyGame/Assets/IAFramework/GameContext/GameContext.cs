@@ -8,7 +8,7 @@ namespace IAFramework
     /// 2，提供静态获取接口
     /// 3，全局静态类
     /// </summary>
-    public static class GameContext
+    public static class GameEnv
     {
         /// <summary>
         /// 资源

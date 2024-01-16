@@ -1,10 +1,7 @@
-﻿using Game.Network.Server;
-using IAEngine;
+﻿using IAEngine;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
-using static Unity.Burst.Intrinsics.X86.Avx;
-using static UnityEditor.Experimental.GraphView.GraphView;
 
 namespace Game.Network.Server.Test
 {
@@ -236,7 +233,7 @@ namespace Game.Network.Server.Test
             }
             else
             {
-                List<ServerRect> rects = Room.Map.CreateCampRect(5, 5, 1, killer.Camp);
+                List<ServerRect> rects = Room.Map.CreateCampRect(5, 5, 1);
                 if (rects.IsLegal())
                 {
                     ServerRect rect = rects[0];

@@ -1,4 +1,5 @@
 ﻿using LiteNetLib;
+using Proto;
 
 namespace Game.Network.Server
 {
@@ -6,13 +7,13 @@ namespace Game.Network.Server
     {
         public readonly int TokenUid;
         public readonly NetPeer Peer;
-        public readonly JoinPacket JoinPacket;
+        public readonly PlayerInfo Player;
 
-        public ServerToken(int tokenUid, NetPeer peer, JoinPacket joinPacket)
+        public ServerToken(int tokenUid, NetPeer peer, PlayerInfo info)
         {
             TokenUid = tokenUid;
             Peer = peer;
-            JoinPacket = joinPacket;
+            Player = info;
         }
     }
 }

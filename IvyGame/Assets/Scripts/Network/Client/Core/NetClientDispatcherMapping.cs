@@ -3,14 +3,14 @@ using System.Collections.Generic;
 using System;
 using UnityEngine;
 
-namespace Game.Network
+namespace Game.Network.CDispatcher
 {
-    public class NetDispatcherMapping
+    public class NetClientDispatcherMapping
     {
-        private List<NetDispatcher> dispatchers = new List<NetDispatcher>();
+        private List<NetClientDispatcher> dispatchers = new List<NetClientDispatcher>();
         private Dictionary<ushort, Action<IExtensible>> msgDict = new Dictionary<ushort, Action<ProtoBuf.IExtensible>>();
 
-        protected void AddDispatcher(NetDispatcher dispatcher)
+        protected void AddDispatcher(NetClientDispatcher dispatcher)
         {
             dispatchers.Add(dispatcher);
         }

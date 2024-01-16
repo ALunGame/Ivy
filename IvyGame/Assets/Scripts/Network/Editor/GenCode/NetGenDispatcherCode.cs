@@ -15,7 +15,6 @@ namespace Game.Network
         //PlayerMsg - PlayerMsg.JoinRoomC2s - JoinRoomC2s
         private static Dictionary<string, Dictionary<int, string>> msgMapping = new Dictionary<string, Dictionary<int, string>>();
 
-        [MenuItem("Tools/Network/Test")]
         public static void GenCode()
         {
             MsgDefineMapping msgDefineMapping = NetGenMsgDefineCode.LoadMapping();
@@ -40,20 +39,21 @@ namespace Game.Network
             {
                 string fileStr = IOHelper.ReadText(filePath);
                 usingStr = GetFileUsingStr(fileStr);
-                msgContentDict = GetFuncContentStr(fileStr, msgPackage.msgs);
+                msgContentDict = GetFuncContentStr(fileStr, msgPackage.msgs, isServer);
             }
 
             string namespaceStr = isServer ? "Game.Network.SDispatcher" : "Game.Network.CDispatcher";
             string classStr = isServer ? $"S{msgPackage.packageName}Dispatcher" : $"C{msgPackage.packageName}Dispatcher";
-            string checkMsgCode = isServer ? "S2c" : "C2s";
+            string checkMsgCode = isServer ? "C2s" : "S2c"; 
+            string dispatcherMappingStr = isServer ? "NetServerDispatcherMapping" : "NetClientDispatcherMapping";
+            string dispatcherStr = isServer ? "NetServerDispatcher" : "NetClientDispatcher";
 
             string fileStr1 = @"namespace #NameSpace#
 {
-    public class #ClassName# : NetDispatcher
+    internal class #ClassName# : #DispatcherClass#
     {
-        public #ClassName#(NetDispatcherMapping InMapping) : base(InMapping)
+        internal #ClassName#(#MappingClass# InMapping) : base(InMapping)
         {
-            //AddDispatch<JoinRoomC2s>(1,OnJoinRoomC2s);
             #AddDispatch#
         }
         
@@ -66,7 +66,14 @@ namespace Game.Network
             AddDispatch<#MsgDefine#>((ushort)#PackageName#Define.#MsgDefine#,On#MsgDefine#);
 ";
 
-            string fileStr3 = @"
+            string funcServer = @"
+        private void On#MsgDefine#(LiteNetLib.NetPeer peer, #MsgDefine# MsgData)
+        {
+#FuncContent#
+        }
+";
+
+            string funcClient = @"
         private void On#MsgDefine#(#MsgDefine# MsgData)
         {
 #FuncContent#
@@ -91,7 +98,7 @@ namespace Game.Network
                     tDispatchStr = tDispatchStr.Replace("#PackageName#", msgPackage.packageName);
                     resAddDispatchStr += tDispatchStr;
 
-                    string tFuncStr = fileStr3;
+                    string tFuncStr = isServer ? funcServer : funcClient;
                     tFuncStr = tFuncStr.Replace("#MsgDefine#", define.msgCodeName);
                     tFuncStr = tFuncStr.Replace("#FuncContent#", msgContentDict.ContainsKey(define.msgCodeName) ? msgContentDict[define.msgCodeName] : "");
                     resFuncStr += tFuncStr;
@@ -100,6 +107,8 @@ namespace Game.Network
 
             string resStr = resUsingStr + fileStr1;
             resStr = resStr.Replace("#NameSpace#", namespaceStr);
+            resStr = resStr.Replace("#DispatcherClass#", dispatcherStr);
+            resStr = resStr.Replace("#MappingClass#", dispatcherMappingStr);
             resStr = resStr.Replace("#ClassName#", classStr);
             resStr = resStr.Replace("#PackageName#", msgPackage.packageName);
             resStr = resStr.Replace("#AddDispatch#", resAddDispatchStr);
@@ -119,7 +128,7 @@ namespace Game.Network
             return regex.Match(fileStr).Value;
         }
 
-        private static Dictionary<string,string> GetFuncContentStr(string fileStr, List<MsgDefine> msgs)
+        private static Dictionary<string,string> GetFuncContentStr(string fileStr, List<MsgDefine> msgs, bool isServer)
         {
             Dictionary<string, string> msgContentDict = new Dictionary<string, string>();
 
@@ -133,7 +142,9 @@ namespace Game.Network
                 string contentStr = "";
 
                 MsgDefine define = msgs[i];
-                string match = @"(?<=private\s+void\s+On#CodeName#\(#CodeName#\s+MsgData\)\s*\{)((?>\{(?<Depth>)|\}(?<-Depth>)|[^{}]+)*(?(Depth)(?!)))(?=\})";
+                string matchServer = @"(?<=private\s+void\s+On#CodeName#\(LiteNetLib.NetPeer peer, #CodeName#\s+MsgData\)\s*\{)((?>\{(?<Depth>)|\}(?<-Depth>)|[^{}]+)*(?(Depth)(?!)))(?=\})";
+                string matchClient = @"(?<=private\s+void\s+On#CodeName#\(#CodeName#\s+MsgData\)\s*\{)((?>\{(?<Depth>)|\}(?<-Depth>)|[^{}]+)*(?(Depth)(?!)))(?=\})";
+                string match = isServer ? matchServer : matchClient;
                 match = match.Replace("#CodeName#", define.msgCodeName);
                 Regex regex = new Regex(match);
                 if (regex.IsMatch(fileStr))

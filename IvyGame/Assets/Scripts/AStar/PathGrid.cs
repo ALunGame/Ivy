@@ -59,7 +59,7 @@ namespace Game.AStar
             FinderType = FinderType.Four;
         }
 
-        public void Create(int width, int height)
+        public void Create(int width, int height, bool defaultObs = false)
         {
             Size = new Vector2Int(width, height);
 
@@ -69,7 +69,9 @@ namespace Game.AStar
             {
                 for (int y = 0; y <= Size.y; y++)
                 {
-                    grid[x, y] = new PathNode(x, y);
+                    PathNode node = new PathNode(x, y);
+                    node.SetObs(defaultObs);
+                    grid[x, y] = node;
                 }
             }
         }

@@ -64,7 +64,7 @@ namespace IAUI
             {
                 if (string.IsNullOrEmpty(_PanelPath))
                 {
-                    GameObject tGo = GameContext.Asset.CreateGo(_PrefabName);
+                    GameObject tGo = GameEnv.Asset.CreateGo(_PrefabName);
                     if (_Panel.transform.Find(_PrefabBindPath,out Transform bindTrans))
                     {
                         tGo.transform.SetParent(bindTrans);

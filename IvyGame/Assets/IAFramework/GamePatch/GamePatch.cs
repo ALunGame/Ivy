@@ -48,7 +48,7 @@ namespace IAFramework
         private void OnApplicationQuit()
         {
             YooAssets.Destroy();
-            GameContext.Clear();
+            GameEnv.Clear();
         }
         
         private void CreatePatchPanel()

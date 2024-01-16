@@ -29,7 +29,7 @@ namespace IAUI
                 UILocate.Log.LogError("创建界面节点失败,没有声明预制体>>>",panelCnf.prefab);
                 return;
             }
-            GameObject goAsset = IAFramework.GameContext.Asset.LoadPrefab(panelCnf.prefab);
+            GameObject goAsset = IAFramework.GameEnv.Asset.LoadPrefab(panelCnf.prefab);
             if (goAsset == null)
             {
                 UILocate.Log.LogError("创建界面节点失败,没有找到预制体>>>", panelCnf.prefab);

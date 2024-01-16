@@ -1,0 +1,65 @@
+syntax = "proto3";
+
+package RoomMsg;
+import "TypesProto.proto";
+
+//指定命名空间（可选参数）如果没有，则使用C#代码的命名空间。
+option csharp_namespace = "Proto";
+
+message JoinRoomC2s {
+	player_info player = 1;
+} 
+
+message JoinRoomS2c {
+	int32 ret_code = 1;
+	repeated player_info players = 2;
+} 
+
+message LeaveRoomS2c {
+	int32 playerUid = 1;
+} 
+
+message StartGameC2s {
+}
+
+message StartGameS2c {
+	int32 ret_code = 1;
+}
+
+message EnterMapS2c {
+	int32 ret_code = 1;
+	int32 mapId = 2;
+}
+
+message PlayerMoveC2s {
+	int32 mapId = 1;
+	net_vector2 pos = 2;
+}
+
+message PlayerMoveS2c {
+	int32 ret_code = 1;
+	int32 playerUid = 2;
+	net_vector2 pos = 3;
+}
+
+message PlayerDieS2c {
+	int32 diePlayerUid = 1;
+	int32 rebornTime = 2;		//复活时间
+	int32 killerPlayerUid = 3;
+}
+
+message PlayerRebornS2c {
+	int32 playerUid = 1;
+	net_vector2 pos = 2;		//复活位置
+}
+
+message PlayerPathChangeS2c {
+	int32 playerUid = 1;
+	int32 operate = 2;			    	//1,Add 2,Remove 3,Clear
+	net_vector2 pos = 3;				//路径点
+}
+
+message CampAreaChangeS2c {
+	int32 camp = 1;
+	net_vector2 pos = 2;				//区域点
+}

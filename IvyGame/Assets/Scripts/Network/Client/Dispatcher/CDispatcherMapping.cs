@@ -1,12 +1,12 @@
 ﻿
 namespace Game.Network.CDispatcher
 {
-    public class CDispatcherMapping : NetDispatcherMapping
+    internal class CDispatcherMapping : NetClientDispatcherMapping
     {
-        public CDispatcherMapping()
+        internal CDispatcherMapping()
         {
             
-            AddDispatcher(new CPlayerMsgDispatcher(this));
+            AddDispatcher(new CRoomMsgDispatcher(this));
 
         }
     }

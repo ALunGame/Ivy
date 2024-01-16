@@ -60,12 +60,14 @@ namespace Game.Network
         public void Deserialize(NetDataReader reader)
         {
             MsgId = reader.GetUShort();
+            ProtoTypeName = reader.GetString();
             MsgData = reader.GetRemainingBytes();
         }
 
         public void Serialize(NetDataWriter writer)
         {
             writer.Put(MsgId);
+            writer.Put(ProtoTypeName);
             writer.Put(MsgData);
         }
     }

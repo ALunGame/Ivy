@@ -1,6 +1,6 @@
-﻿using Game.Network.Server;
-using LiteNetLib;
+﻿using LiteNetLib;
 using LiteNetLib.Utils;
+using Proto;
 using ProtoBuf;
 using System;
 using System.Net;
@@ -18,17 +18,10 @@ namespace Game.Network.Client
         private NetPeer netServer;
         private Action<DisconnectInfo> onDisconnected;
 
-        private string userName;
-
         #region Unity
 
         private void Awake()
         {
-            DontDestroyOnLoad(gameObject);
-
-            System.Random r = new System.Random();
-            userName = Environment.MachineName + " " + r.Next(100000);
-
             packetProcessor = new NetPacketProcessor();
             packetProcessor.SubscribeReusable<DiscoveryPacket, IPEndPoint>(OnDiscoveryReceived);
 
@@ -90,8 +83,8 @@ namespace Game.Network.Client
 
         #region 消息通信
 
-        private readonly NetDataWriter _cachedWriter = new NetDataWriter();
-        private readonly NetProtoPacket _cachedProtoPacket = new NetProtoPacket();
+        private NetDataWriter _cachedWriter = new NetDataWriter();
+        private NetProtoPacket _cachedProtoPacket = new NetProtoPacket();
 
         public void Send<T>(ushort msgId, T msgData, DeliveryMethod deliveryMethod = DeliveryMethod.ReliableOrdered) where T : IExtensible
         {
@@ -101,7 +94,7 @@ namespace Game.Network.Client
             }
 
             _cachedProtoPacket.PutMsgId(msgId);
-            _cachedProtoPacket.PutProtoTypeName(typeof(T).Name);
+            _cachedProtoPacket.PutProtoTypeName(msgData.GetType().FullName);
             _cachedProtoPacket.PutMsgData(ProtoBufTool.Encode(msgData));
 
             netServer.Send(WriteSerializable(PacketType.Proto, _cachedProtoPacket), deliveryMethod);
@@ -121,7 +114,7 @@ namespace Game.Network.Client
         public void Connect(IPEndPoint endPoint, Action<DisconnectInfo> onDisconnected)
         {
             this.onDisconnected = onDisconnected;
-            netManager.Connect(endPoint, NetServer.NetConnectKey);
+            netManager.Connect(endPoint, NetworkGeneral.NetConnectKey);
         }
 
 
@@ -135,10 +128,16 @@ namespace Game.Network.Client
             netServer = peer;
 
             //发送加入
-            _cachedWriter.Reset();
-            _cachedWriter.Put((byte)PacketType.JoinRoom);
-            packetProcessor.Write(_cachedWriter, new JoinPacket { UserName = userName });
-            netServer.Send(_cachedWriter, DeliveryMethod.ReliableOrdered);
+            JoinRoomC2s data = new JoinRoomC2s();
+            data.Player = new PlayerInfo();
+            data.Player.PlayerName = "zzz";
+            NetClientLocate.Log.LogWarning("发送加入>>>>", "zzz");
+            Send((ushort)RoomMsgDefine.JoinRoomC2s, data);
+
+            //_cachedWriter.Reset();
+            //_cachedWriter.Put((byte)PacketType.JoinRoom);
+            //packetProcessor.Write(_cachedWriter, new JoinPacket { UserName = GameContext.GameContextLocate.Player.Name });
+            //netServer.Send(_cachedWriter, DeliveryMethod.ReliableOrdered);
         }
 
         /// <summary>
@@ -226,8 +225,6 @@ namespace Game.Network.Client
         public void OnNetworkLatencyUpdate(NetPeer peer, int latency)
         {
         }
-
-
 
         public void OnConnectionRequest(ConnectionRequest request)
         {

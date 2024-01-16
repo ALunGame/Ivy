@@ -6,11 +6,6 @@ import "TypesProto.proto";
 //指定命名空间（可选参数）如果没有，则使用C#代码的命名空间。
 option csharp_namespace = "Proto";
 
-message join_room_c2s {
+message PlayerLevelChangeS2c {
 	player_info player = 1;
-} 
-
-message join_room_s2c {
-	int32 ret_code = 1;
-	repeated player_info players = 2;
 } 

@@ -15,13 +15,14 @@ namespace Game.Network
             string namespaceStr = isServer ? "Game.Network.SDispatcher" : "Game.Network.CDispatcher";
             string classStr = isServer ? "SDispatcherMapping" : "CDispatcherMapping";
             string titleStr = isServer ? "S" : "C";
+            string dispatcherMappingStr = isServer ? "NetServerDispatcherMapping" : "NetClientDispatcherMapping";
 
             string fileStr1 = @"
 namespace #NameSpace#
 {
-    public class #ClassName# : NetDispatcherMapping
+    internal class #ClassName# : #MappingClass#
     {
-        public #ClassName#()
+        internal #ClassName#()
         {
             #AddDispatcher#
         }
@@ -44,6 +45,7 @@ namespace #NameSpace#
 
             string resStr = fileStr1;
             resStr = resStr.Replace("#NameSpace#", namespaceStr);
+            resStr = resStr.Replace("#MappingClass#", dispatcherMappingStr);
             resStr = resStr.Replace("#ClassName#", classStr);
             resStr = resStr.Replace("#AddDispatcher#", resAddDispatcherStr);
 

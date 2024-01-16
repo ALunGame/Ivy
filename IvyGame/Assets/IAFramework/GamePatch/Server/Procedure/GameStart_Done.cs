@@ -16,8 +16,8 @@ namespace IAFramework.Server.Procedure
 
             //业务层初始化
             Debug.Log("游戏初始化成功！！！！！！！！！！！");
-            GameContext.Init();
-            GameContext.Asset.CreateGo("Test");
+            GameEnv.Init();
+            GameEnv.Asset.CreateGo("Test");
 
             UIPanelCfg cfg = IAConfig.Config.UIPanelCfg[IAUI.UIPanelDef.MainGamePanel];
             Debug.Log("UI"+cfg.script);

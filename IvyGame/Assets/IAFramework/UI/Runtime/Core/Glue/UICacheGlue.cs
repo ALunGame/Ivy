@@ -123,7 +123,7 @@ namespace IAUI
                     }
                     else
                     {
-                        cacheItem = IAFramework.GameContext.Asset.LoadPrefab(cacheItemName);
+                        cacheItem = IAFramework.GameEnv.Asset.LoadPrefab(cacheItemName);
                         if (cacheItem == null)
                             UILocate.Log.LogError("缓存对象绑定失败，没有缓存对象！！", cacheItemName);
                     }

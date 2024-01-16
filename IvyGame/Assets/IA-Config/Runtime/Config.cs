@@ -21,7 +21,7 @@ namespace IAConfig
             {
                 if (_UIPanelCfg == null)
                 {
-                    Byte[] byteArray = GameContext.Asset.LoadBytes("TbUIPanelCfg");
+                    Byte[] byteArray = GameEnv.Asset.LoadBytes("TbUIPanelCfg");
                     List<UIPanelCfg> configs = MemoryPackSerializer.Deserialize<List<UIPanelCfg>>(byteArray);
                     _UIPanelCfg = new TbUIPanelCfg();
                     _UIPanelCfg.AddConfig(configs);

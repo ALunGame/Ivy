@@ -76,6 +76,7 @@ namespace IAToolkit.ViewModel
     {
         public event Func<object> Getter;
         public event Action<object> Setter;
+        public event Action<object> an;
         public event Action<object> onValueChanged;
 
         public object Value

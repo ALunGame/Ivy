@@ -1,13 +1,13 @@
 ﻿using ProtoBuf;
 using System;
 
-namespace Game.Network
+namespace Game.Network.CDispatcher
 {
-    public class NetDispatcher
+    public class NetClientDispatcher
     {
-        private NetDispatcherMapping mapping;
+        private NetClientDispatcherMapping mapping;
 
-        public NetDispatcher(NetDispatcherMapping InMapping)
+        public NetClientDispatcher(NetClientDispatcherMapping InMapping)
         {
             mapping = InMapping;
         }

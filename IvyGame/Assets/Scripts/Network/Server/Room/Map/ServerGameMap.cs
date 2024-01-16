@@ -2,9 +2,6 @@
 using IAEngine;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Drawing;
-using UnityEngine;
 
 namespace Game.Network.Server
 {
@@ -41,6 +38,14 @@ namespace Game.Network.Server
             y = (byte)pY;
         }
 
+        public ServerPoint Copy()
+        {
+            ServerPoint point = new ServerPoint();
+            point.x = x;
+            point.y = y;
+            return point;
+        }
+
         public bool Equals(byte pX, byte pY)
         {
             return x == pX && y == pY;
@@ -72,6 +77,9 @@ namespace Game.Network.Server
     {
         public ServerPoint min = new ServerPoint(false);
         public ServerPoint max = new ServerPoint(false);
+
+        public byte width { get { return (byte)(max.x - min.x + 1); } }
+        public byte height { get { return (byte)(max.y - min.y + 1); } }
 
         public ServerRect()
         {
@@ -129,8 +137,8 @@ namespace Game.Network.Server
         public ServerRect Copy()
         {
             ServerRect rect = new ServerRect();
-            rect.min = min;
-            rect.max = max;
+            rect.min = min.Copy();
+            rect.max = max.Copy();
             return rect;
         }
 
@@ -163,7 +171,7 @@ namespace Game.Network.Server
     #region Delegate
 
     /// <summary>
-    /// 点阵营改变委托
+    /// 阵营改变委托
     /// </summary>
     /// <param name="posX"></param>
     /// <param name="posY"></param>
@@ -217,10 +225,13 @@ namespace Game.Network.Server
         //阵营寻路区域
         private Dictionary<byte, PathGrid> campPathGridDict = new Dictionary<byte, PathGrid>();
 
+        public ServerPoint Size { get { return size; } }
+
         #region 事件
 
-        public event OnPointCampChange Evt_PointCampChange;
         public event OnKillPlayer Evt_KillPlayer;
+        public event OnPointCampChange Evt_PointCampChange;
+
         public event OnAddPlayerPathPoint Evt_AddPlayerPathPoint;
         public event OnRemovePlayerPathPoint Evt_RemovePlayerPathPoint;
         public event OnRemovePlayerPath Evt_RemovePlayerPath;
@@ -258,7 +269,7 @@ namespace Game.Network.Server
                 PathGrid pathGrid = new PathGrid();
                 pathGrid.FinderType = FinderType.Four;
                 campPathGridDict.Add(player.Camp, pathGrid);
-                campPathGridDict[player.Camp].Create(size.x, size.y);
+                campPathGridDict[player.Camp].Create(size.x, size.y,false);
             }
 
             ChangePointCamp(player.Pos.x, player.Pos.y, player.Camp);
@@ -326,14 +337,33 @@ namespace Game.Network.Server
             campRectDict[camp].TryUpdateY(posY);
 
             //寻路
+            AddCampPathGrid(camp);
+            AddCampPathGrid(oldCamp);
             if (campPathGridDict.ContainsKey(camp))
-                campPathGridDict[camp].SetObs(posX, posY, false);
+            {
+                campPathGridDict[camp].SetObs(posX, posY, true);
+                UnityEngine.Debug.Log($"SetObs(true) {camp} --> {posX},{posY}");
+            }
+                
             if (campPathGridDict.ContainsKey(oldCamp))
-                campPathGridDict[oldCamp].SetObs(posX, posY, true);
+            {
+                campPathGridDict[oldCamp].SetObs(posX, posY, false);
+                UnityEngine.Debug.Log($"SetObs(false) {oldCamp} --> {posX},{posY}");
+            }
+                
 
             area[posX, posY] = camp;
 
             Evt_PointCampChange?.Invoke(posX, posY, camp);
+        }
+        private void AddCampPathGrid(byte camp)
+        {
+            if (campPathGridDict.ContainsKey(camp))
+                return;
+            PathGrid pathGrid = new PathGrid();
+            pathGrid.FinderType = FinderType.Four;
+            campPathGridDict.Add(camp, pathGrid);
+            campPathGridDict[camp].Create(size.x, size.y, false);
         }
 
         //改变区域阵营
@@ -362,12 +392,11 @@ namespace Game.Network.Server
         }
 
         //创建一个指定大小的占领区域
-        public List<ServerRect> CreateCampRect(byte width, byte height, byte checkCamp = Byte.MaxValue, int cnt = 4)
+        public List<ServerRect> CreateCampRect(byte width, byte height, int cnt = 4)
         {
             int currCnt = 0;
             List<ServerRect> rects = new List<ServerRect>();
 
-            //TODO:改为字典把
             Dictionary<byte, HashSet<byte>> usePointMap = new Dictionary<byte, HashSet<byte>>();
 
             Dictionary<int, int> xMap = RandomHelper.GetRandomNumList(width, size.x - width);
@@ -379,7 +408,7 @@ namespace Game.Network.Server
                 foreach (var key2 in yMap.Keys)
                 {
                     byte y = (byte)yMap[key2];
-                    if (area[x, y] == 0 && area[x, y] != checkCamp)
+                    if (area[x, y] == 0)
                     {
                         if (CheckRectIsLegal(x, y, width, height, usePointMap))
                         {

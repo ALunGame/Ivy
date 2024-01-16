@@ -1,4 +1,6 @@
-﻿namespace Game.Network.Server
+﻿using Gameplay;
+
+namespace Game.Network.Server
 {
     internal static class NetServerLocate
     {
@@ -17,6 +19,11 @@
         /// </summary>
         public static ServerTokenCenter TokenCenter { get; private set; }
 
+        /// <summary>
+        /// 游戏
+        /// </summary>
+        public static ServerGame Game { get; private set; }
+
         public static void Init(NetServer netServer)
         {
             Net = netServer;
@@ -29,6 +36,13 @@
             Net = null;
             Log = null;
             TokenCenter = null;
+            Game = null;
+        }
+
+        public static void StartGame(int cfgId, GameModeType modeType)
+        {
+            Game = new ServerGame();
+            Game.Create(cfgId,modeType);
         }
     }
 }

@@ -16,9 +16,27 @@ namespace Proto
         global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
             => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
 
-        [global::ProtoBuf.ProtoMember(1, Name = @"player_name")]
+        [global::ProtoBuf.ProtoMember(1)]
+        public int playerUid { get; set; }
+
+        [global::ProtoBuf.ProtoMember(2, Name = @"player_name")]
         [global::System.ComponentModel.DefaultValue("")]
         public string PlayerName { get; set; } = "";
+
+    }
+
+    [global::ProtoBuf.ProtoContract(Name = @"net_vector2")]
+    public partial class NetVector2 : global::ProtoBuf.IExtensible
+    {
+        private global::ProtoBuf.IExtension __pbn__extensionData;
+        global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+            => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+
+        [global::ProtoBuf.ProtoMember(1, Name = @"x")]
+        public int X { get; set; }
+
+        [global::ProtoBuf.ProtoMember(2, Name = @"y")]
+        public int Y { get; set; }
 
     }
 
