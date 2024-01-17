@@ -92,10 +92,10 @@ namespace Proto
             => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
 
         [global::ProtoBuf.ProtoMember(1)]
-        public int mapId { get; set; }
+        public int playerUid { get; set; }
 
-        [global::ProtoBuf.ProtoMember(2, Name = @"pos")]
-        public NetVector2 Pos { get; set; }
+        [global::ProtoBuf.ProtoMember(2)]
+        public NetVector2 moveDir { get; set; }
 
     }
 
@@ -112,8 +112,8 @@ namespace Proto
         [global::ProtoBuf.ProtoMember(2)]
         public int playerUid { get; set; }
 
-        [global::ProtoBuf.ProtoMember(3, Name = @"pos")]
-        public NetVector2 Pos { get; set; }
+        [global::ProtoBuf.ProtoMember(3)]
+        public NetVector2 movePos { get; set; }
 
     }
 

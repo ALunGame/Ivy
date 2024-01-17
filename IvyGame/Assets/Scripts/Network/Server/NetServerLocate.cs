@@ -22,7 +22,7 @@ namespace Game.Network.Server
         /// <summary>
         /// 游戏
         /// </summary>
-        public static ServerGame Game { get; private set; }
+        public static ServerGameInstance Game { get; private set; }
 
         public static void Init(NetServer netServer)
         {
@@ -41,7 +41,7 @@ namespace Game.Network.Server
 
         public static void StartGame(int cfgId, GameModeType modeType)
         {
-            Game = new ServerGame();
+            Game = new ServerGameInstance();
             Game.Create(cfgId,modeType);
         }
     }

@@ -18,13 +18,17 @@ namespace Game.Network.SDispatcher
         
         private void OnJoinRoomC2s(LiteNetLib.NetPeer peer, JoinRoomC2s MsgData)
         {
+
             NetServerLocate.TokenCenter.TokenEnter(peer, MsgData.Player);
+        
         }
 
         private void OnStartGameC2s(LiteNetLib.NetPeer peer, StartGameC2s MsgData)
         {
 
 
+
+        
         
         }
 
@@ -32,6 +36,8 @@ namespace Game.Network.SDispatcher
         {
 
 
+
+        
         
         }
 

@@ -2,6 +2,7 @@
 using IAEngine;
 using System;
 using System.Collections.Generic;
+using UnityEngine.UIElements;
 
 namespace Game.Network.Server
 {
@@ -70,7 +71,6 @@ namespace Game.Network.Server
         {
             return $"(x={x},y={y})";
         }
-
     }
 
     internal class ServerRect

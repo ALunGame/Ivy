@@ -64,6 +64,15 @@ namespace Game.Network.Server
         }
 
         /// <summary>
+        /// 获得所有玩家
+        /// </summary>
+        /// <returns></returns>
+        public List<ServerPlayer> Getplayers()
+        {
+            return players;
+        }
+
+        /// <summary>
         /// 获得玩家所处位置的区域阵营
         /// </summary>
         /// <param name="playerUid"></param>
@@ -84,7 +93,6 @@ namespace Game.Network.Server
         {
             return map.GetPointCamp(posX, posY);
         }
-
 
         public bool TestPlayerMove(int playerUid, byte posX, byte posY)
         {

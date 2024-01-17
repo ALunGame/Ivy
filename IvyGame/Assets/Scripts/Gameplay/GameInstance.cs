@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using Gameplay.System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Gameplay
@@ -50,7 +51,7 @@ namespace Gameplay
         //玩法系统
         private List<GameplaySystem> systems = new List<GameplaySystem>() 
         {
-            
+            new NetworkSystem(),
         };
 
         #region Unity

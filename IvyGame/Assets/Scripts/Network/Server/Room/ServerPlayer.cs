@@ -14,6 +14,48 @@
         }
     }
 
+    internal class PlayerMoveDir
+    {
+        public int HorDir;
+        public int VerDir;
+
+        public bool ChangeDir(int pHorDir, int pVerDir)
+        {
+            if (HorDir == pHorDir || VerDir == pVerDir)
+            {
+                return false;
+            }
+            if (HorDir != pHorDir)
+            {
+                HorDir = pHorDir;
+                return true;
+            }
+            else
+            {
+                VerDir = pVerDir;
+                return true;
+            }
+        }
+        
+        public int GetValue()
+        {
+            if (HorDir != 0)
+            {
+                return HorDir;
+            }
+            else
+            {
+                return VerDir;
+            }
+        }
+
+        public void Reset()
+        {
+            HorDir = 0;
+            VerDir = 0;
+        }
+    }
+
     internal class ServerPlayer
     {
         /// <summary>
@@ -47,6 +89,21 @@
         public PlayerState State { get; private set; }
 
         /// <summary>
+        /// 玩家速度
+        /// </summary>
+        public float Speed { get; private set; }
+
+        /// <summary>
+        /// 移动缓存
+        /// </summary>
+        public float MoveDelCache { get; set; }
+
+        /// <summary>
+        /// 移动方向
+        /// </summary>
+        public PlayerMoveDir MoveDir { get; private set; }
+
+        /// <summary>
         /// 上一次位置
         /// </summary>
         public ServerPoint LastPos { get; private set; }
@@ -67,6 +124,8 @@
             Name = name;
             Camp = camp;
             State = PlayerState.Alive;
+            Speed = 0;
+            MoveDir = new PlayerMoveDir();
             Pos = new ServerPoint();
         }
 
@@ -84,6 +143,27 @@
             }
             Pos.x = posX;
             Pos.y = posY;
+        }
+
+        public void UpdateSpeed(float pAddSpeed)
+        {
+            if (State != PlayerState.Alive)
+            {
+                return;
+            }
+            if (Speed == 0)
+            {
+                Speed = NetworkGeneral.BaseSpeed;
+            }
+            Speed += pAddSpeed;
+        }
+
+        public void ChangeMoveDir(int pHorDir, int pVerDir)
+        {
+            if (MoveDir.ChangeDir(pHorDir,pVerDir))
+            {
+                MoveDelCache = 0;
+            }
         }
 
         public void Die()

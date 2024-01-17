@@ -5,11 +5,32 @@ using System.Collections.Generic;
 
 namespace Game.Network.Server
 {
-    internal class ServerGame
+    internal class ServerGameInstance
     {
         public int GameCfgId {  get; private set; }
         public GameModeType GameMode {  get; private set; }
         public ServerGameRoom Room { get; private set; }
+
+        /// <summary>
+        /// 帧已经运行秒数
+        /// </summary>
+        public float UpdateRealElapseSeconds { get; private set; }
+        /// <summary>
+        /// 每帧间隔时间
+        /// </summary>
+        public float UpdateDeltaTime { get; private set; }
+        /// <summary>
+        /// 每帧时间缩放
+        /// </summary>
+        public float UpdateTimeScale { get; private set; }
+
+        //玩法系统
+        private List<ServerGameSystem> systems = new List<ServerGameSystem>()
+        {
+            new ServerGamePlayerSystem(),
+        };
+
+        #region 生命周期
 
         /// <summary>
         /// 创建一局游戏
@@ -27,7 +48,48 @@ namespace Game.Network.Server
             Room.Map.Evt_AddPlayerPathPoint += OnAddPlayerPathPoint;
             Room.Map.Evt_RemovePlayerPathPoint += OnRemovePlayerPathPoint;
             Room.Map.Evt_RemovePlayerPath += OnRemovePlayerPath;
+
+            foreach (ServerGameSystem system in systems)
+                system.Init();
         }
+
+        /// <summary>
+        /// 开始游戏
+        /// </summary>
+        public void StartGame()
+        {
+            foreach (ServerGameSystem system in systems)
+                system.StartGame();
+        }
+
+        /// <summary>
+        /// 每帧逻辑更新
+        /// </summary>
+        public void Update()
+        {
+            UpdateRealElapseSeconds += UpdateDeltaTime * UpdateTimeScale;
+            foreach (ServerGameSystem system in systems)
+                system.Update(UpdateDeltaTime * UpdateTimeScale, UpdateRealElapseSeconds);
+        }
+
+        /// <summary>
+        /// 结束游戏
+        /// </summary>
+        public void EndGame()
+        {
+            foreach (ServerGameSystem system in systems)
+                system.EndGame();
+        }
+
+        public void Clear()
+        {
+            foreach (ServerGameSystem system in systems)
+                system.Clear();
+        }
+
+        #endregion
+
+        #region 玩家
 
         /// <summary>
         /// 添加玩家
@@ -52,7 +114,7 @@ namespace Game.Network.Server
             ServerPoint point = Room.Map.GetRandomPointInCamp(diePlayer.Camp);
             if (point != null)
             {
-                diePlayer.SetPos(point.x,point.y);
+                diePlayer.SetPos(point.x, point.y);
                 diePlayer.Reborn();
             }
             else
@@ -88,7 +150,9 @@ namespace Game.Network.Server
             {
                 killerPlayer.KillCnt++;
             }
-        }
+        } 
+
+        #endregion
 
         #region RoomEvent
 

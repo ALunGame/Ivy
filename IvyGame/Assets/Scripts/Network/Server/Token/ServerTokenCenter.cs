@@ -2,9 +2,16 @@
 using LiteNetLib;
 using Proto;
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace Game.Network.Server
 {
+    #region Delegate
+
+    internal delegate void OnUpdate(float pDeltaTime, float pRealElapseSeconds);
+
+    #endregion
+
     /// <summary>
     /// 服务连接中心
     /// </summary>
@@ -17,6 +24,34 @@ namespace Game.Network.Server
         private SDispatcherMapping dispatcherMapping = new SDispatcherMapping();
 
         private NetProtoPacket cachedCommand = new NetProtoPacket();
+
+        /// <summary>
+        /// 帧已经运行秒数
+        /// </summary>
+        public float UpdateRealElapseSeconds { get; private set; }
+        /// <summary>
+        /// 每帧间隔时间
+        /// </summary>
+        public float UpdateDeltaTime { get; private set; }
+        /// <summary>
+        /// 每帧时间缩放
+        /// </summary>
+        public float UpdateTimeScale { get; private set; }
+
+        public event OnUpdate Evt_OnUpdate;
+
+        public ServerTokenCenter()
+        {
+            UpdateRealElapseSeconds = 0;
+            UpdateDeltaTime = Time.deltaTime;
+            UpdateTimeScale = Time.timeScale;
+        }
+
+        public void Update()
+        {
+            UpdateRealElapseSeconds += UpdateDeltaTime * UpdateTimeScale;
+            Evt_OnUpdate?.Invoke(UpdateDeltaTime * UpdateTimeScale, UpdateRealElapseSeconds);
+        }
 
         private int GenTokenUid()
         {
@@ -49,6 +84,7 @@ namespace Game.Network.Server
             {
                 serverTokens.Remove(token);
 
+                //广播其他人有人离开
                 LeaveRoomS2c msg = new LeaveRoomS2c();
                 msg.playerUid = token.TokenUid;
                 NetServerLocate.Net.Broadcast((ushort)RoomMsgDefine.LeaveRoomS2c, msg);
