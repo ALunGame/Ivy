@@ -8,5 +8,6 @@ namespace Game.Network.Client
 {
     internal class ClientToken
     {
+
     }
 }

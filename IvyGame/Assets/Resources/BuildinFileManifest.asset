@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 71b02dfa7aa9d4545b3417a18477fbee, type: 3}
+  m_Name: BuildinFileManifest
+  m_EditorClassIdentifier: 
+  BuildinFiles:
+  - 0bbf613a84f68b9a403b029472101218.bundle
+  - 11fcae26d5f7f3cfe721fa3864f98ce3.bundle
+  - 29d36a05dada5f1f2a0311fa2dc6e125.bundle
+  - 4d737d3648005ef95de228402fa95ce3.bundle
+  - 6342c2d9df28cbdb328bfe9b2002f966.bundle
+  - 81a9b22c913e36e786d47b05b4d29309.bundle
+  - 8825de7af3d9237f5aa748f191f6c112.bundle
+  - 97cc617e5ffede3264e3122a4f7d6e71.rawfile
+  - a1626d1722f59e27954f2870d029e5cd.bundle
+  - BuildReport_DefaultPackage_2024-01-27-82.json
+  - c310de20270eb7490a73d61fda82c513.bundle
+  - d5f9f2d11770e4e1d3d22be9bdb355c4.bundle
+  - OutputCache
+  - OutputCache.manifest

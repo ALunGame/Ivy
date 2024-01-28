@@ -31,6 +31,14 @@ namespace Game.Network.Server
         }
 
         /// <summary>
+        /// 开始游戏之后
+        /// </summary>
+        public void AfterStartGame()
+        {
+            OnAfterStartGame();
+        }
+
+        /// <summary>
         /// 每帧更新
         /// </summary>
         /// <param name="pDeltaTime">时间间隔</param>
@@ -74,6 +82,11 @@ namespace Game.Network.Server
         /// 开始游戏
         /// </summary>
         protected virtual void OnStartGame() { }
+
+        /// <summary>
+        /// 开始游戏之后
+        /// </summary>
+        protected virtual void OnAfterStartGame() { }
 
         /// <summary>
         /// 每帧更新

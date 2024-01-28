@@ -1,0 +1,311 @@
+{
+    "Summary": {
+        "YooVersion": "",
+        "UnityVersion": "2022.3.16f1",
+        "BuildDate": "2024/1/27 1:22:25",
+        "BuildSeconds": 13,
+        "BuildTarget": 13,
+        "BuildPipeline": 0,
+        "BuildMode": 0,
+        "BuildPackageName": "DefaultPackage",
+        "BuildPackageVersion": "2024-01-27-82",
+        "EnableAddressable": true,
+        "LocationToLower": false,
+        "IncludeAssetGUID": false,
+        "UniqueBundleName": false,
+        "SharedPackRuleClassName": "YooAsset.Editor.ZeroRedundancySharedPackRule",
+        "EncryptionServicesClassName": "YooAsset.Editor.EncryptionNone",
+        "OutputNameStyle": 1,
+        "CompressOption": 2,
+        "DisableWriteTypeTree": false,
+        "IgnoreTypeTreeChanges": true,
+        "AssetFileTotalCount": 11,
+        "MainAssetTotalCount": 9,
+        "AllBundleTotalCount": 11,
+        "AllBundleTotalSize": 341706,
+        "EncryptedBundleTotalCount": 0,
+        "EncryptedBundleTotalSize": 0,
+        "RawBundleTotalCount": 1,
+        "RawBundleTotalSize": 191
+    },
+    "AssetInfos": [
+        {
+            "Address": "FightPanel",
+            "AssetPath": "Assets/GameAsset/UI/Prefabs/Fight/FightPanel.prefab",
+            "AssetGUID": "afc02582690ee624eba7eacf6b56501d",
+            "AssetTags": [],
+            "MainBundleName": "assets_gameasset_ui_prefabs_fight_fightpanel.bundle",
+            "MainBundleSize": 6624,
+            "DependBundles": [],
+            "DependAssets": []
+        },
+        {
+            "Address": "MainGamePanel",
+            "AssetPath": "Assets/GameAsset/UI/Prefabs/MainGame/MainGamePanel.prefab",
+            "AssetGUID": "f556f6c4f0c9cf541a7c034c123d6121",
+            "AssetTags": [],
+            "MainBundleName": "assets_gameasset_ui_prefabs_maingame_maingamepanel.bundle",
+            "MainBundleSize": 7077,
+            "DependBundles": [],
+            "DependAssets": []
+        },
+        {
+            "Address": "RoomPanel",
+            "AssetPath": "Assets/GameAsset/UI/Prefabs/Room/RoomPanel.prefab",
+            "AssetGUID": "2bb2e828e6539244497ed11ffce04d68",
+            "AssetTags": [],
+            "MainBundleName": "assets_gameasset_ui_prefabs_room_roompanel.bundle",
+            "MainBundleSize": 6996,
+            "DependBundles": [],
+            "DependAssets": []
+        },
+        {
+            "Address": "Test",
+            "AssetPath": "Assets/GameAsset/UI/Prefabs/Test.prefab",
+            "AssetGUID": "c6ed02612e9095641a1e12dbf441d112",
+            "AssetTags": [],
+            "MainBundleName": "assets_gameasset_ui_prefabs_test.bundle",
+            "MainBundleSize": 1711,
+            "DependBundles": [],
+            "DependAssets": []
+        },
+        {
+            "Address": "TbUIPanelCfg",
+            "AssetPath": "Assets/GameAsset/Config/TbUIPanelCfg.cfg",
+            "AssetGUID": "e6dcbb8c44c716644abaff02afc163f8",
+            "AssetTags": [],
+            "MainBundleName": "assets_gameasset_config_tbuipanelcfg_cfg.rawfile",
+            "MainBundleSize": 191,
+            "DependBundles": [],
+            "DependAssets": []
+        },
+        {
+            "Address": "GameMap_Single",
+            "AssetPath": "Assets/GameAsset/Map/Prefab/GameMap_Single.prefab",
+            "AssetGUID": "4d7e8f46651757247817a38728e8457f",
+            "AssetTags": [],
+            "MainBundleName": "assets_gameasset_map_prefab_gamemap_single.bundle",
+            "MainBundleSize": 3592,
+            "DependBundles": [
+                "share_packages_com_unity_render-pipelines_universal_runtime_materials.bundle",
+                "unityshaders.bundle"
+            ],
+            "DependAssets": [
+                "Packages/com.unity.render-pipelines.universal/Runtime/Materials/Lit.mat",
+                "Packages/com.unity.render-pipelines.universal/Shaders/Lit.shader"
+            ]
+        },
+        {
+            "Address": "MapGrid",
+            "AssetPath": "Assets/GameAsset/Map/Prefab/MapGrid.prefab",
+            "AssetGUID": "31f6b309e1c85f347b3fac2a188d5f46",
+            "AssetTags": [],
+            "MainBundleName": "assets_gameasset_map_prefab_mapgrid.bundle",
+            "MainBundleSize": 3374,
+            "DependBundles": [
+                "share_packages_com_unity_render-pipelines_universal_runtime_materials.bundle",
+                "unityshaders.bundle"
+            ],
+            "DependAssets": [
+                "Packages/com.unity.render-pipelines.universal/Runtime/Materials/Lit.mat",
+                "Packages/com.unity.render-pipelines.universal/Shaders/Lit.shader"
+            ]
+        },
+        {
+            "Address": "Player",
+            "AssetPath": "Assets/GameAsset/Player/Prefab/Player.prefab",
+            "AssetGUID": "5d53af29c66eddb40bfc7b04861d5e47",
+            "AssetTags": [],
+            "MainBundleName": "assets_gameasset_player_prefab_player.bundle",
+            "MainBundleSize": 3395,
+            "DependBundles": [
+                "share_packages_com_unity_render-pipelines_universal_runtime_materials.bundle",
+                "unityshaders.bundle"
+            ],
+            "DependAssets": [
+                "Packages/com.unity.render-pipelines.universal/Runtime/Materials/Lit.mat",
+                "Packages/com.unity.render-pipelines.universal/Shaders/Lit.shader"
+            ]
+        },
+        {
+            "Address": "PlayerPath",
+            "AssetPath": "Assets/GameAsset/Player/Prefab/PlayerPath.prefab",
+            "AssetGUID": "c5d955442bf3f044b81374ebd346cb44",
+            "AssetTags": [],
+            "MainBundleName": "assets_gameasset_player_prefab_playerpath.bundle",
+            "MainBundleSize": 3043,
+            "DependBundles": [
+                "share_packages_com_unity_render-pipelines_universal_runtime_materials.bundle",
+                "unityshaders.bundle"
+            ],
+            "DependAssets": [
+                "Packages/com.unity.render-pipelines.universal/Runtime/Materials/Lit.mat",
+                "Packages/com.unity.render-pipelines.universal/Shaders/Lit.shader"
+            ]
+        }
+    ],
+    "BundleInfos": [
+        {
+            "BundleName": "assets_gameasset_ui_prefabs_fight_fightpanel.bundle",
+            "FileName": "4d737d3648005ef95de228402fa95ce3.bundle",
+            "FileHash": "4d737d3648005ef95de228402fa95ce3",
+            "FileCRC": "aef4e313",
+            "FileSize": 6624,
+            "IsRawFile": false,
+            "LoadMethod": 0,
+            "Tags": [],
+            "ReferenceIDs": [],
+            "AllBuiltinAssets": [
+                "Assets/GameAsset/UI/Prefabs/Fight/FightPanel.prefab"
+            ]
+        },
+        {
+            "BundleName": "assets_gameasset_ui_prefabs_maingame_maingamepanel.bundle",
+            "FileName": "c310de20270eb7490a73d61fda82c513.bundle",
+            "FileHash": "c310de20270eb7490a73d61fda82c513",
+            "FileCRC": "bd3f79a8",
+            "FileSize": 7077,
+            "IsRawFile": false,
+            "LoadMethod": 0,
+            "Tags": [],
+            "ReferenceIDs": [],
+            "AllBuiltinAssets": [
+                "Assets/GameAsset/UI/Prefabs/MainGame/MainGamePanel.prefab"
+            ]
+        },
+        {
+            "BundleName": "assets_gameasset_ui_prefabs_room_roompanel.bundle",
+            "FileName": "11fcae26d5f7f3cfe721fa3864f98ce3.bundle",
+            "FileHash": "11fcae26d5f7f3cfe721fa3864f98ce3",
+            "FileCRC": "09ee0961",
+            "FileSize": 6996,
+            "IsRawFile": false,
+            "LoadMethod": 0,
+            "Tags": [],
+            "ReferenceIDs": [],
+            "AllBuiltinAssets": [
+                "Assets/GameAsset/UI/Prefabs/Room/RoomPanel.prefab"
+            ]
+        },
+        {
+            "BundleName": "assets_gameasset_ui_prefabs_test.bundle",
+            "FileName": "a1626d1722f59e27954f2870d029e5cd.bundle",
+            "FileHash": "a1626d1722f59e27954f2870d029e5cd",
+            "FileCRC": "aef8053a",
+            "FileSize": 1711,
+            "IsRawFile": false,
+            "LoadMethod": 0,
+            "Tags": [],
+            "ReferenceIDs": [],
+            "AllBuiltinAssets": [
+                "Assets/GameAsset/UI/Prefabs/Test.prefab"
+            ]
+        },
+        {
+            "BundleName": "assets_gameasset_config_tbuipanelcfg_cfg.rawfile",
+            "FileName": "97cc617e5ffede3264e3122a4f7d6e71.rawfile",
+            "FileHash": "97cc617e5ffede3264e3122a4f7d6e71",
+            "FileCRC": "46b5e43f",
+            "FileSize": 191,
+            "IsRawFile": true,
+            "LoadMethod": 0,
+            "Tags": [],
+            "ReferenceIDs": [],
+            "AllBuiltinAssets": [
+                "Assets/GameAsset/Config/TbUIPanelCfg.cfg"
+            ]
+        },
+        {
+            "BundleName": "assets_gameasset_map_prefab_gamemap_single.bundle",
+            "FileName": "0bbf613a84f68b9a403b029472101218.bundle",
+            "FileHash": "0bbf613a84f68b9a403b029472101218",
+            "FileCRC": "ab97399e",
+            "FileSize": 3592,
+            "IsRawFile": false,
+            "LoadMethod": 0,
+            "Tags": [],
+            "ReferenceIDs": [],
+            "AllBuiltinAssets": [
+                "Assets/GameAsset/Map/Prefab/GameMap_Single.prefab"
+            ]
+        },
+        {
+            "BundleName": "assets_gameasset_map_prefab_mapgrid.bundle",
+            "FileName": "81a9b22c913e36e786d47b05b4d29309.bundle",
+            "FileHash": "81a9b22c913e36e786d47b05b4d29309",
+            "FileCRC": "d0f3932a",
+            "FileSize": 3374,
+            "IsRawFile": false,
+            "LoadMethod": 0,
+            "Tags": [],
+            "ReferenceIDs": [],
+            "AllBuiltinAssets": [
+                "Assets/GameAsset/Map/Prefab/MapGrid.prefab"
+            ]
+        },
+        {
+            "BundleName": "assets_gameasset_player_prefab_player.bundle",
+            "FileName": "d5f9f2d11770e4e1d3d22be9bdb355c4.bundle",
+            "FileHash": "d5f9f2d11770e4e1d3d22be9bdb355c4",
+            "FileCRC": "4eb0ccf0",
+            "FileSize": 3395,
+            "IsRawFile": false,
+            "LoadMethod": 0,
+            "Tags": [],
+            "ReferenceIDs": [],
+            "AllBuiltinAssets": [
+                "Assets/GameAsset/Player/Prefab/Player.prefab"
+            ]
+        },
+        {
+            "BundleName": "assets_gameasset_player_prefab_playerpath.bundle",
+            "FileName": "8825de7af3d9237f5aa748f191f6c112.bundle",
+            "FileHash": "8825de7af3d9237f5aa748f191f6c112",
+            "FileCRC": "7ee1ca6d",
+            "FileSize": 3043,
+            "IsRawFile": false,
+            "LoadMethod": 0,
+            "Tags": [],
+            "ReferenceIDs": [],
+            "AllBuiltinAssets": [
+                "Assets/GameAsset/Player/Prefab/PlayerPath.prefab"
+            ]
+        },
+        {
+            "BundleName": "share_packages_com_unity_render-pipelines_universal_runtime_materials.bundle",
+            "FileName": "6342c2d9df28cbdb328bfe9b2002f966.bundle",
+            "FileHash": "6342c2d9df28cbdb328bfe9b2002f966",
+            "FileCRC": "303fecff",
+            "FileSize": 3023,
+            "IsRawFile": false,
+            "LoadMethod": 0,
+            "Tags": [],
+            "ReferenceIDs": [
+                5,
+                6,
+                7,
+                8
+            ],
+            "AllBuiltinAssets": [
+                "Packages/com.unity.render-pipelines.universal/Runtime/Materials/Lit.mat"
+            ]
+        },
+        {
+            "BundleName": "unityshaders.bundle",
+            "FileName": "29d36a05dada5f1f2a0311fa2dc6e125.bundle",
+            "FileHash": "29d36a05dada5f1f2a0311fa2dc6e125",
+            "FileCRC": "ff7647b2",
+            "FileSize": 302680,
+            "IsRawFile": false,
+            "LoadMethod": 0,
+            "Tags": [],
+            "ReferenceIDs": [
+                9
+            ],
+            "AllBuiltinAssets": [
+                "Packages/com.unity.render-pipelines.universal/Shaders/Lit.shader"
+            ]
+        }
+    ],
+    "RedundancyInfos": []
+}

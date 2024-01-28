@@ -1,7 +1,9 @@
-﻿using LiteNetLib;
+﻿using IAEngine;
+using LiteNetLib;
 using LiteNetLib.Utils;
 using ProtoBuf;
 using System;
+using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
 using UnityEngine;
@@ -23,7 +25,8 @@ namespace Game.Network.Server
             netManager = new NetManager(this)
             {
                 AutoRecycle = true,
-                BroadcastReceiveEnabled = true
+                BroadcastReceiveEnabled = true,
+                DisconnectTimeout = 500000000,          //临时
             };
 
             NetServerLocate.Init(this);
@@ -37,14 +40,20 @@ namespace Game.Network.Server
         private void OnDestroy()
         {
             NetServerLocate.Clear();
+            netManager.Stop();
+        }
+
+        private void OnApplicationQuit()
+        {
+            netManager.Stop();
         }
 
         #endregion
 
         #region 消息通信
 
-        private readonly NetDataWriter _cachedWriter = new NetDataWriter();
-        private readonly NetProtoPacket _cachedProtoPacket = new NetProtoPacket();
+        private NetDataWriter _cachedWriter = new NetDataWriter();
+        private NetProtoPacket _cachedProtoPacket = new NetProtoPacket();
 
         /// <summary>
         /// 消息广播
@@ -52,9 +61,20 @@ namespace Game.Network.Server
         public void Broadcast<T>(ushort msgId, T msgData, NetPeer exPeer = null, DeliveryMethod deliveryMethod = DeliveryMethod.ReliableOrdered) where T : IExtensible
         {
             _cachedProtoPacket.PutMsgId(msgId);
-            _cachedProtoPacket.PutProtoTypeName(typeof(T).Name);
+            _cachedProtoPacket.PutProtoTypeName(msgData.GetType().FullName);
             _cachedProtoPacket.PutMsgData(ProtoBufTool.Encode(msgData));
 
+            NetServerLocate.Log.LogWarning($"Broadcast:{msgId}->{msgData.GetType().FullName}");
+
+            //WriteSerializable(PacketType.Proto, _cachedProtoPacket);
+            //List<NetPeer> peers = NetServerLocate.TokenCenter.GetPeers(exPeer);
+            //if (peers.IsLegal())
+            //{
+            //    foreach (var item in peers)
+            //    {
+            //        item.Send(_cachedWriter.Data, 0, _cachedWriter.Length, 0, deliveryMethod);
+            //    }
+            //}
             netManager.SendToAll(WriteSerializable(PacketType.Proto, _cachedProtoPacket), deliveryMethod, exPeer);
         }
 
@@ -64,8 +84,10 @@ namespace Game.Network.Server
         public void SendTo<T>(NetPeer peer, ushort msgId, T msgData, DeliveryMethod deliveryMethod = DeliveryMethod.ReliableOrdered) where T : IExtensible
         {
             _cachedProtoPacket.PutMsgId(msgId);
-            _cachedProtoPacket.PutProtoTypeName(typeof(T).Name);
+            _cachedProtoPacket.PutProtoTypeName(msgData.GetType().FullName);
             _cachedProtoPacket.PutMsgData(ProtoBufTool.Encode(msgData));
+
+            NetServerLocate.Log.LogWarning($"SendTo:{msgId}->{msgData.GetType().FullName}");
 
             peer.Send(WriteSerializable(PacketType.Proto, _cachedProtoPacket), deliveryMethod);
         }
@@ -102,7 +124,6 @@ namespace Game.Network.Server
         public void OnNetworkReceive(NetPeer peer, NetPacketReader reader, byte channelNumber, DeliveryMethod deliveryMethod)
         {
             byte packetType = reader.GetByte();
-            Debug.LogWarning($"OnNetworkReceive>>>>{packetType}");
             if (packetType >= NetworkGeneral.PacketTypesCount)
                 return;
 

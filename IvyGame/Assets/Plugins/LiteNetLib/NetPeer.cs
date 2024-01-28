@@ -580,7 +580,11 @@ namespace LiteNetLib
             object userData)
         {
             if (_connectionState != ConnectionState.Connected || channelNumber >= _channels.Length)
+            {
+                UnityEngine.Debug.LogWarning($"SendInternal:{_connectionState}");
                 return;
+            }
+
 
             //Select channel
             PacketProperty property;
@@ -853,6 +857,7 @@ namespace LiteNetLib
                 if (force)
                 {
                     _connectionState = ConnectionState.Disconnected;
+                    UnityEngine.Debug.LogWarning($"Shutdown:{_connectionState}");
                     return result;
                 }
 
@@ -1115,7 +1120,11 @@ namespace LiteNetLib
             if (packet.Property == PacketProperty.ShutdownOk)
             {
                 if (_connectionState == ConnectionState.ShutdownRequested)
+                {
                     _connectionState = ConnectionState.Disconnected;
+                    UnityEngine.Debug.LogWarning($"ShutdownOk:{_connectionState}");
+                }
+                    
                 NetManager.PoolRecycle(packet);
                 return;
             }
@@ -1280,6 +1289,7 @@ namespace LiteNetLib
                     if (_timeSinceLastPacket > NetManager.DisconnectTimeout)
                     {
                         _connectionState = ConnectionState.Disconnected;
+                        UnityEngine.Debug.LogWarning($"ShutdownRequested:{_connectionState}");
                     }
                     else
                     {

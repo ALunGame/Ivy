@@ -1,4 +1,4 @@
-syntax = "proto3";
+syntax="proto2";
 
 package PlayerMsg;
 import "TypesProto.proto";
@@ -7,5 +7,5 @@ import "TypesProto.proto";
 option csharp_namespace = "Proto";
 
 message PlayerLevelChangeS2c {
-	player_info player = 1;
+	required player_info player = 1;
 } 

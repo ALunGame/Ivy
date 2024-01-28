@@ -2,6 +2,7 @@ using IAEngine;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using static UnityEngine.Rendering.DebugUI;
 
 namespace IAUI
 {
@@ -71,9 +72,38 @@ namespace IAUI
         public void Hide(UIPanelDef panelId)
         {
             InternalUIPanel panel = ExecuteHidePanel(panelId);
+            if (panel == null)
+            {
+                return;
+            }
             foreach (var item in rules)
             {
                 item.HidePanel(panelId, panel);
+            }
+        }
+
+        public bool Hide(InternalUIPanel panel)
+        {
+            UIPanelDef resPanelId = UIPanelDef.None;
+
+            bool find = false;
+            foreach (UIPanelDef panelId in activePanelDict.Keys)
+            {
+                if (activePanelDict[panelId] == panel)
+                {
+                    find = true;
+                    resPanelId = panelId;
+                    break;
+                }
+            }
+            if (find)
+            {
+                Hide(resPanelId);
+                return true;
+            }
+            else
+            {
+                return false;
             }
         }
 

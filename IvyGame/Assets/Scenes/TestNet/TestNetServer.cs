@@ -57,7 +57,7 @@ public class TestNetServer : MonoBehaviour
         netClient.SetDiscoveryCallBack((endPoint) =>
         {
             openDiscovery = false;
-            netClient.Connect(endPoint, null);
+            netClient.Connect(endPoint, null, null);
         });
 
         openDiscovery = true;

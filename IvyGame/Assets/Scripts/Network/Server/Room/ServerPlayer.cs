@@ -1,14 +1,18 @@
-﻿namespace Game.Network.Server
+﻿using System;
+
+namespace Game.Network.Server
 {
     internal class AddServerPlayerInfo
     {
         public int uid;
+        public int id;
         public string name;
         public byte camp;
 
-        public AddServerPlayerInfo(int pUid, string pName, byte pCamp)
+        public AddServerPlayerInfo(int pUid, int pId, string pName, byte pCamp)
         {
             uid = pUid;
+            id = pId;
             name = pName;
             camp = pCamp;
         }
@@ -21,20 +25,20 @@
 
         public bool ChangeDir(int pHorDir, int pVerDir)
         {
-            if (HorDir == pHorDir || VerDir == pVerDir)
+            if (HorDir == pHorDir && VerDir == pVerDir)
             {
                 return false;
             }
-            if (HorDir != pHorDir)
-            {
-                HorDir = pHorDir;
-                return true;
-            }
-            else
-            {
-                VerDir = pVerDir;
-                return true;
-            }
+            HorDir = pHorDir;
+            VerDir = pVerDir;
+            return false;
+        }
+
+        public ServerPos CalcMovePos(ServerPos currPos, float moveDel)
+        {
+            float xDel = HorDir * moveDel + currPos.x;
+            float yDel = VerDir * moveDel + currPos.y;
+            return new ServerPos(xDel, yDel);
         }
         
         public int GetValue()
@@ -62,6 +66,11 @@
         /// 玩家Uid
         /// </summary>
         public int Uid {  get; private set; }
+
+        /// <summary>
+        /// 玩家配置Id
+        /// </summary>
+        public int Id { get; private set; }
 
         /// <summary>
         /// 玩家名字
@@ -94,24 +103,24 @@
         public float Speed { get; private set; }
 
         /// <summary>
-        /// 移动缓存
-        /// </summary>
-        public float MoveDelCache { get; set; }
-
-        /// <summary>
         /// 移动方向
         /// </summary>
         public PlayerMoveDir MoveDir { get; private set; }
 
         /// <summary>
-        /// 上一次位置
+        /// 网格点位置
         /// </summary>
-        public ServerPoint LastPos { get; private set; }
+        public ServerPoint GridPos { get; private set; }
 
         /// <summary>
-        /// 位置
+        /// 世界坐标
         /// </summary>
-        public ServerPoint Pos { get; private set; }
+        public ServerPos Pos { get; private set; }
+
+        /// <summary>
+        /// 复活时间
+        /// </summary>
+        public float RebornTime { get; set; }
 
         public ServerPlayer(AddServerPlayerInfo pInfo) : this(pInfo.uid, pInfo.name, pInfo.camp)
         {
@@ -126,23 +135,30 @@
             State = PlayerState.Alive;
             Speed = 0;
             MoveDir = new PlayerMoveDir();
-            Pos = new ServerPoint();
+            GridPos = new ServerPoint();
+            Pos = new ServerPos();
         }
 
-        public void SetPos(byte posX, byte posY) 
+        public void SetCamp(byte camp)
         {
-            if (LastPos == null)
-            {
-                LastPos = new ServerPoint(false);
-            }
-            else
-            {
-                LastPos.isLegal = true;
-                LastPos.x = Pos.x;
-                LastPos.y = Pos.y;
-            }
+            Camp = camp;
+        }
+
+        public void SetGridPos(byte posX, byte posY) 
+        {
+            GridPos.x = posX;
+            GridPos.y = posY;
+        }
+
+        public void SetPos(float posX, float posY)
+        {
             Pos.x = posX;
             Pos.y = posY;
+        }
+
+        public byte ToGridPos(float pos)
+        {
+            return (byte)MathF.Floor(pos);
         }
 
         public void UpdateSpeed(float pAddSpeed)
@@ -160,10 +176,7 @@
 
         public void ChangeMoveDir(int pHorDir, int pVerDir)
         {
-            if (MoveDir.ChangeDir(pHorDir,pVerDir))
-            {
-                MoveDelCache = 0;
-            }
+            MoveDir.ChangeDir(pHorDir, pVerDir);
         }
 
         public void Die()
@@ -173,6 +186,7 @@
                 return;
             }
             State = PlayerState.Die;
+            RebornTime = TempConfig.RebornTime;
         }
 
         public void Reborn()

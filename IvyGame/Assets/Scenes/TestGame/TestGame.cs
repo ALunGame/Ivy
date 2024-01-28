@@ -20,19 +20,19 @@ namespace Game.Network.Server.Test
         public void SpawnPlayer(int uid, string name, byte camp, ServerRect rect)
         {
             Player = new ServerPlayer(uid, name, camp);
-            Player.SetPos(rect.min.x, rect.min.y);
+            Player.SetGridPos(rect.min.x, rect.min.y);
             PlayerGo.transform.position = new Vector3(rect.min.x, 0, rect.min.y);
         }
 
         public void Reborn(ServerRect rect)
         {
-            Player.SetPos(rect.min.x, rect.min.y);
+            Player.SetGridPos(rect.min.x, rect.min.y);
             PlayerGo.transform.position = new Vector3(rect.min.x, 0, rect.min.y);
         }
 
         public void Reborn(ServerPoint point)
         {
-            Player.SetPos(point.x, point.y);
+            Player.SetGridPos(point.x, point.y);
             PlayerGo.transform.position = new Vector3(point.x, 0, point.y);
         }
     }
@@ -61,7 +61,7 @@ namespace Game.Network.Server.Test
             Room = new ServerGameRoom();
             Room.Create((byte)AreaSize.x, (byte)AreaSize.y,1);
 
-            Room.Map.Evt_PointCampChange += OnGrdCampChange;
+            Room.Map.Evt_PointCampChange += OnPointCampChange;
             Room.Map.Evt_KillPlayer += OnKillPlayer;
             Room.Map.Evt_AddPlayerPathPoint += OnAddPlayerCaptureRecord;
             Room.Map.Evt_RemovePlayerPathPoint += OnRemovePlayerCaptureRecord;
@@ -86,7 +86,7 @@ namespace Game.Network.Server.Test
             {
                 byte camp = (byte)(i + 1);
 
-                ServerRect rect = Room.Map.CreateCampRect(5, 5, 1)[0];
+                ServerRect rect = Room.Map.CreateCampRect(5, 5);
                 Room.Map.ChangRectCamp(rect, camp);
 
                 int playerUid = i + 1;
@@ -142,8 +142,8 @@ namespace Game.Network.Server.Test
             {
                 PlayerInfo playerInfo = Players[0];
                 ServerPlayer Player1 = playerInfo.Player;
-                byte newPosX = (byte)(Player1.Pos.x + movePlayer1Pos.x);
-                byte newPosY = (byte)(Player1.Pos.y + movePlayer1Pos.y);
+                byte newPosX = (byte)(Player1.GridPos.x + movePlayer1Pos.x);
+                byte newPosY = (byte)(Player1.GridPos.y + movePlayer1Pos.y);
                 if (Room.TestPlayerMove(Player1.Uid, newPosX, newPosY))
                 {
                     playerInfo.PlayerGo.transform.position = new Vector3(newPosX, 0, newPosY);
@@ -190,8 +190,8 @@ namespace Game.Network.Server.Test
             {
                 PlayerInfo playerInfo = Players[1];
                 ServerPlayer Player2 = playerInfo.Player;
-                byte newPosX = (byte)(Player2.Pos.x + movePlayer2Pos.x);
-                byte newPosY = (byte)(Player2.Pos.y + movePlayer2Pos.y);
+                byte newPosX = (byte)(Player2.GridPos.x + movePlayer2Pos.x);
+                byte newPosY = (byte)(Player2.GridPos.y + movePlayer2Pos.y);
                 if (Room.TestPlayerMove(Player2.Uid, newPosX, newPosY))
                 {
                     playerInfo.PlayerGo.transform.position = new Vector3(newPosX, 0, newPosY);
@@ -199,7 +199,7 @@ namespace Game.Network.Server.Test
             }
         }
 
-        private void OnGrdCampChange(byte posX, byte posY, byte camp)
+        private void OnPointCampChange(byte posX, byte posY, byte camp)
         {
             //Color color = Color.white;
             if (camp != 0)
@@ -233,13 +233,9 @@ namespace Game.Network.Server.Test
             }
             else
             {
-                List<ServerRect> rects = Room.Map.CreateCampRect(5, 5, 1);
-                if (rects.IsLegal())
-                {
-                    ServerRect rect = rects[0];
-                    Room.Map.ChangRectCamp(rect, player.Camp);
-                    playerInfo.Reborn(rect);
-                }
+                ServerRect rect = Room.Map.CreateCampRect(5, 5);
+                Room.Map.ChangRectCamp(rect, player.Camp);
+                playerInfo.Reborn(rect);
             }
         }
 

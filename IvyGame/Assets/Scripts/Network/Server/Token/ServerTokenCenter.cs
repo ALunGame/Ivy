@@ -26,6 +26,16 @@ namespace Game.Network.Server
         private NetProtoPacket cachedCommand = new NetProtoPacket();
 
         /// <summary>
+        /// 房主
+        /// </summary>
+        public NetPeer RoomMasterPeer { get; set; }
+
+        /// <summary>
+        /// 游戏模式
+        /// </summary>
+        public int RoomGameMode { get; set; }
+
+        /// <summary>
         /// 帧已经运行秒数
         /// </summary>
         public float UpdateRealElapseSeconds { get; private set; }
@@ -59,22 +69,35 @@ namespace Game.Network.Server
             return currTokenUid;
         }
 
-        public void TokenEnter(NetPeer netPeer, Proto.PlayerInfo playerInfo)
+        public void TokenEnter(NetPeer netPeer, Proto.JoinPlayerInfo playerInfo)
         {
             TokenLeave(netPeer);
 
-            ServerToken newToken = new ServerToken(GenTokenUid(), netPeer, playerInfo);
+            int uid = GenTokenUid();
+            ServerToken newToken = new ServerToken(uid, netPeer, playerInfo);
             netPeer.Tag = newToken;
             serverTokens.Add(newToken);
 
-            //广播其他人有人加入
+            //通知加入成功
             JoinRoomS2c msg = new JoinRoomS2c();
             msg.RetCode = 0;
-            foreach (ServerToken token in serverTokens)
+            msg.gameMode = RoomGameMode;
+            msg.roomMasterPlayerUid = GetServerToken(RoomMasterPeer).TokenUid;
+            msg.selfPlayerUid = uid;
+            NetServerLocate.Net.SendTo(netPeer, (ushort)RoomMsgDefine.JoinRoomS2c, msg);
+
+            //广播其他人有人加入
+            RoomMembersChangeS2c chanegMsg = new RoomMembersChangeS2c();
+            foreach (ServerToken item in serverTokens)
             {
-                msg.Players.Add(token.Player);
+                chanegMsg.Players.Add(item.CollectPlayerInfo());
             }
-            NetServerLocate.Net.Broadcast((ushort)RoomMsgDefine.JoinRoomS2c, msg);
+            NetServerLocate.Net.Broadcast((ushort)RoomMsgDefine.RoomMembersChangeS2c, chanegMsg);
+        }
+
+        public List<ServerToken> GetServerTokens() 
+        { 
+            return serverTokens; 
         }
 
         public void TokenLeave(NetPeer netPeer)
@@ -96,6 +119,19 @@ namespace Game.Network.Server
             return (ServerToken)netPeer.Tag;
         }
 
+        public List<NetPeer> GetPeers(NetPeer exPeer = null)
+        {
+            List<NetPeer> peers = new List<NetPeer>();
+            foreach (ServerToken token in serverTokens)
+            {
+                if (token.Peer != exPeer)
+                {
+                    peers.Add(token.Peer);
+                }
+            }
+            return peers;
+        }
+
         public void OnReceiveMsg(NetPeer peer, NetPacketReader reader)
         {
             cachedCommand.Deserialize(reader);
@@ -103,6 +139,9 @@ namespace Game.Network.Server
             ushort msgId = cachedCommand.MsgId;
             string protoTypeName = cachedCommand.ProtoTypeName;
             byte[] msgData = cachedCommand.MsgData;
+
+            NetServerLocate.Log.LogWarning($"Rec:{msgId}->{protoTypeName}");
+
             dispatcherMapping.OnReceiveMsg(peer, msgId,ProtoBufTool.Decode(protoTypeName,msgData));
         }
     }

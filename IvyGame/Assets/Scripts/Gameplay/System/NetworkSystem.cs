@@ -1,8 +1,8 @@
-﻿using UnityEngine;
-using Game.Network.Server;
+﻿using Game.Network;
 using Game.Network.Client;
-using System.Net;
-using Game.Network;
+using Game.Network.Server;
+using Proto;
+using UnityEngine;
 
 namespace Gameplay.System
 {
@@ -17,7 +17,7 @@ namespace Gameplay.System
 
         protected override void OnInit()
         {
-            if (GameplayLocate.GameIns.Mode.ModeType.Value == GameModeType.Local)
+            if (GameplayLocate.GameIns.Mode.ModeType == GameModeType.Local)
             {
                 return;
             }
@@ -34,13 +34,27 @@ namespace Gameplay.System
             Client.SetDiscoveryCallBack((endPoint) =>
             {
                 openDiscovery = false;
-                Client.Connect(endPoint, null);
+                Client.Connect(endPoint, OnConnectServer, null);
             });
+            openDiscovery = true;
+            SendDiscovery();
         }
 
         protected override void OnStartGame()
         {
-            
+
+        }
+
+        protected override void OnClear()
+        {
+            if (Server != null)
+            {
+                GameObject.Destroy(Server.gameObject);
+            }
+            if (Client != null)
+            {
+                GameObject.Destroy(Client.gameObject);
+            }
         }
 
         protected override void OnUpdate(float pDeltaTime, float pRealElapseSeconds)
@@ -59,6 +73,29 @@ namespace Gameplay.System
         {
             NetClientLocate.Log.Log("寻找服务器...", NetworkGeneral.ServerPort);
             Client.Discovery(NetworkGeneral.ServerPort);
+        }
+
+        private void OnConnectServer()
+        {
+            //发送创建房间
+            if (GameplayLocate.GameIns.IsRoomOwner)
+            {
+                CreateRoomC2s createRoomMsg = new CreateRoomC2s();
+                createRoomMsg.gameMode = (int)GameplayLocate.GameIns.Mode.ModeType;
+                NetClientLocate.Log.LogWarning("发送创建房间>>>>", createRoomMsg.gameMode);
+                NetClientLocate.Net.Send((ushort)RoomMsgDefine.CreateRoomC2s, createRoomMsg);
+            }
+            //发送加入房间
+            else
+            {
+                //发送加入
+                JoinRoomC2s data = new JoinRoomC2s();
+                data.Player = new JoinPlayerInfo();
+                data.Player.Name = "zzz";
+                data.Player.Id = 1;
+                NetClientLocate.Log.LogWarning("发送加入>>>>", "zzz");
+                NetClientLocate.Net.Send((ushort)RoomMsgDefine.JoinRoomC2s, data);
+            }
         }
     }
 }

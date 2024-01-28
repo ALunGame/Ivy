@@ -2,14 +2,32 @@
 using IAEngine;
 using Proto;
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace Game.Network.Server
 {
-    internal class ServerGameInstance
+    internal enum GameState
+    {
+        Wait,
+        Start,
+        End,
+    }
+
+    internal class ServerGameInstance : MonoBehaviour
     {
         public int GameCfgId {  get; private set; }
         public GameModeType GameMode {  get; private set; }
         public ServerGameRoom Room { get; private set; }
+
+        /// <summary>
+        /// 当前游戏时间
+        /// </summary>
+        public GameState CurrGameState { get; private set; }
+
+        /// <summary>
+        /// 当前游戏时间
+        /// </summary>
+        public float CurrGameTime { get; private set; }
 
         /// <summary>
         /// 帧已经运行秒数
@@ -27,6 +45,7 @@ namespace Game.Network.Server
         //玩法系统
         private List<ServerGameSystem> systems = new List<ServerGameSystem>()
         {
+            new ServerGameRuleSystem(),
             new ServerGamePlayerSystem(),
         };
 
@@ -39,8 +58,13 @@ namespace Game.Network.Server
         /// <param name="modeType"></param>
         public void Create(int cfgId, GameModeType modeType)
         {
+            CurrGameState = GameState.Wait;
+
+            GameCfgId = cfgId;
+            GameMode = modeType;
+
             Room = new ServerGameRoom();
-            Room.Create(30, 30, 10);
+            Room.Create((byte)TempConfig.MapSize.x, (byte)TempConfig.MapSize.y, 10);
 
             Room.Map.Evt_PointCampChange += OnCampChange;
             Room.Map.Evt_KillPlayer += OnKillPlayer;
@@ -58,8 +82,51 @@ namespace Game.Network.Server
         /// </summary>
         public void StartGame()
         {
+            CurrGameTime = 0;
+            CurrGameState = GameState.Start;
+
+            //创建玩家
+            List<ServerToken> serverTokens = NetServerLocate.TokenCenter.GetServerTokens();
+            for (int i = 0; i < serverTokens.Count; i++)
+            {
+                ServerToken token = serverTokens[i];
+                PlayerInfo playerInfo = token.CollectPlayerInfo();
+                AddServerPlayerInfo addInfo = new AddServerPlayerInfo(playerInfo.Uid, playerInfo.Id, playerInfo.Name, (byte)playerInfo.Camp);
+                AddPlayer(addInfo);
+            }
+
+            //系统开始游戏
             foreach (ServerGameSystem system in systems)
                 system.StartGame();
+
+            //地图添加玩家
+            List<ServerPlayer> players = Room.GetPlayers();
+            foreach (ServerPlayer player in players)
+            {
+                Room.Map.AddPlayer(player);
+            }
+
+            //广播开始游戏
+            StartGameS2c msg = new StartGameS2c();
+            msg.RetCode = 0;
+            msg.gameCfgId = GameCfgId;
+            msg.gameMode = (int)GameMode;
+            foreach (ServerToken token in serverTokens)
+            {
+                msg.Players.Add(token.CollectPlayerInfo());
+            }
+            NetServerLocate.Net.Broadcast((ushort)RoomMsgDefine.StartGameS2c, msg);
+
+            //系统开始游戏后
+            foreach (ServerGameSystem system in systems)
+                system.AfterStartGame();
+        }
+
+        private void Awake()
+        {
+            UpdateRealElapseSeconds = 0;
+            UpdateDeltaTime = Time.deltaTime;
+            UpdateTimeScale = Time.timeScale;
         }
 
         /// <summary>
@@ -68,8 +135,20 @@ namespace Game.Network.Server
         public void Update()
         {
             UpdateRealElapseSeconds += UpdateDeltaTime * UpdateTimeScale;
+
+            CurrGameTime += UpdateDeltaTime * UpdateTimeScale;
+            if (CurrGameState == GameState.Start && CurrGameTime >= TempConfig.GameTotalTime)
+            {
+                EndGame();
+            }
+
             foreach (ServerGameSystem system in systems)
                 system.Update(UpdateDeltaTime * UpdateTimeScale, UpdateRealElapseSeconds);
+        }
+
+        private void OnDestroy()
+        {
+            Clear();
         }
 
         /// <summary>
@@ -77,6 +156,7 @@ namespace Game.Network.Server
         /// </summary>
         public void EndGame()
         {
+            CurrGameState = GameState.End;
             foreach (ServerGameSystem system in systems)
                 system.EndGame();
         }
@@ -104,34 +184,57 @@ namespace Game.Network.Server
         /// <summary>
         /// 复活玩家
         /// </summary>
-        private void RebornPlayer(int diePlayerUid)
+        public void RebornPlayer(int diePlayerUid)
         {
             ServerPlayer diePlayer = Room.GetPlayer(diePlayerUid);
             if (diePlayer == null)
                 return;
 
+            PlayerRebornS2c rebornMsg = new PlayerRebornS2c();
+            rebornMsg.playerUid = diePlayerUid;
+            rebornMsg.RetCode = 0;
+
             //找到占领区域
             ServerPoint point = Room.Map.GetRandomPointInCamp(diePlayer.Camp);
             if (point != null)
             {
+                diePlayer.SetGridPos(point.x, point.y);
                 diePlayer.SetPos(point.x, point.y);
                 diePlayer.Reborn();
+
+                rebornMsg.Pos = new NetVector2()
+                {
+                    X = point.x,
+                    Y = point.y
+                };
             }
             else
             {
-                List<ServerRect> rects = Room.Map.CreateCampRect(5, 5, 1);
-                if (rects.IsLegal())
+                ServerRect rect = Room.Map.CreateCampRect(5, 5);
+                if (rect != null)
                 {
-                    ServerRect rect = rects[0];
                     Room.Map.ChangRectCamp(rect, diePlayer.Camp);
-                    diePlayer.SetPos(rect.min.x, rect.min.y);
+
+                    ServerPoint randomPoint = rect.TakeRandomPoint();
+                    diePlayer.SetGridPos(randomPoint.x, randomPoint.y);
+                    diePlayer.SetPos(randomPoint.x, randomPoint.y);
                     diePlayer.Reborn();
+
+                    rebornMsg.Pos = new NetVector2()
+                    {
+                        X = randomPoint.x,
+                        Y = randomPoint.y
+                    };
                 }
                 else
                 {
+                    rebornMsg.RetCode = 1;
+                    //TODO:
                     NetServerLocate.Log.LogError("没有复活位置了》》》》》", diePlayer.Uid);
                 }
             }
+
+            NetServerLocate.Net.Broadcast((ushort)RoomMsgDefine.PlayerRebornS2c, rebornMsg);
         }
 
         /// <summary>
@@ -143,6 +246,7 @@ namespace Game.Network.Server
             if (diePlayer != null)
             {
                 diePlayer.DieCnt++;
+                diePlayer.Die();
             }
 
             ServerPlayer killerPlayer = Room.GetPlayer(killerPlayerUid);
@@ -168,10 +272,9 @@ namespace Game.Network.Server
         private void OnKillPlayer(int diePlayerUid, int killPlayerUid)
         {
             KillPlayer(diePlayerUid, killPlayerUid);
-            RebornPlayer(diePlayerUid);
 
             playerDieMsg.diePlayerUid = diePlayerUid;
-            playerDieMsg.rebornTime = 0;
+            playerDieMsg.rebornTime = TempConfig.RebornTime;
             playerDieMsg.killerPlayerUid = killPlayerUid;
             NetServerLocate.Net.Broadcast((ushort)RoomMsgDefine.PlayerDieS2c, playerDieMsg);
         }

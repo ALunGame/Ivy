@@ -1,5 +1,4 @@
-﻿using IAToolkit.ViewModel;
-
+﻿
 namespace Gameplay
 {
     /// <summary>
@@ -30,30 +29,17 @@ namespace Gameplay
     /// </summary>
     internal class GameMode
     {
-        public BindableProperty<GameModeType> ModeType { get; set; }
+        public GameModeType ModeType { get; set; }
 
         /// <summary>
         /// 最大玩家人数
         /// </summary>
-        public BindableProperty<int> MaxPlayerCnt { get; private set; }
+        public int MaxPlayerCnt { get; private set; }
 
         public GameMode()
         {
-            ModeType.RegisterValueChangedEvent((mode) =>
-            {
-                switch (mode)
-                {
-                    case GameModeType.Local:
-                        MaxPlayerCnt.Value = 1;
-                        break;
-                    case GameModeType.Single:
-                        MaxPlayerCnt.Value = 10;
-                        break;
-                    case GameModeType.Team:
-                        MaxPlayerCnt.Value = 10;
-                        break;
-                }
-            }); 
+            ModeType = GameModeType.Single;
+            MaxPlayerCnt = 10;
         }
     }
 }

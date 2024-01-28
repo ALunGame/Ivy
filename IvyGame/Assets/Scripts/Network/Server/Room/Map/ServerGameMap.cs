@@ -1,8 +1,7 @@
 ﻿using Game.AStar;
 using IAEngine;
-using System;
 using System.Collections.Generic;
-using UnityEngine.UIElements;
+using UnityEngine;
 
 namespace Game.Network.Server
 {
@@ -73,6 +72,60 @@ namespace Game.Network.Server
         }
     }
 
+    /// <summary>
+    /// 世界坐标
+    /// </summary>
+    internal class ServerPos
+    {
+        public float x;
+        public float y;
+
+        public ServerPos()
+        {
+            x = 0;
+            y = 0;
+        }
+
+        public ServerPos(float pX, float pY)
+        {
+            x = pX;
+            y = pY;
+        }
+
+        public ServerPos Copy()
+        {
+            ServerPos point = new ServerPos();
+            point.x = x;
+            point.y = y;
+            return point;
+        }
+
+        public bool Equals(byte pX, byte pY)
+        {
+            return x == pX && y == pY;
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (obj is ServerPoint)
+            {
+                ServerPoint p = (ServerPoint)obj;
+                return Equals(p.x, p.y);
+            }
+            return false;
+        }
+
+        public override int GetHashCode()
+        {
+            return base.GetHashCode();
+        }
+
+        public override string ToString()
+        {
+            return $"(x={x},y={y})";
+        }
+    }
+
     internal class ServerRect
     {
         public ServerPoint min = new ServerPoint(false);
@@ -90,6 +143,13 @@ namespace Game.Network.Server
         {
             min = new ServerPoint(x, y);
             max = new ServerPoint(x + width - 1, y + height - 1);
+        }
+
+        public ServerPoint TakeRandomPoint()
+        {
+            byte xDel = (byte)Random.Range(0, width);
+            byte yDel = (byte)Random.Range(0, height);
+            return new ServerPoint(min.x + xDel, min.y + yDel);
         }
 
         public void TryUpdateX(byte x)
@@ -271,8 +331,16 @@ namespace Game.Network.Server
                 campPathGridDict.Add(player.Camp, pathGrid);
                 campPathGridDict[player.Camp].Create(size.x, size.y,false);
             }
+        }
 
-            ChangePointCamp(player.Pos.x, player.Pos.y, player.Camp);
+        public void UpdateAllPlayersCamp()
+        {
+            List<ServerPlayer> players = room.GetPlayers();
+            for (int i = 0; i < players.Count; i++)
+            {
+                ServerPlayer player = players[i];
+                ChangePointCamp(player.GridPos.x, player.GridPos.y, player.Camp);
+            }
         }
 
         //检测点合法
@@ -339,6 +407,7 @@ namespace Game.Network.Server
             //寻路
             AddCampPathGrid(camp);
             AddCampPathGrid(oldCamp);
+            NetServerLocate.Log.LogError($"ChangePointCamp>>>{posX}-{posY}:{camp}");
             if (campPathGridDict.ContainsKey(camp))
             {
                 campPathGridDict[camp].SetObs(posX, posY, true);
@@ -392,11 +461,8 @@ namespace Game.Network.Server
         }
 
         //创建一个指定大小的占领区域
-        public List<ServerRect> CreateCampRect(byte width, byte height, int cnt = 4)
+        public ServerRect CreateCampRect(byte width, byte height)
         {
-            int currCnt = 0;
-            List<ServerRect> rects = new List<ServerRect>();
-
             Dictionary<byte, HashSet<byte>> usePointMap = new Dictionary<byte, HashSet<byte>>();
 
             Dictionary<int, int> xMap = RandomHelper.GetRandomNumList(width, size.x - width);
@@ -413,19 +479,13 @@ namespace Game.Network.Server
                         if (CheckRectIsLegal(x, y, width, height, usePointMap))
                         {
                             ServerRect rect = new ServerRect(x, y, width, height);
-                            currCnt++;
-                            rects.Add(rect);
-
-                            if (currCnt >= cnt)
-                            {
-                                return rects;
-                            }
+                            return rect;
                         }
                     }
                 }
             }
 
-            return rects;
+            return null;
         }
 
         private bool CheckRectIsLegal(byte posX, byte posY, byte width, byte height, Dictionary<byte, HashSet<byte>> usePointMap)
@@ -505,14 +565,14 @@ namespace Game.Network.Server
             //}
 
             //判断有人
-            int currPlayerUid = GetPlayerUidInPathPoint(player.Pos.x, player.Pos.y);
+            int currPlayerUid = GetPlayerUidInPathPoint(player.GridPos.x, player.GridPos.y);
             if (currPlayerUid != -1 && currPlayerUid != player.Uid)
             {
                 diePlayerUids.Add(currPlayerUid);
             }
 
             //1，判断是不是自己的领地
-            byte currCamp = GetPointCamp(player.Pos.x, player.Pos.y);
+            byte currCamp = GetPointCamp(player.GridPos.x, player.GridPos.y);
             //2，是自己的领地，区域占领
             if (currCamp == player.Camp)
             {
@@ -553,9 +613,9 @@ namespace Game.Network.Server
                 }
                 else
                 {
-                    playerPath.AddPoint(player.Pos.x, player.Pos.y);
+                    playerPath.AddPoint(player.GridPos.x, player.GridPos.y);
 
-                    Evt_AddPlayerPathPoint?.Invoke(player.Uid, player.Pos.x, player.Pos.y);
+                    Evt_AddPlayerPathPoint?.Invoke(player.Uid, player.GridPos.x, player.GridPos.y);
                 }
             }
 

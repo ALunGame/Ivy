@@ -1,4 +1,4 @@
-syntax = "proto3";
+syntax="proto2";
 
 package RoomMsg;
 import "TypesProto.proto";
@@ -6,60 +6,90 @@ import "TypesProto.proto";
 //指定命名空间（可选参数）如果没有，则使用C#代码的命名空间。
 option csharp_namespace = "Proto";
 
+message join_player_info {
+	required int32 id = 1;				//配置Id
+	required string name = 2;		//名字
+}
+
+message CreateRoomC2s {
+	required int32 gameMode = 1;
+} 
+
+message CreateRoomS2c {
+	required int32 ret_code = 1;
+	required int32 gameMode = 2;
+} 
+
 message JoinRoomC2s {
-	player_info player = 1;
+	required join_player_info player = 1;
 } 
 
 message JoinRoomS2c {
-	int32 ret_code = 1;
-	repeated player_info players = 2;
+	required int32 ret_code = 1;
+	required int32 gameMode = 2;
+	required int32 roomMasterPlayerUid = 3;
+	required int32 selfPlayerUid = 4;
 } 
 
 message LeaveRoomS2c {
-	int32 playerUid = 1;
+	required int32 playerUid = 1;
+} 
+
+message RoomMembersChangeS2c {
+	repeated player_info players = 1;
 } 
 
 message StartGameC2s {
+	required int32 gameCfgId = 1;
+	required int32 gameMode = 2;
 }
 
 message StartGameS2c {
-	int32 ret_code = 1;
+	required int32 ret_code = 1;
+	required int32 gameCfgId = 2;
+	required int32 gameMode = 3;
+	repeated player_info players = 4;
 }
 
 message EnterMapS2c {
-	int32 ret_code = 1;
-	int32 mapId = 2;
+	required int32 ret_code = 1;
+	required int32 mapId = 2;
 }
 
 message PlayerMoveC2s {
-	int32 playerUid = 1;
-	net_vector2 moveDir = 2;
+	required int32 playerUid = 1;
+	required net_vector2 moveDir = 2;
 }
 
 message PlayerMoveS2c {
-	int32 ret_code = 1;
-	int32 playerUid = 2;
-	net_vector2 movePos = 3;
+	required int32 ret_code = 1;
+	required int32 playerUid = 2;
+	required net_vector2 movePos = 3;
 }
 
 message PlayerDieS2c {
-	int32 diePlayerUid = 1;
-	int32 rebornTime = 2;		//复活时间
-	int32 killerPlayerUid = 3;
+	required int32 diePlayerUid = 1;
+	required int32 rebornTime = 2;		//复活时间
+	required int32 killerPlayerUid = 3;
 }
 
 message PlayerRebornS2c {
-	int32 playerUid = 1;
-	net_vector2 pos = 2;		//复活位置
+	required int32 ret_code = 1;
+	required int32 playerUid = 2;
+	required net_vector2 pos = 3;		//复活位置
 }
 
 message PlayerPathChangeS2c {
-	int32 playerUid = 1;
-	int32 operate = 2;			    	//1,Add 2,Remove 3,Clear
-	net_vector2 pos = 3;				//路径点
+	required int32 playerUid = 1;
+	required int32 operate = 2;			    	//1,Add 2,Remove 3,Clear
+	required net_vector2 pos = 3;				//路径点
 }
 
 message CampAreaChangeS2c {
-	int32 camp = 1;
-	net_vector2 pos = 2;				//区域点
+	required int32 camp = 1;
+	required net_vector2 pos = 2;				//区域点
+}
+
+message GameEndS2c {
+	repeated player_info players = 1;
 }

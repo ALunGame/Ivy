@@ -1,16 +1,19 @@
-syntax = "proto3";
+syntax="proto2";
 
 package Types;
 
 //指定命名空间（可选参数）如果没有，则使用C#代码的命名空间。
 option csharp_namespace = "Proto";
 
-message player_info {
-    int32 playerUid = 1;
-	string player_name = 2;
+message net_vector2 {
+	required int32 x = 1;
+	required int32 y = 2;
 }
 
-message net_vector2 {
-	int32 x = 1;
-	int32 y = 2;
+message player_info {
+    required int32 uid = 1;
+    required int32 id = 2;
+	required string name = 3;
+	required int32 camp = 4;
+	required net_vector2 pos = 5;
 }

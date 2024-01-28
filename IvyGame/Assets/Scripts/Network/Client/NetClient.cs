@@ -1,6 +1,5 @@
 ﻿using LiteNetLib;
 using LiteNetLib.Utils;
-using Proto;
 using ProtoBuf;
 using System;
 using System.Net;
@@ -16,7 +15,10 @@ namespace Game.Network.Client
         private NetPacketProcessor packetProcessor;
 
         private NetPeer netServer;
+        private Action onConnected;
         private Action<DisconnectInfo> onDisconnected;
+
+        private int ping;
 
         #region Unity
 
@@ -30,6 +32,8 @@ namespace Game.Network.Client
                 AutoRecycle = true,
                 IPv6Enabled = false,
                 UnconnectedMessagesEnabled = true,
+                BroadcastReceiveEnabled = true,
+                DisconnectTimeout = 500000000,          //TODO:临时
             };
             netManager.Start();
 
@@ -46,6 +50,11 @@ namespace Game.Network.Client
             netManager.Stop();
         }
 
+        private void OnApplicationQuit()
+        {
+            netManager.Stop();
+        }
+
         #endregion
 
         #region 广播用于发现服务器
@@ -55,6 +64,7 @@ namespace Game.Network.Client
         {
             if (netManager == null)
             {
+                NetClientLocate.Log.Log("Discovery000...", NetworkGeneral.ServerPort);
                 return;
             }
             _cachedWriter.Reset();
@@ -97,6 +107,8 @@ namespace Game.Network.Client
             _cachedProtoPacket.PutProtoTypeName(msgData.GetType().FullName);
             _cachedProtoPacket.PutMsgData(ProtoBufTool.Encode(msgData));
 
+            NetClientLocate.Log.LogWarning($"Send:{msgId}->{msgData.GetType().FullName}");
+
             netServer.Send(WriteSerializable(PacketType.Proto, _cachedProtoPacket), deliveryMethod);
         }
 
@@ -110,9 +122,9 @@ namespace Game.Network.Client
 
         #endregion
 
-
-        public void Connect(IPEndPoint endPoint, Action<DisconnectInfo> onDisconnected)
+        public void Connect(IPEndPoint endPoint, Action onConnected, Action<DisconnectInfo> onDisconnected)
         {
+            this.onConnected = onConnected;
             this.onDisconnected = onDisconnected;
             netManager.Connect(endPoint, NetworkGeneral.NetConnectKey);
         }
@@ -127,17 +139,7 @@ namespace Game.Network.Client
             Debug.Log("[C] Connected to server: " + peer.EndPoint);
             netServer = peer;
 
-            //发送加入
-            JoinRoomC2s data = new JoinRoomC2s();
-            data.Player = new PlayerInfo();
-            data.Player.PlayerName = "zzz";
-            NetClientLocate.Log.LogWarning("发送加入>>>>", "zzz");
-            Send((ushort)RoomMsgDefine.JoinRoomC2s, data);
-
-            //_cachedWriter.Reset();
-            //_cachedWriter.Put((byte)PacketType.JoinRoom);
-            //packetProcessor.Write(_cachedWriter, new JoinPacket { UserName = GameContext.GameContextLocate.Player.Name });
-            //netServer.Send(_cachedWriter, DeliveryMethod.ReliableOrdered);
+            onConnected?.Invoke();
         }
 
         /// <summary>
@@ -228,6 +230,7 @@ namespace Game.Network.Client
 
         public void OnConnectionRequest(ConnectionRequest request)
         {
+            request.Reject();
         }
     }
 }

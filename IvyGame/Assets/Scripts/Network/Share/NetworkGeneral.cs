@@ -19,7 +19,7 @@ namespace Game.Network
         /// <summary>
         /// 基础速度
         /// </summary>
-        public const float BaseSpeed = 1;
+        public const float BaseSpeed = 35;
 
         /// <summary>
         /// 编码移动消息数据
@@ -27,19 +27,14 @@ namespace Game.Network
         /// <param name="moveDir"></param>
         /// <param name="moveDel"></param>
         /// <returns></returns>
-        public static int EncodeMoveMsgValue(int moveDir, float moveDel)
+        public static int EncodeMoveMsgValue(float moveDel)
         {
-            if (moveDel == 0)
-            {
-                return 0;
-            }
-            return moveDir * 1000 + (int)(moveDel * 100);
+            return (int)(moveDel * 100);
         }
 
-        public static void DecodeMoveMsgValue(int moveMsgValue, out int moveDir, out float moveDel)
+        public static float DecodeMoveMsgValue(int moveDel)
         {
-            moveDir = moveMsgValue / 1000;
-            moveDel = (moveMsgValue % 1000)/100;
+            return moveDel / 100.0f;
         }
     }
 

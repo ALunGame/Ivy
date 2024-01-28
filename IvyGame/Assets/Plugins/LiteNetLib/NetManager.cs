@@ -563,6 +563,7 @@ namespace LiteNetLib
         private void ProcessEvent(NetEvent evt)
         {
             NetDebug.Write("[NM] Processing event: " + evt.Type);
+
             bool emptyData = evt.DataReader.IsNull;
             switch (evt.Type)
             {

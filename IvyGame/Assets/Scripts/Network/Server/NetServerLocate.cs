@@ -1,4 +1,7 @@
 ﻿using Gameplay;
+using Proto;
+using System.Collections.Generic;
+using UnityEngine;
 
 namespace Game.Network.Server
 {
@@ -41,8 +44,17 @@ namespace Game.Network.Server
 
         public static void StartGame(int cfgId, GameModeType modeType)
         {
-            Game = new ServerGameInstance();
+            if (Game != null)
+            {
+                UnityEngine.GameObject.Destroy(Game.gameObject);
+                return;
+            }
+
+            GameObject gameGo = new UnityEngine.GameObject("ServerGame");
+            Game = gameGo.AddComponent<ServerGameInstance>();
             Game.Create(cfgId,modeType);
+
+            Game.StartGame();
         }
     }
 }

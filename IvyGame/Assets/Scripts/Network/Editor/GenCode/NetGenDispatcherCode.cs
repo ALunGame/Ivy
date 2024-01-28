@@ -75,9 +75,7 @@ namespace Game.Network
 
             string funcClient = @"
         private void On#MsgDefine#(#MsgDefine# MsgData)
-        {
-#FuncContent#
-        }
+        {#FuncContent#}
 ";
 
             string resUsingStr = usingStr;
@@ -151,6 +149,17 @@ namespace Game.Network
                 {
                     Match matchStr = regex.Match(fileStr);
                     contentStr = matchStr.Value;
+                    if (contentStr.Length >= 2)
+                    {
+                        if (contentStr[0] == '\n')
+                        {
+                            contentStr.Remove(0);
+                        }
+                        if (contentStr[contentStr.Length - 1] == '\n')
+                        {
+                            contentStr.Remove(contentStr.Length - 1);
+                        }
+                    }
                     //regex = new Regex(@"(?<={\n|{\r\n)[\d\D]*(?=}\n|}\r\n)");
                     //contentStr = regex.Match(matchStr.Value).Value;
                     //contentStr = contentStr.Substring(0, contentStr.IndexOf("}"));

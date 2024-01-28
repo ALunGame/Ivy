@@ -78,6 +78,19 @@
             OnDestroy();
         }
 
+        /// <summary>
+        /// 尝试通过UIMgr关闭界面
+        /// 1，如果这个界面不是通过UI管理打开的，这个操作就是无效的
+        /// </summary>
+        public bool Close()
+        {
+            if (UILocate.UI == null)
+            {
+                return false;
+            }
+            return UILocate.UI.Hide(this);
+        }
+
         #region Virtual
 
         /// <summary>

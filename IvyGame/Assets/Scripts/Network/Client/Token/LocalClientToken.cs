@@ -1,5 +1,7 @@
 ﻿using Game.Network.CDispatcher;
 using LiteNetLib;
+using ProtoBuf;
+using System;
 
 namespace Game.Network.Client
 {
@@ -9,18 +11,35 @@ namespace Game.Network.Client
 
         private NetProtoPacket cachedCommand = new NetProtoPacket();
 
+        public int PlayerUid {  get; private set; }
+
+        public void SetLocalPlayerUid(int playerUid)
+        {
+            PlayerUid = playerUid;
+        }
+
         public void OnReceiveMsg(NetPeer peer, NetPacketReader reader)
         {
-            if (peer.Tag == null)
-                return;
 
             cachedCommand.Deserialize(reader);
 
             ushort msgId = cachedCommand.MsgId;
             string protoTypeName = cachedCommand.ProtoTypeName;
             byte[] msgData = cachedCommand.MsgData;
+
+            NetClientLocate.Log.LogWarning($"Rec:{msgId}->{protoTypeName}");
+
             dispatcherMapping.OnReceiveMsg(msgId, ProtoBufTool.Decode(protoTypeName, msgData));
         }
 
+        public void AddListen<T>(ushort msgId, Action<T> msgFunc) where T : IExtensible
+        {
+            dispatcherMapping.AddListen(msgId, msgFunc);
+        }
+
+        public void RemoveListen<T>(ushort msgId, Action<T> msgFunc) where T : IExtensible
+        {
+            dispatcherMapping.RemoveListen(msgId, msgFunc);
+        }
     }
 }

@@ -72,8 +72,8 @@ namespace IAUI
         {
             if (transform != null)
             {
-                transform.gameObject.SetActive(true);
                 transform.SetAsLastSibling();
+                transform.gameObject.SetActive(true);
             }
         }
 
@@ -95,7 +95,7 @@ namespace IAUI
         {
             if (transform!=null)
             {
-                GameObject.Destroy(transform);
+                Object.Destroy(transform.gameObject);
             }
         }
 

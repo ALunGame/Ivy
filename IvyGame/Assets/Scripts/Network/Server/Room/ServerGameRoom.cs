@@ -29,7 +29,6 @@ namespace Game.Network.Server
         public void AddPlayer(ServerPlayer player)
         {
             players.Add(player);
-            Map.AddPlayer(player);
         }
 
         /// <summary>
@@ -57,7 +56,7 @@ namespace Game.Network.Server
         {
             foreach (var player in players)
             {
-                if (player.Pos.x == x && player.Pos.y == y)
+                if (player.GridPos.x == x && player.GridPos.y == y)
                     return player;
             }
             return null;
@@ -67,7 +66,7 @@ namespace Game.Network.Server
         /// 获得所有玩家
         /// </summary>
         /// <returns></returns>
-        public List<ServerPlayer> Getplayers()
+        public List<ServerPlayer> GetPlayers()
         {
             return players;
         }
@@ -80,7 +79,7 @@ namespace Game.Network.Server
         public int GetPlayerPosAreaCamp(int playerUid)
         {
             ServerPlayer player = GetPlayer(playerUid);
-            return GetCamp(player.Pos.x, player.Pos.y);
+            return GetCamp(player.GridPos.x, player.GridPos.y);
         }
 
         /// <summary>
@@ -100,13 +99,13 @@ namespace Game.Network.Server
             if (player == null) 
                 return false;
 
-            if (player.Pos.Equals(posX,posY))
+            if (player.GridPos.Equals(posX,posY))
                 return false;
 
             if (!map.CheckPointIsLegal(posX,posY))
                 return false;
 
-            player.SetPos(posX, posY);
+            player.SetGridPos(posX, posY);
             map.OnPlayerMove(player);
             return true;
         }
