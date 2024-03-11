@@ -359,6 +359,16 @@ namespace Game.Network.Server
             return true;
         }
 
+        public bool CheckPosXInBorder(byte posX)
+        {
+            return posX == 0 || posX == size.x - 1;
+        }
+
+        public bool CheckPosYInBorder(byte posY)
+        {
+            return posY == 0 || posY == size.y - 1;
+        }
+
         //获得点属于的阵营
         public byte GetPointCamp(byte posX, byte posY)
         {
@@ -407,7 +417,6 @@ namespace Game.Network.Server
             //寻路
             AddCampPathGrid(camp);
             AddCampPathGrid(oldCamp);
-            NetServerLocate.Log.LogError($"ChangePointCamp>>>{posX}-{posY}:{camp}");
             if (campPathGridDict.ContainsKey(camp))
             {
                 campPathGridDict[camp].SetObs(posX, posY, true);
@@ -593,23 +602,14 @@ namespace Game.Network.Server
             }
             else
             {
-                //连接了，区域占领
+                //路径连接了，清空路径
                 if (currPlayerUid == player.Uid)
                 {
-                    areaPoints = playerPath.CaptureArea((x, y) =>
+                    areaPoints = playerPath.RemovePath(player.LastGridPos, player.GridPos);
+                    foreach (var item in areaPoints)
                     {
-                        ServerPlayer diePlayer = room.GetPlayer(x, y);
-                        if (diePlayer != null && diePlayer.Uid != player.Uid)
-                        {
-                            if (!diePlayerUids.Contains(diePlayer.Uid))
-                            {
-                                diePlayerUids.Add(diePlayer.Uid);
-                            }
-                        }
-                    });
-                    //自己路径清理
-                    playerPathDict[player.Uid].Clear();
-                    Evt_RemovePlayerPath?.Invoke(player.Uid);
+                        Evt_RemovePlayerPathPoint(player.Uid, item.x, item.y);
+                    }
                 }
                 else
                 {

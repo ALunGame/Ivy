@@ -38,6 +38,15 @@ namespace Game.Network.Server
                     }
 
                     ServerPos movePos = player.MoveDir.CalcMovePos(player.Pos,moveDel);
+
+                    byte checkX = movePos.x < 0 ? (byte)0 : (byte)(movePos.x);
+                    if (NetServerLocate.Game.Room.Map.CheckPosXInBorder(player.GridPos.x) && NetServerLocate.Game.Room.Map.CheckPosXInBorder(checkX))
+                        movePos.x = player.Pos.x;
+
+                    byte checkY = movePos.y < 0 ? (byte)0 : (byte)(movePos.y);
+                    if (NetServerLocate.Game.Room.Map.CheckPosYInBorder(player.GridPos.y) && NetServerLocate.Game.Room.Map.CheckPosYInBorder(checkY))
+                        movePos.y = player.Pos.y;
+
                     player.SetPos(movePos.x,movePos.y);
 
                     moveMsg.RetCode = 0;
@@ -60,14 +69,15 @@ namespace Game.Network.Server
                     }
                     else
                     {
-                        //判断移动到下一个格子
-                        NetServerLocate.Game.Room.TestPlayerMove(player.Uid, nextPosX, nextPosY);
                         moveMsg.movePos = new NetVector2()
                         {
                             X = NetworkGeneral.EncodeMoveMsgValue(player.Pos.x),
                             Y = NetworkGeneral.EncodeMoveMsgValue(player.Pos.y),
                         };
                         NetServerLocate.Net.Broadcast((ushort)RoomMsgDefine.PlayerMoveS2c, moveMsg);
+
+                        //判断移动到下一个格子
+                        NetServerLocate.Game.Room.TestPlayerMove(player.Uid, nextPosX, nextPosY);
                     }
                 }
             }

@@ -5,7 +5,7 @@
     "IncludeAssetGUID": false,
     "OutputNameStyle": 1,
     "PackageName": "DefaultPackage",
-    "PackageVersion": "2024-01-27-82",
+    "PackageVersion": "2024-03-07-1085",
     "AssetList": [
         {
             "Address": "FightPanel",
@@ -95,10 +95,10 @@
     "BundleList": [
         {
             "BundleName": "assets_gameasset_ui_prefabs_fight_fightpanel.bundle",
-            "UnityCRC": 2852529927,
-            "FileHash": "4d737d3648005ef95de228402fa95ce3",
-            "FileCRC": "aef4e313",
-            "FileSize": 6624,
+            "UnityCRC": 2440865382,
+            "FileHash": "5776b23ef4f7b9f15cfc422a62b6b437",
+            "FileCRC": "6a3ecff0",
+            "FileSize": 6642,
             "IsRawFile": false,
             "LoadMethod": 0,
             "Tags": [],

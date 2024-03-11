@@ -17,7 +17,7 @@ namespace Game
 
     public static class TempConfig
     {
-        public static Vector2Int MapSize = new Vector2Int(50, 50);
+        public static Vector2Int MapSize = new Vector2Int(100, 100);
 
         public static Vector2 GridSize = new Vector2(1, 1);
 

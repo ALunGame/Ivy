@@ -80,7 +80,7 @@ namespace Gameplay.Player
         public Vector3 TargetMovePos;
 
         // 持续时间
-        public float lerpDuration = 0.25f;
+        public float lerpDuration = 0.3f;
         // 记录运行时间
         private float _timeElapsed = 0;
 

@@ -108,6 +108,11 @@ namespace Game.Network.Server
         public PlayerMoveDir MoveDir { get; private set; }
 
         /// <summary>
+        /// 上一个网格点位置
+        /// </summary>
+        public ServerPoint LastGridPos { get; private set; }
+
+        /// <summary>
         /// 网格点位置
         /// </summary>
         public ServerPoint GridPos { get; private set; }
@@ -135,7 +140,7 @@ namespace Game.Network.Server
             State = PlayerState.Alive;
             Speed = 0;
             MoveDir = new PlayerMoveDir();
-            GridPos = new ServerPoint();
+            LastGridPos = new ServerPoint();
             Pos = new ServerPos();
         }
 
@@ -146,18 +151,34 @@ namespace Game.Network.Server
 
         public void SetGridPos(byte posX, byte posY) 
         {
+            if (GridPos != null)
+            {
+                LastGridPos.x = GridPos.x;
+                LastGridPos.y = GridPos.y;
+            }
+            else
+            {
+                GridPos = new ServerPoint();
+            }
+
             GridPos.x = posX;
             GridPos.y = posY;
         }
 
         public void SetPos(float posX, float posY)
         {
+            posX = posX < 0 ? 0 : posX;
+            posY = posY < 0 ? 0 : posY; 
+
             Pos.x = posX;
             Pos.y = posY;
         }
 
         public byte ToGridPos(float pos)
         {
+            if (pos < 0)
+                return byte.MaxValue;
+
             return (byte)MathF.Floor(pos);
         }
 

@@ -12,10 +12,44 @@ namespace Game.Network.Server
         private ServerGameMap map;
         private byte camp;
 
-        private Dictionary<byte, HashSet<byte>> pointDict = new Dictionary<byte, HashSet<byte>>();
         private ServerRect pathRect;
         private ServerRect containPathRect;
         private ServerPoint[] checkPoints = new ServerPoint[4];
+
+
+        class PathPoint
+        {
+            public ServerPoint point;
+
+            public PathPoint lastPoint;
+
+            public PathPoint nextPoint;
+
+
+            public override bool Equals(object obj)
+            {
+                if (obj == null)
+                    return false;
+
+                if (!(obj is PathPoint))
+                    return false;
+
+                PathPoint other = (PathPoint)obj;
+                if (this.point == other.point)
+                    return true;
+                else
+                    return false;
+            }
+
+            public override int GetHashCode()
+            {
+                return base.GetHashCode();
+            }
+
+        }
+
+        private Dictionary<byte, Dictionary<byte, PathPoint>> pathDict = new Dictionary<byte, Dictionary<byte, PathPoint>>();
+        private ServerPoint currPoint;
 
         public ServerGameMap_PlayerPath(byte pCamp, ServerGameMap pMap)
         {
@@ -28,8 +62,117 @@ namespace Game.Network.Server
             containPathRect = new ServerRect();
         }
 
+        /// <summary>
+        /// 添加路径点
+        /// </summary>
+        public void AddPoint(byte posX, byte posY)
+        {
+            if (pathRect == null)
+                pathRect = map.GetCampRect(camp).Copy();
+            pathRect.TryUpdateX(posX);
+            pathRect.TryUpdateY(posY);
+
+            UpdateContainPathRect();
+
+            if (!pathDict.ContainsKey(posX))
+                pathDict.Add(posX, new Dictionary<byte, PathPoint>());
+            if (!pathDict[posX].ContainsKey(posY))
+            {
+                PathPoint pathPoint = new PathPoint();
+                pathPoint.point = new ServerPoint(posX, posY);
+
+                //添加上一个点
+                if (currPoint != null)
+                {
+                    PathPoint lastPoint = pathDict[currPoint.x][currPoint.y];
+                    lastPoint.nextPoint = pathPoint;
+                    pathPoint.lastPoint = lastPoint;
+                }
+
+                pathDict[posX].Add(posY, pathPoint);
+                currPoint = pathPoint.point;
+            }
+        }
+
+        /// <summary>
+        /// 添加路径点
+        /// </summary>
+        public void AddPoint(ServerPoint point)
+        {
+            AddPoint(point.x, point.y);
+        }
+
+        /// <summary>
+        /// 删除路径点
+        /// </summary>
+        public void RemovePoint(ServerPoint removePoint, ServerPoint currPoint)
+        {
+            pathRect = map.GetCampRect(camp).Copy();
+            pathRect.TryUpdateX(currPoint.x);
+            pathRect.TryUpdateY(currPoint.y);
+
+            if (pathDict.ContainsKey(removePoint.x) && pathDict[removePoint.x].ContainsKey(removePoint.y))
+                pathDict[removePoint.x].Remove(removePoint.y);
+        }
+
+        /// <summary>
+        /// 检测点在路径内
+        /// </summary>
+        public bool CheckInPath(byte posX, byte posY)
+        {
+            return pathDict.ContainsKey(posX) && pathDict[posX].ContainsKey(posY);
+        }
+
+        /// <summary>
+        /// 检测点在路径内
+        /// </summary>
+        public bool CheckInPath(ServerPoint point)
+        {
+            return CheckInPath(point.x, point.y);
+        }
+
+        //更新包围框
+        private void UpdateContainPathRect()
+        {
+            ServerPoint leftDownPoint = pathRect.min.Copy();
+            if (leftDownPoint.x <= 0)
+                leftDownPoint.x = 0;
+            else if (leftDownPoint.x >= map.Size.x)
+                leftDownPoint.x = map.Size.x;
+            else
+                leftDownPoint.x -= 1;
+
+            if (leftDownPoint.y <= 0)
+                leftDownPoint.y = 0;
+            else if (leftDownPoint.y >= map.Size.y)
+                leftDownPoint.y = map.Size.y;
+            else
+                leftDownPoint.y -= 1;
+
+            ServerPoint rightUpPoint = pathRect.max.Copy();
+            if (rightUpPoint.x <= 0)
+                rightUpPoint.x = 0;
+            else if (rightUpPoint.x >= map.Size.x)
+                rightUpPoint.x = map.Size.x;
+            else
+                rightUpPoint.x += 1;
+
+            if (rightUpPoint.y <= 0)
+                rightUpPoint.y = 0;
+            else if (rightUpPoint.y >= map.Size.y)
+                rightUpPoint.y = map.Size.y;
+            else
+                rightUpPoint.y += 1;
+
+            containPathRect.min = leftDownPoint;
+            containPathRect.max = rightUpPoint;
+
+        }
+
+        #region 区域占领
+
         //占领区域
-        public List<ServerPoint> CaptureArea(Action<byte,byte> changeCampCallBack)
+        public List<ServerPoint> CaptureArea(Action<byte, byte> changeCampCallBack)
         {
             if (pathRect == null)
             {
@@ -38,9 +181,9 @@ namespace Game.Network.Server
             List<ServerPoint> capturePoints = new List<ServerPoint>();
 
             //先将路径变为占领区域
-            foreach (byte x in pointDict.Keys)
+            foreach (byte x in pathDict.Keys)
             {
-                foreach (byte y in pointDict[x])
+                foreach (byte y in pathDict[x].Keys)
                 {
                     capturePoints.Add(new ServerPoint(x, y));
                     changeCampCallBack?.Invoke(x, y);
@@ -53,9 +196,9 @@ namespace Game.Network.Server
                 for (byte y = pathRect.min.y; y <= pathRect.max.y; y++)
                 {
                     //不在路径中并且阵营不同
-                    if (!CheckInPath(x,y) && map.GetPointCamp(x,y) != camp)
+                    if (!CheckInPath(x, y) && map.GetPointCamp(x, y) != camp)
                     {
-                        if(CheckPointCanCapture(x,y))
+                        if (CheckPointCanCapture(x, y))
                         {
                             capturePoints.Add(new ServerPoint(x, y));
                             changeCampCallBack?.Invoke(x, y);
@@ -66,6 +209,7 @@ namespace Game.Network.Server
             }
 
             pathRect = null;
+            currPoint = null;
             return capturePoints;
         }
 
@@ -121,7 +265,9 @@ namespace Game.Network.Server
                 return false;
             }
 
-            ServerPoint pointA = new ServerPoint(pointX,pointY);
+            //return true;
+
+            ServerPoint pointA = new ServerPoint(pointX, pointY);
             ServerPoint pointB = containPathRect.min.Copy();
             if (pointB.Equals(pathRect.min))
             {
@@ -147,104 +293,73 @@ namespace Game.Network.Server
             return containPathRect.CheckContain((byte)x, (byte)y);
         }
 
-        //更新包围框
-        private void UpdateContainPathRect()
+        #endregion
+
+        #region 路径点占领
+
+        public List<ServerPoint> RemovePath(ServerPoint lastPoint, ServerPoint currPoint)
         {
-            ServerPoint leftDownPoint = pathRect.min.Copy();
-            if (leftDownPoint.x <= 0)
-                leftDownPoint.x = 0;
-            else if (leftDownPoint.x >= map.Size.x)
-                leftDownPoint.x = map.Size.x;
-            else
-                leftDownPoint.x -= 1;
+            if (!CheckInPath(lastPoint) || !CheckInPath(currPoint))
+            {
+                return null;
+            }
 
-            if (leftDownPoint.y <= 0)
-                leftDownPoint.y = 0;
-            else if (leftDownPoint.y >= map.Size.y)
-                leftDownPoint.y = map.Size.y;
-            else
-                leftDownPoint.y -= 1;
+            PathPoint last = pathDict[lastPoint.x][lastPoint.y];
+            PathPoint check = pathDict[currPoint.x][currPoint.y];
 
-            ServerPoint rightUpPoint = pathRect.max.Copy();
-            if (rightUpPoint.x <= 0)
-                rightUpPoint.x = 0;
-            else if (rightUpPoint.x >= map.Size.x)
-                rightUpPoint.x = map.Size.x;
-            else
-                rightUpPoint.x += 1;
+            last.nextPoint = check;
 
-            if (rightUpPoint.y <= 0)
-                rightUpPoint.y = 0;
-            else if (rightUpPoint.y >= map.Size.y)
-                rightUpPoint.y = map.Size.y;
-            else
-                rightUpPoint.y += 1;
+            List<PathPoint> list = new List<PathPoint>();
+            CalcPoint(check, list, check);
 
-            containPathRect.min = leftDownPoint;
-            containPathRect.max = rightUpPoint;
+            List<ServerPoint> pointList = new List<ServerPoint>();
+            foreach (PathPoint pathPoint in list)
+            {
+                pointList.Add(pathPoint.point);
+                pathDict[pathPoint.point.x].Remove(pathPoint.point.y);
+            }
 
+            //更新区域
+            pathRect = map.GetCampRect(camp).Copy();
+            pathRect.TryUpdateX(check.point.x);
+            pathRect.TryUpdateY(check.point.y);
+
+            //清理
+            check.nextPoint = null;
+            this.currPoint = check.point;
+
+            return pointList;
         }
+
+        private void CalcPoint(PathPoint point, List<PathPoint> pointList, PathPoint checkPoint)
+        {
+            if (point.nextPoint == null)
+            {
+                return;
+            }
+
+            if (point.nextPoint == checkPoint)
+            {
+                pointList.Add(point);
+                return;
+            }
+
+            if (point != checkPoint)
+            {
+                pointList.Add(point);
+            }
+            CalcPoint(point.nextPoint, pointList, checkPoint);    
+        }
+
+        #endregion
 
         //清空区域
         public void Clear()
         {
-            pointDict.Clear();
+            pathDict.Clear();
             pathRect?.Clear();
         }
 
-        /// <summary>
-        /// 添加路径点
-        /// </summary>
-        public void AddPoint(byte posX, byte posY)
-        {
-            if (pathRect == null)
-                pathRect = map.GetCampRect(camp).Copy();
-            pathRect.TryUpdateX(posX);
-            pathRect.TryUpdateY(posY);
 
-            UpdateContainPathRect();
-
-            if (!pointDict.ContainsKey(posX))
-                pointDict.Add(posX, new HashSet<byte>());
-            if (!pointDict[posX].Contains(posY))
-                pointDict[posX].Add(posY);
-        }
-
-        /// <summary>
-        /// 添加路径点
-        /// </summary>
-        public void AddPoint(ServerPoint point)
-        {
-            AddPoint(point.x, point.y);
-        }
-
-        /// <summary>
-        /// 删除路径点
-        /// </summary>
-        public void RemovePoint(ServerPoint removePoint, ServerPoint currPoint)
-        {
-            pathRect = map.GetCampRect(camp).Copy();
-            pathRect.TryUpdateX(currPoint.x);
-            pathRect.TryUpdateY(currPoint.y);
-
-            if (pointDict.ContainsKey(removePoint.x) && pointDict[removePoint.x].Contains(removePoint.y))
-                pointDict[removePoint.x].Remove(removePoint.y);
-        }
-
-        /// <summary>
-        /// 检测点在路径内
-        /// </summary>
-        public bool CheckInPath(byte posX, byte posY)
-        {
-            return pointDict.ContainsKey(posX) && pointDict[posX].Contains(posY);
-        }
-
-        /// <summary>
-        /// 检测点在路径内
-        /// </summary>
-        public bool CheckInPath(ServerPoint point)
-        {
-            return CheckInPath(point.x, point.y);
-        }
     }
 }

@@ -349,7 +349,8 @@ namespace Gameplay
         /// <returns></returns>
         public static Vector3 ServerPosToClient(byte posX, byte posY)
         {
-            return new Vector3(TempConfig.GridSize.x / 2 + posX, 0, TempConfig.GridSize.y / 2 + posY);
+            //return new Vector3(TempConfig.GridSize.x / 2 + posX, 0, TempConfig.GridSize.y / 2 + posY);
+            return new Vector3(posX, 0, posY);
         }
     }
 }

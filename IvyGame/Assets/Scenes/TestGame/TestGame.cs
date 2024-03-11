@@ -94,6 +94,8 @@ namespace Game.Network.Server.Test
                 PlayerCaptureSpDict.Add(playerUid, new List<MeshRenderer>());
 
                 Room.AddPlayer(Players[i].Player);
+
+                Room.Map.AddPlayer(Players[i].Player);
             }
         }
 

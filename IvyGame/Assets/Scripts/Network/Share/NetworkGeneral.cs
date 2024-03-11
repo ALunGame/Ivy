@@ -19,7 +19,7 @@ namespace Game.Network
         /// <summary>
         /// 基础速度
         /// </summary>
-        public const float BaseSpeed = 35;
+        public const float BaseSpeed = 50;
 
         /// <summary>
         /// 编码移动消息数据
