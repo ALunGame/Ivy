@@ -5,15 +5,18 @@ using System;
 
 namespace Game.Network.Client
 {
+    /// <summary>
+    /// 负责消息的接收和派发
+    /// </summary>
     internal class LocalClientToken : ClientToken
     {
         private CDispatcherMapping dispatcherMapping = new CDispatcherMapping();
 
         private NetProtoPacket cachedCommand = new NetProtoPacket();
 
-        public int PlayerUid {  get; private set; }
+        public string PlayerUid {  get; private set; }
 
-        public void SetLocalPlayerUid(int playerUid)
+        public void SetLocalPlayerUid(string playerUid)
         {
             PlayerUid = playerUid;
         }
@@ -27,7 +30,7 @@ namespace Game.Network.Client
             string protoTypeName = cachedCommand.ProtoTypeName;
             byte[] msgData = cachedCommand.MsgData;
 
-            NetClientLocate.Log.LogWarning($"Rec:{msgId}->{protoTypeName}");
+            NetClientLocate.Log.Log($"<color=#8CBBE0>Rec:{msgId}->{protoTypeName}</color>");
 
             dispatcherMapping.OnReceiveMsg(msgId, ProtoBufTool.Decode(protoTypeName, msgData));
         }

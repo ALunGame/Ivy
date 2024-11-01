@@ -15,4 +15,4 @@ MonoBehaviour:
   ConfigRootPath: ../Config
   GenCodeRootPath: Assets/Scripts/ConfigGenCode
   GenJsonRootPath: Assets/GameAsset/Config
-  GenJsonExName: .json
+  GenJsonExName: .cfg

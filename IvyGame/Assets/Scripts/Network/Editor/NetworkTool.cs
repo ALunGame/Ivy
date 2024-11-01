@@ -1,5 +1,6 @@
 using Game.Network;
 using IAToolkit;
+using System.IO;
 using UnityEditor;
 using UnityEngine;
 
@@ -8,17 +9,31 @@ public static class NetworkTool
     [MenuItem("Tools/Network/生成消息码")]
     public static void CreateMsg()
     {
-        //删除文件
-        IOHelper.DelDirectoryAllFile(Application.dataPath + "/Scripts/Network/GenProto");
+        string tmpPath = Path.GetFullPath("../GenProtoTemp");
 
-        //执行批处理
-        MiscHelper.ExecuteBat("GenProto.bat", "", Application.dataPath + "/../../Proto/");
+        IOHelper.MoveDirectory(Application.dataPath + "/Scripts/Network/GenProto", tmpPath);
 
-        //生成消息码映射文件
-        NetGenDispatcherCode.GenCode();
+        Debug.Log($"CreateMsg;{tmpPath}");
 
-        AssetDatabase.Refresh();
-        AssetDatabase.SaveAssets();
-        
+        try
+        {
+            //执行批处理
+            MiscHelper.ExecuteBat("../Proto/GenProto.bat", "", () =>
+            {
+                //生成消息码映射文件
+                NetGenDispatcherCode.GenCode();
+
+                AssetDatabase.Refresh();
+                AssetDatabase.SaveAssets();
+            }, Path.GetFullPath("../Proto/"));
+        }
+        catch (System.Exception ex)
+        {
+            Debug.LogError($"CreateMsg;{ex.ToString()}");
+
+            IOHelper.MoveDirectory(tmpPath, Application.dataPath + "/Scripts/Network/GenProto");
+        }
+
+
     }
 }

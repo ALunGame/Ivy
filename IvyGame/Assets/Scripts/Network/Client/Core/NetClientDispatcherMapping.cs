@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System;
 using UnityEngine;
+using Game.Network.Client;
 
 namespace Game.Network.CDispatcher
 {
@@ -37,6 +38,7 @@ namespace Game.Network.CDispatcher
 
         public void OnReceiveMsg(ushort msgId, IExtensible msgData)
         {
+            //派发逻辑层
             if(msgDict.ContainsKey(msgId))
             {
                 msgDict[msgId]?.Invoke(msgData);
@@ -48,6 +50,9 @@ namespace Game.Network.CDispatcher
                     }
                 }
             }
+
+            //派发UI层
+            NetworkEvent.BroadcastEvent(msgId, msgData);
         }
 
         public void AddListen<T>(ushort msgId, Action<T> msgFunc) where T : IExtensible

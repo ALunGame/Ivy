@@ -75,6 +75,22 @@ namespace IAToolkit
         }
 
         /// <summary>
+        /// 移动文件夹
+        /// </summary>
+        public static void MoveDirectory(string pPath, string pTargetPath)
+        {
+            if (!Directory.Exists(pPath))
+            {
+                return;
+            }
+
+            if (Directory.Exists(pTargetPath))
+                Directory.Delete(pTargetPath, true);
+
+            Directory.Move(pPath, pTargetPath);
+        }
+
+        /// <summary>
         /// 删除文件
         /// </summary>
         public static void DelFile(string path)

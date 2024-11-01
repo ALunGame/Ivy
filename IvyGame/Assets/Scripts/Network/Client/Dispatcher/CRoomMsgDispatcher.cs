@@ -1,115 +1,142 @@
 ﻿using Game.Network.Client;
 using Gameplay;
+using Gameplay.GameData;
 using IAEngine;
 using Proto;
+
 namespace Game.Network.CDispatcher
 {
     internal class CRoomMsgDispatcher : NetClientDispatcher
     {
         internal CRoomMsgDispatcher(NetClientDispatcherMapping InMapping) : base(InMapping)
         {
-            
             AddDispatch<CreateRoomS2c>((ushort)RoomMsgDefine.CreateRoomS2c,OnCreateRoomS2c);
-
             AddDispatch<JoinRoomS2c>((ushort)RoomMsgDefine.JoinRoomS2c,OnJoinRoomS2c);
-
             AddDispatch<LeaveRoomS2c>((ushort)RoomMsgDefine.LeaveRoomS2c,OnLeaveRoomS2c);
-
-            AddDispatch<StartGameS2c>((ushort)RoomMsgDefine.StartGameS2c,OnStartGameS2c);
-
-            AddDispatch<EnterMapS2c>((ushort)RoomMsgDefine.EnterMapS2c,OnEnterMapS2c);
-
-            AddDispatch<PlayerMoveS2c>((ushort)RoomMsgDefine.PlayerMoveS2c,OnPlayerMoveS2c);
-
-            AddDispatch<PlayerDieS2c>((ushort)RoomMsgDefine.PlayerDieS2c,OnPlayerDieS2c);
-
-            AddDispatch<PlayerRebornS2c>((ushort)RoomMsgDefine.PlayerRebornS2c,OnPlayerRebornS2c);
-
-            AddDispatch<PlayerPathChangeS2c>((ushort)RoomMsgDefine.PlayerPathChangeS2c,OnPlayerPathChangeS2c);
-
-            AddDispatch<CampAreaChangeS2c>((ushort)RoomMsgDefine.CampAreaChangeS2c,OnCampAreaChangeS2c);
-
-            AddDispatch<GameEndS2c>((ushort)RoomMsgDefine.GameEndS2c,OnGameEndS2c);
-
             AddDispatch<RoomMembersChangeS2c>((ushort)RoomMsgDefine.RoomMembersChangeS2c,OnRoomMembersChangeS2c);
+            AddDispatch<StartGameS2c>((ushort)RoomMsgDefine.StartGameS2c,OnStartGameS2c);
+            AddDispatch<EnterMapS2c>((ushort)RoomMsgDefine.EnterMapS2c,OnEnterMapS2c);
+            AddDispatch<ServerStateS2c>((ushort)RoomMsgDefine.ServerStateS2c,OnServerStateS2c);
+            AddDispatch<GamerInputS2c>((ushort)RoomMsgDefine.GamerInputS2c,OnGamerInputS2c);
+            AddDispatch<GamerDieS2c>((ushort)RoomMsgDefine.GamerDieS2c,OnGamerDieS2c);
+            AddDispatch<GamerRebornS2c>((ushort)RoomMsgDefine.GamerRebornS2c,OnGamerRebornS2c);
+            AddDispatch<GamerPathChangeS2c>((ushort)RoomMsgDefine.GamerPathChangeS2c,OnGamerPathChangeS2c);
+            AddDispatch<ChangeGridCampS2c>((ushort)RoomMsgDefine.ChangeGridCampS2c,OnChangeGridCampS2c);
+            AddDispatch<GameEndS2c>((ushort)RoomMsgDefine.GameEndS2c,OnGameEndS2c);
 
         }
         
         
         private void OnCreateRoomS2c(CreateRoomS2c MsgData)
         {
-            GameplayLocate.UserData.Room.ChangeGameMode((GameModeType)MsgData.gameMode);
-
-            //发送加入
-            JoinRoomC2s data = new JoinRoomC2s();
-            data.Player = new JoinPlayerInfo();
-            data.Player.Name = "zzz";
-            data.Player.Id = 1;
-            NetClientLocate.Log.LogWarning("发送加入>>>>", "zzz");
-            NetClientLocate.Net.Send((ushort)RoomMsgDefine.JoinRoomC2s, data);
         }
 
         private void OnJoinRoomS2c(JoinRoomS2c MsgData)
         {
-            GameplayLocate.UserData.Room.ChangeGameMode((GameModeType)MsgData.gameMode);
-            GameplayLocate.UserData.Room.SetRoomMasterUid(MsgData.roomMasterPlayerUid);
-            GameplayLocate.UserData.Room.SetSelfPlayerId(MsgData.selfPlayerUid);
+            GameplayGlobal.Data.RoomMasterUid = MsgData.roomMastergamerUid;
+            GameplayGlobal.Data.SelfGamerUid = MsgData.selfgamerUid;
 
-            NetClientLocate.LocalToken.SetLocalPlayerUid(MsgData.selfPlayerUid);           
+            NetClientLocate.LocalToken.SetLocalPlayerUid(MsgData.selfgamerUid);           
         }
 
         private void OnLeaveRoomS2c(LeaveRoomS2c MsgData)
         {
-            GameplayLocate.UserData.Room.RemovePlayerInfo(MsgData.playerUid);
+            GameplayCtrl.Instance.GameData.Gamers.RemoveGamer(MsgData.gamerUid);
+        }
+
+        private void OnRoomMembersChangeS2c(RoomMembersChangeS2c MsgData)
+        {
+            if (MsgData.Gamers.IsLegal())
+            {
+                for (int i = 0; i < MsgData.Gamers.Count; i++)
+                {
+                    GameplayCtrl.Instance.GameData.Gamers.UpdateGamer(MsgData.Gamers[i]);
+                }
+            }
         }
 
         private void OnStartGameS2c(StartGameS2c MsgData)
         {
-            if (MsgData.Players.IsLegal())
+            if (MsgData.Gamers.IsLegal())
             {
-                for (int i = 0; i < MsgData.Players.Count; i++)
+                for (int i = 0; i < MsgData.Gamers.Count; i++)
                 {
-                    GameplayLocate.UserData.Game.UpdatePlayerInfo(MsgData.Players[i]);
+                    GameplayCtrl.Instance.GameData.Gamers.UpdateGamer(MsgData.Gamers[i]);
                 }
             }
+
+            GameplayCtrl.Instance.StartGame(MsgData.gameCfgId);
+
+
         }
 
         private void OnEnterMapS2c(EnterMapS2c MsgData)
         {
+            GameplayCtrl.Instance.EnterMap(MsgData.mapId);
         }
 
-        private void OnPlayerMoveS2c(PlayerMoveS2c MsgData)
+        private void OnServerStateS2c(ServerStateS2c MsgData)
         {
+            GameplayCtrl.Instance.OnReceiveServerState(MsgData);
         }
 
-        private void OnPlayerDieS2c(PlayerDieS2c MsgData)
+        private void OnGamerInputS2c(GamerInputS2c MsgData)
         {
+            
         }
 
-        private void OnPlayerRebornS2c(PlayerRebornS2c MsgData)
+        private void OnGamerDieS2c(GamerDieS2c MsgData)
         {
+            if (MsgData.dieGamerInfos.IsLegal())
+            {
+                for (int i = 0; i < MsgData.dieGamerInfos.Count; i++)
+                {
+                    GamerDieInfo info = MsgData.dieGamerInfos[i];
+
+                    GamerData dieGamerData = GameplayGlobal.Data.Gamers.GetGamer(info.gamerUid);
+                    dieGamerData?.Die(info);
+
+                    GamerData killGamerData = GameplayGlobal.Data.Gamers.GetGamer(info.killergamerUid);
+                    killGamerData?.Kill(info);
+                }
+            }
         }
 
-        private void OnPlayerPathChangeS2c(PlayerPathChangeS2c MsgData)
+        private void OnGamerRebornS2c(GamerRebornS2c MsgData)
         {
+            GamerData gamerData = GameplayGlobal.Data.Gamers.GetGamer(MsgData.gamerUid);
+            gamerData?.Reborn(MsgData);
         }
 
-        private void OnCampAreaChangeS2c(CampAreaChangeS2c MsgData)
+        private void OnGamerPathChangeS2c(GamerPathChangeS2c MsgData)
         {
+            GamerData gamerData = GameplayGlobal.Data.Gamers.GetGamer(MsgData.gamerUid);
+            //Add
+            if (MsgData.Operate == 1)
+            {
+                gamerData.AppPathPoint(MsgData.Pos.ToVector2Int());
+            }
+            //Remove
+            else if (MsgData.Operate == 2)
+            {
+                gamerData.RemovePathPoint(MsgData.Pos.ToVector2Int());
+            }
+            //Clear
+            else if (MsgData.Operate == 3)
+            {
+                gamerData.ClearPath();
+            }
+        }
+
+        private void OnChangeGridCampS2c(ChangeGridCampS2c MsgData)
+        {
+            GameMapGridData gridData = GameplayGlobal.Data.Map.GetGridData(new UnityEngine.Vector2Int((int)MsgData.gridPos.X, (int)MsgData.gridPos.Y));
+            gridData.Camp.Value = MsgData.Camp;
         }
 
         private void OnGameEndS2c(GameEndS2c MsgData)
-        {}
-
-        private void OnRoomMembersChangeS2c(RoomMembersChangeS2c MsgData)
         {
-            if (MsgData.Players.IsLegal())
-            {
-                for (int i = 0; i < MsgData.Players.Count; i++)
-                {
-                    GameplayLocate.UserData.Room.UpdatePlayerInfo(MsgData.Players[i]);
-                }
-            }
+            GameplayGlobal.Ctrl.EndGame();
         }
 
 

@@ -1,6 +1,7 @@
 ﻿using IAEngine;
 using System.Collections.Generic;
 using UnityEngine;
+using static UnityEngine.Rendering.DebugUI;
 
 namespace IAUI
 {
@@ -49,8 +50,19 @@ namespace IAUI
                 object value = item.GetValue(this);
                 if (value != null && value is UIGlue)
                 {
-                    glues.Add((UIGlue)value);
+                    if (!glues.Contains((UIGlue)value))
+                    {
+                        glues.Add((UIGlue)value);
+                    }
                 }
+            }
+        }
+
+        internal void AddGlue(UIGlue pGlue)
+        {
+            if (!glues.Contains(pGlue))
+            {
+                glues.Add(pGlue);
             }
         }
 

@@ -21,6 +21,8 @@ namespace IAFramework
         Wait,
         Success,
         Fail,
+
+        GameStartSuccess,       //游戏业务层开始成功
     }
 
     public class GamePatchData : BaseUserData<GamePatchData>
@@ -61,7 +63,7 @@ namespace IAFramework
             UpdateUserData();
         }
 
-        public void SetGameStartState(EGamePatchState currState)
+        public void SetGamePatchState(EGamePatchState currState)
         {
             CurrState = currState;
 

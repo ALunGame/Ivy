@@ -5,6 +5,16 @@ namespace IAEngine
 {
     public static class GameObjectEx 
     {
+        /// <summary>
+        /// 空检查
+        /// </summary>
+        public static bool IsNull(this GameObject pGo) => ReferenceEquals(pGo, null);
+
+        /// <summary>
+        /// 非空检查
+        /// </summary>
+        public static bool NotNull(this GameObject pGo) => !ReferenceEquals(pGo, null);
+
         public static void SetActive(this GameObject pGo, string pPath, bool pActive)
         {
             if (pGo == null)

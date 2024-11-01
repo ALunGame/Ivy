@@ -7,17 +7,23 @@
 
         public static void Init()
         {
-            Player = RecordData.LoadRecord<PlayerData>("PlayerData");
+            Player = ArchiveHelper.LoadRecord<PlayerData>("PlayerData");
         }
 
         public static void SaveRecord()
         {
-            RecordData.SaveRecord("PlayerData", Player);
+            ArchiveHelper.SaveRecord("PlayerData", Player);
         }
 
         public static void Clear()
         {
 
+        }
+
+        public static void DelRecord()
+        {
+            ArchiveHelper.DelRecord("PlayerData");
+            Player = new PlayerData();
         }
     }
 }

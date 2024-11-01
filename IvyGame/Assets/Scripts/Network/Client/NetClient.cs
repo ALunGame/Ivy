@@ -8,7 +8,7 @@ using UnityEngine;
 
 namespace Game.Network.Client
 {
-    internal class NetClient : MonoBehaviour, INetEventListener
+    public class NetClient : MonoBehaviour, INetEventListener
     {
         private NetManager netManager;
         
@@ -17,6 +17,8 @@ namespace Game.Network.Client
         private NetPeer netServer;
         private Action onConnected;
         private Action<DisconnectInfo> onDisconnected;
+
+        internal NetworkLogicTimer LogicTimer { get; private set; }
 
         private int ping;
 
@@ -37,23 +39,61 @@ namespace Game.Network.Client
             };
             netManager.Start();
 
+            LogicTimer = new NetworkLogicTimer(OnLogicUpdate);
+
             NetClientLocate.Init(this);
         }
 
         private void Update()
         {
             netManager.PollEvents();
+            LogicTimer.Update();
+        }
+
+        private void OnLogicUpdate()
+        {
+            NetClientLocate.OnNetWorkLogicUpdate();
         }
 
         private void OnDestroy()
         {
             netManager.Stop();
+            LogicTimer.Stop();
+            NetworkEvent.Clear();
         }
 
         private void OnApplicationQuit()
         {
             netManager.Stop();
+            LogicTimer.Stop();
+            NetworkEvent.Clear();
         }
+
+        #endregion
+
+
+        #region 编辑器
+
+        public void OpenLog(bool pOpen)
+        {
+            NetClientLocate.Log.OpenLog = pOpen;
+        }
+
+        public bool GetOpenLogState()
+        {
+            return NetClientLocate.Log.OpenLog;
+        }
+
+        public void OpenLogWarn(bool pOpen)
+        {
+            NetClientLocate.Log.OpenWarn = pOpen;
+        }
+
+        public bool GetOpenLogWarnState()
+        {
+            return NetClientLocate.Log.OpenWarn;
+        }
+
 
         #endregion
 
@@ -107,7 +147,7 @@ namespace Game.Network.Client
             _cachedProtoPacket.PutProtoTypeName(msgData.GetType().FullName);
             _cachedProtoPacket.PutMsgData(ProtoBufTool.Encode(msgData));
 
-            NetClientLocate.Log.LogWarning($"Send:{msgId}->{msgData.GetType().FullName}");
+            NetClientLocate.Log.Log($"<color=#008EFF>Send:{msgId}->{msgData.GetType().FullName}</color>");
 
             netServer.Send(WriteSerializable(PacketType.Proto, _cachedProtoPacket), deliveryMethod);
         }
@@ -129,7 +169,6 @@ namespace Game.Network.Client
             netManager.Connect(endPoint, NetworkGeneral.NetConnectKey);
         }
 
-
         /// <summary>
         /// 连接服务器成功
         /// </summary>
@@ -140,6 +179,7 @@ namespace Game.Network.Client
             netServer = peer;
 
             onConnected?.Invoke();
+            LogicTimer.Start();
         }
 
         /// <summary>
@@ -156,6 +196,7 @@ namespace Game.Network.Client
                 onDisconnected(disconnectInfo);
                 onDisconnected = null;
             }
+            LogicTimer.Stop();
         }
 
         /// <summary>
@@ -175,9 +216,6 @@ namespace Game.Network.Client
             PacketType pt = (PacketType)packetType;
             switch (pt)
             {
-                case PacketType.JoinRoom:
-                    packetProcessor.ReadAllPackets(reader, peer);
-                    break;
                 case PacketType.Proto:
                     NetClientLocate.LocalToken.OnReceiveMsg(peer, reader);
                     break;

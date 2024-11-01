@@ -24,7 +24,7 @@ public class ProtobufNetHelperEditor
         typeof(Proto.CreateRoomC2s),
     };
 
-    [MenuItem("Tools/重建protobuf-model.dll")]
+    [MenuItem("Tools/Network/重建protobuf-model.dll")]
     private static void RebuildProtobufModelForProject()
     {
         RuntimeTypeModel typeModel = GetModel(out string typeNames);

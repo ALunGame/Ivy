@@ -5,7 +5,6 @@ namespace Game.Network.SDispatcher
     {
         internal SDispatcherMapping()
         {
-            
             AddDispatcher(new SRoomMsgDispatcher(this));
 
         }

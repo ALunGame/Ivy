@@ -10,11 +10,6 @@ namespace Game.Network
         Discovery,
 
         /// <summary>
-        /// 加入房间，连接开始
-        /// </summary>
-        JoinRoom,
-
-        /// <summary>
         /// Proto 数据
         /// </summary>
         Proto,
@@ -26,14 +21,6 @@ namespace Game.Network
     public class DiscoveryPacket
     {
         public string DiscoveryStr { get; set; }
-    }
-
-    /// <summary>
-    /// 加入房间
-    /// </summary>
-    public class JoinPacket
-    {
-        public string UserName { get; set; }
     }
 
     public struct NetProtoPacket : INetSerializable

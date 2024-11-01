@@ -9,8 +9,8 @@ namespace IAConfig.Excel
     /// </summary>
     public class ExcelReadSetting : ScriptableObject
     {
-        public const string EditorRootPath = "Assets/com.lc.config/Editor";
-        public const string RunningRootPath = "Assets/com.lc.config/Runtime";
+        public const string EditorRootPath = "Assets/IA-Config/Editor";
+        public const string RunningRootPath = "Assets/IA-Config/Runtime";
         
         /// <summary>
         /// 表格根目录

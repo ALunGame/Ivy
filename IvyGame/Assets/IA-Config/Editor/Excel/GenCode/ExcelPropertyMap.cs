@@ -16,6 +16,9 @@ namespace IAConfig.Excel.GenCode.Property
             singleProps.Add(new IntProperty());
             singleProps.Add(new FloatProperty());
             singleProps.Add(new BoolProperty());
+            singleProps.Add(new Vector2Property());
+            singleProps.Add(new Vector3Property());
+
             singleProps.Add(new StringProperty());
         }
 

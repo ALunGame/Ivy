@@ -1,8 +1,6 @@
-using IAEngine;
 using IAFramework.Server;
 using IAFramework.UI;
 using IAUI;
-using System.Collections;
 using UnityEngine;
 using YooAsset;
 
@@ -26,8 +24,6 @@ namespace IAFramework
             Debug.Log($"资源系统运行模式：{PlayMode}");
             Application.targetFrameRate = 60;
             Application.runInBackground = true;
-
-            DontDestroyOnLoad(gameObject);
         }
 
         private void Start()

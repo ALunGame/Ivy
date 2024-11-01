@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.WSA;
+using static PlasticGui.ProcessProvider;
 using Application = UnityEngine.Application;
 using Object = System.Object;
 using UnityObject = UnityEngine.Object;
@@ -397,17 +398,24 @@ namespace IAToolkit
 
         private static Process CreateShellExProcess(string cmd, string args, string workingDir = "")
         {
+            var en = System.Text.UTF8Encoding.UTF8;
+            if (Application.platform == RuntimePlatform.WindowsEditor)
+                en = System.Text.Encoding.GetEncoding("gb2312");
+
             var pStartInfo = new ProcessStartInfo(cmd);
             pStartInfo.Arguments = args;
-            pStartInfo.CreateNoWindow = false;
-            pStartInfo.UseShellExecute = true;
-            pStartInfo.RedirectStandardError = false;
-            pStartInfo.RedirectStandardInput = false;
-            pStartInfo.RedirectStandardOutput = false;
-            if (!string.IsNullOrEmpty(workingDir))
-                pStartInfo.WorkingDirectory = workingDir;
+            pStartInfo.CreateNoWindow = true;
+            pStartInfo.UseShellExecute = false;
+            pStartInfo.RedirectStandardError = true;
+            pStartInfo.RedirectStandardInput = true;
+            pStartInfo.RedirectStandardOutput = true;
+            pStartInfo.WindowStyle = ProcessWindowStyle.Hidden;
+            pStartInfo.StandardErrorEncoding = en;
+            pStartInfo.StandardOutputEncoding = en;
+
+            pStartInfo.WorkingDirectory = workingDir;
+
             return Process.Start(pStartInfo);
-        
         }
 
         /// <summary>
@@ -416,10 +424,22 @@ namespace IAToolkit
         /// <param name="batfile">批处理文件</param>
         /// <param name="args">参数</param>
         /// <param name="workingDir">工作目录</param>
-        public static void ExecuteBat(string batfile, string args, string workingDir = "")
+        public static void ExecuteBat(string batfile, string args, Action action, string workingDir = "")
         {
             var p = CreateShellExProcess(batfile, args, workingDir);
+
+            string output = p.StandardOutput.ReadToEnd();
+            UnityEngine.Debug.Log(output); // 输出标准输出的内容
+
+            var err = p.StandardError.ReadToEnd();
+            UnityEngine.Debug.Log(err); // 输出标准错误的内容
+
+            p.WaitForExit();
             p.Close();
+            if (action != null)
+            {
+                action();
+            }
         }
 
         #endregion

@@ -42,10 +42,9 @@ namespace IAFramework.UI
 
         private void RefreshTips()
         {
-            if (GamePatchData.Instance.CurrState == EGamePatchState.Success)
+            if (GamePatchData.Instance.CurrState == EGamePatchState.GameStartSuccess)
             {
                 Hide();
-                SceneManager.LoadScene("GameScene");
                 return;
             }
 

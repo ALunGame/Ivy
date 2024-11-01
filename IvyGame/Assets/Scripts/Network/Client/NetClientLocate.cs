@@ -1,4 +1,6 @@
-﻿namespace Game.Network.Client
+﻿using System;
+
+namespace Game.Network.Client
 {
     internal static class NetClientLocate
     {
@@ -17,11 +19,40 @@
         /// </summary>
         public static LocalClientToken LocalToken { get; private set; }
 
+        private static Action onLogicUpdateCallBack;
+
         public static void Init(NetClient netServer)
         {
             Net = netServer;
             Log = new NetClientLog();
             LocalToken = new LocalClientToken();
+            onLogicUpdateCallBack = null;
+        }
+
+        /// <summary>
+        /// 网络逻辑帧Update
+        /// </summary>
+        public static void OnNetWorkLogicUpdate()
+        {
+            onLogicUpdateCallBack?.Invoke();
+        }
+
+        /// <summary>
+        /// 注册网络帧更新回调
+        /// </summary>
+        /// <param name="pCallBack"></param>
+        public static void RegLogicUpdateCallBack(Action pCallBack)
+        {
+            onLogicUpdateCallBack += pCallBack;
+        }
+
+        /// <summary>
+        /// 移除网络帧更新回调
+        /// </summary>
+        /// <param name="pCallBack"></param>
+        public static void RemoveLogicUpdateCallBack(Action pCallBack)
+        {
+            onLogicUpdateCallBack -= pCallBack;
         }
 
         public static void Clear()
@@ -29,6 +60,7 @@
             Net = null;
             Log = null;
             LocalToken = null;
+            onLogicUpdateCallBack = null;
         }
     }
 }

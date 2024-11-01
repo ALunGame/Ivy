@@ -1,6 +1,4 @@
 ﻿using Gameplay;
-using Proto;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace Game.Network.Server
@@ -22,16 +20,24 @@ namespace Game.Network.Server
         /// </summary>
         public static ServerTokenCenter TokenCenter { get; private set; }
 
+        ///// <summary>
+        ///// 游戏
+        ///// </summary>
+        //public static ServerGameInstance Game { get; private set; }
+
         /// <summary>
-        /// 游戏
+        /// 游戏控制层
         /// </summary>
-        public static ServerGameInstance Game { get; private set; }
+        public static ServerGameplayCtrl GameCtrl { get; private set; }
 
         public static void Init(NetServer netServer)
         {
             Net = netServer;
             Log = new NetServerLog();
             TokenCenter = new ServerTokenCenter();
+
+            GameCtrl = new ServerGameplayCtrl();
+            GameCtrl.Init();
         }
 
         public static void Clear()
@@ -39,22 +45,9 @@ namespace Game.Network.Server
             Net = null;
             Log = null;
             TokenCenter = null;
-            Game = null;
-        }
 
-        public static void StartGame(int cfgId, GameModeType modeType)
-        {
-            if (Game != null)
-            {
-                UnityEngine.GameObject.Destroy(Game.gameObject);
-                return;
-            }
-
-            GameObject gameGo = new UnityEngine.GameObject("ServerGame");
-            Game = gameGo.AddComponent<ServerGameInstance>();
-            Game.Create(cfgId,modeType);
-
-            Game.StartGame();
+            GameCtrl.Clear();
+            GameCtrl = null;
         }
     }
 }

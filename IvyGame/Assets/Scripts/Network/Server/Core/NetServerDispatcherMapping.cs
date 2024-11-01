@@ -6,6 +6,10 @@ using System.Collections.Generic;
 
 namespace Game.Network.SDispatcher
 {
+    /// <summary>
+    /// 服务端消息派发
+    /// 1，更简单，没有消息监听，因为目前觉得服务端做的事情应该要更纯粹，数据流向更为单一
+    /// </summary>
     internal class NetServerDispatcherMapping
     {
         private List<NetServerDispatcher> dispatchers = new List<NetServerDispatcher>();

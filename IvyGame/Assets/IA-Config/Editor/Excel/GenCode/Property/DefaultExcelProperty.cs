@@ -1,5 +1,7 @@
+using OfficeOpenXml.FormulaParsing.Excel.Functions.Text;
 using System;
 using System.Text.RegularExpressions;
+using UnityEngine;
 
 namespace IAConfig.Excel.GenCode.Property
 {
@@ -127,7 +129,107 @@ namespace IAConfig.Excel.GenCode.Property
             return codeStr;
         }
     }
-    
+
+    internal class Vector2Property : BaseProperty
+    {
+        public override string TypeName { get => "Vector2"; }
+        public override string NameSpace { get => "using UnityEngine;"; }
+        public override bool CanBeKey { get => false; }
+
+        public override bool CanCatch(string pValue)
+        {
+            if (string.IsNullOrEmpty(pValue))
+            {
+                return true;
+            }
+
+            string str = pValue.Replace("(", " ").Replace(")", " "); //将字符串中"("和")"替换为" "
+            string[] s = str.Split(',');
+            if (s.Length != 2)
+                return false;
+
+            for (int i = 0; i < 2; i++)
+            {
+                if (!float.TryParse(s[i], out var t))
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        public override object Parse(string pValue)
+        {
+            if (string.IsNullOrEmpty(pValue))
+            {
+                return Vector2.zero;
+            }
+
+            string str = pValue.Replace("(", " ").Replace(")", " ");
+            string[] s = str.Split(',');
+            return new Vector2(float.Parse(s[0]), float.Parse(s[1]));
+        }
+
+        public override string CreateExportStr(string pExportName, string pRowValueName)
+        {
+            string codeStr = "\t\t\t\t#NAME#.#PRONAME# = (#ValueTypeName#)GetProp(pProps,\"#PRONAME#\").Parse(propDict[\"#PRONAME#\"][0]);";
+            codeStr = Regex.Replace(codeStr, "#NAME#", pExportName);
+            codeStr = Regex.Replace(codeStr, "#PRONAME#", name);
+            codeStr = Regex.Replace(codeStr, "#ValueTypeName#", TypeName);
+            return codeStr;
+        }
+    }
+
+    internal class Vector3Property : BaseProperty
+    {
+        public override string TypeName { get => "Vector3"; }
+        public override string NameSpace { get => "using UnityEngine;"; }
+        public override bool CanBeKey { get => false; }
+
+        public override bool CanCatch(string pValue)
+        {
+            if (string.IsNullOrEmpty(pValue))
+            {
+                return true;
+            }
+
+            string str = pValue.Replace("(", " ").Replace(")", " "); //将字符串中"("和")"替换为" "
+            string[] s = str.Split(',');
+            if (s.Length != 3)
+                return false;
+
+            for (int i = 0; i < 3; i++)
+            {
+                if (!float.TryParse(s[i], out var t))
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        public override object Parse(string pValue)
+        {
+            if (string.IsNullOrEmpty(pValue))
+            {
+                return Vector3.zero;
+            }
+
+            string str = pValue.Replace("(", " ").Replace(")", " ");
+            string[] s = str.Split(',');
+            return new Vector3(float.Parse(s[0]), float.Parse(s[1]), float.Parse(s[2]));
+        }
+
+        public override string CreateExportStr(string pExportName, string pRowValueName)
+        {
+            string codeStr = "\t\t\t\t#NAME#.#PRONAME# = (#ValueTypeName#)GetProp(pProps,\"#PRONAME#\").Parse(propDict[\"#PRONAME#\"][0]);";
+            codeStr = Regex.Replace(codeStr, "#NAME#", pExportName);
+            codeStr = Regex.Replace(codeStr, "#PRONAME#", name);
+            codeStr = Regex.Replace(codeStr, "#ValueTypeName#", TypeName);
+            return codeStr;
+        }
+    }
+
     internal class EnumProperty : BaseProperty
     {
         public EnumInfo enumInfo;

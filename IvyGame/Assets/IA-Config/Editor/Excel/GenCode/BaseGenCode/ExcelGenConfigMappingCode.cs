@@ -41,7 +41,7 @@ namespace IAConfig
             {
                 if (#NAME01# == null)
                 {
-                    Byte[] byteArray = GameContext.Asset.LoadBytes(""#NAME03#"");
+                    Byte[] byteArray = GameEnv.Asset.LoadBytes(""#NAME03#"");
                     List<#TYPE#> configs = MemoryPackSerializer.Deserialize<List<#TYPE#>>(byteArray);
                     #NAME01# = new #CLASS#();
                     #NAME01#.AddConfig(configs);

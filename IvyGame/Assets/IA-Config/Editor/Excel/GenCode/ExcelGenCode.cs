@@ -20,6 +20,8 @@ namespace IAConfig.Excel.GenCode
 
         public void Init()
         {
+            exportCodeStr = IOHelper.ReadText(GetExportCodePath());
+
             Clear();
         }
 

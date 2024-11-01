@@ -3,7 +3,7 @@
     /// <summary>
     /// 玩家数据
     /// </summary>
-    internal class PlayerData : RecordData
+    internal class PlayerData : ArchiveData
     {
         /// <summary>
         /// 玩家昵称

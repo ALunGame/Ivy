@@ -12,7 +12,7 @@ namespace Game.Network.CDispatcher
             mapping = InMapping;
         }
 
-        protected void AddDispatch<T>(ushort msgId,Action<T> msgFunc) where T : IExtensible
+        protected void AddDispatch<T>(ushort msgId, Action<T> msgFunc) where T : IExtensible
         {
             mapping.AddDispatch(msgId, msgFunc);
         }

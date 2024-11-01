@@ -14,11 +14,32 @@ namespace IAServer
     {
         public virtual string LogTag {  get; }
 
+        /// <summary>
+        /// 开启日志
+        /// </summary>
+        public bool OpenLog { get; set; }
+
+        /// <summary>
+        /// 开启警告
+        /// </summary>
+        public bool OpenWarn { get; set; }
 
         private StringBuilder stringBuilder = new StringBuilder();
 
+        public LogServer()
+        {
+            OpenLog = true;
+            OpenWarn = true;
+        }
+
         private void PrintLog(LogType logType, string log, params object[] args)
         {
+            if (logType == LogType.Log && !OpenLog)
+                return;
+
+            if (logType == LogType.LogWarn && !OpenWarn)
+                return;
+
             stringBuilder.Length = 0;
 
             stringBuilder.Append(LogTag);

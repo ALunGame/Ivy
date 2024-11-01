@@ -1,8 +1,9 @@
 ﻿using Game.Network.Client;
 using Gameplay;
+using Gameplay.GameData;
 using IAUI;
 using Proto;
-using System;
+using ProtoBuf;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -21,6 +22,10 @@ namespace Game.UI
         private UICacheGlue singlePlayerInfoCache = new UICacheGlue("Center/Prefab/PlayerInfo", "Center/RoomBox/Players/Single/List", true);
         private UICacheGlue teamPlayerInfoCache = new UICacheGlue("Center/Prefab/PlayerInfo", "Center/RoomBox/Players/Team/List", true);
 
+        private UINetworkMsgGlue OnJoinRoomS2c;
+        private UINetworkMsgGlue OnLeaveRoomS2c;
+        private UINetworkMsgGlue OnRoomMembersChangeS2c;
+
         public override void OnAwake()
         {
             BtnUtil.SetClick(transform, "Center/CloseBtn", () =>
@@ -30,12 +35,12 @@ namespace Game.UI
 
             BtnUtil.SetClick(transform, "Center/StartBtn", () =>
             {
-                if (!GameplayLocate.UserData.Room.CheckIsRoomMaster())
+                if (!GameplayCtrl.Instance.GameData.CheckIsRoomMaster())
                 {
                     return;
                 }
 
-                GameModeType modeType = GameplayLocate.UserData.Room.GameMode;
+                GameModeType modeType = GameplayCtrl.Instance.GameModeType;
                 NetClientLocate.Log.LogWarning("发送开始游戏》》》》》", modeType);
 
                 StartGameC2s msg = new StartGameC2s();
@@ -43,29 +48,36 @@ namespace Game.UI
                 msg.gameMode = (int)modeType;
                 NetClientLocate.Net.Send((ushort)RoomMsgDefine.StartGameC2s, msg);
             });
+            OnJoinRoomS2c = new UINetworkMsgGlue(this, (ushort)RoomMsgDefine.JoinRoomS2c, (msgBody) =>
+            {
+                Refresh();
+            });
+
+            OnLeaveRoomS2c = new UINetworkMsgGlue(this, (ushort)RoomMsgDefine.LeaveRoomS2c, (msgBody) =>
+            {
+                Refresh();
+            });
+
+            OnRoomMembersChangeS2c = new UINetworkMsgGlue(this, (ushort)RoomMsgDefine.RoomMembersChangeS2c, (msgBody) =>
+            {
+                Refresh();
+            });
         }
 
         public override void OnShow()
         {
             Refresh();
-            transform.Find("Center/StartBtn").gameObject.SetActive(GameplayLocate.UserData.Room.CheckIsRoomMaster());
-
-            NetClientLocate.LocalToken.AddListen<JoinRoomS2c>((ushort)RoomMsgDefine.JoinRoomS2c, OnJoinRoomS2c);
-            NetClientLocate.LocalToken.AddListen<LeaveRoomS2c>((ushort)RoomMsgDefine.LeaveRoomS2c, OnLeaveRoomS2c);
-            NetClientLocate.LocalToken.AddListen<RoomMembersChangeS2c>((ushort)RoomMsgDefine.RoomMembersChangeS2c, OnRoomMembersChangeS2c);
+            transform.Find("Center/StartBtn").gameObject.SetActive(GameplayCtrl.Instance.GameData.CheckIsRoomMaster());
         }
 
         public override void OnHide()
         {
-            NetClientLocate.LocalToken.RemoveListen<JoinRoomS2c>((ushort)RoomMsgDefine.JoinRoomS2c, OnJoinRoomS2c);
-            NetClientLocate.LocalToken.AddListen<LeaveRoomS2c>((ushort)RoomMsgDefine.LeaveRoomS2c, OnLeaveRoomS2c);
-            NetClientLocate.LocalToken.RemoveListen<RoomMembersChangeS2c>((ushort)RoomMsgDefine.RoomMembersChangeS2c, OnRoomMembersChangeS2c);
         }
 
         private void Refresh()
         {
             Refresh_Info();
-            GameModeType modeType = GameplayLocate.UserData.Room.GameMode;
+            GameModeType modeType = GameplayCtrl.Instance.GameModeType;
             if (modeType == GameModeType.Local)
             {
                 Refresh_Local();
@@ -82,7 +94,7 @@ namespace Game.UI
 
         private void Refresh_Info()
         {
-            GameModeType modeType = GameplayLocate.UserData.Room.GameMode;
+            GameModeType modeType = GameplayCtrl.Instance.GameModeType;
             string modeStr = "单人";
             if (modeType == GameModeType.Team)
                 modeStr = "团队";
@@ -99,12 +111,12 @@ namespace Game.UI
         private void Refresh_Single()
         {
             singlePlayerInfoCache.RecycleAll();
-            List<PlayerInfo> players = GameplayLocate.UserData.Room.PlayerInfos;
-            for (int i = 0; i < players.Count; i++)
+            List<GamerData> gamers = GameplayCtrl.Instance.GameData.Gamers.Gamers;
+            for (int i = 0; i < gamers.Count; i++)
             {
-                PlayerInfo player = players[i];
-                GameObject playerGo = singlePlayerInfoCache.Take();
-                Refresh_PlayerInfo(playerGo, player);
+                GamerData gamer = gamers[i];
+                GameObject gamerGo = singlePlayerInfoCache.Take();
+                Refresh_PlayerInfo(gamerGo, gamer);
             }
         }
 
@@ -113,30 +125,9 @@ namespace Game.UI
 
         }
 
-        private void Refresh_PlayerInfo(GameObject playerGo, PlayerInfo info)
+        private void Refresh_PlayerInfo(GameObject playerGo, GamerData gamerData)
         {
 
         }
-
-        #region 网络消息
-
-        private void OnJoinRoomS2c(JoinRoomS2c c)
-        {
-            Refresh();
-        }
-
-        private void OnLeaveRoomS2c(LeaveRoomS2c c)
-        {
-            Refresh();
-        }
-
-
-        private void OnRoomMembersChangeS2c(RoomMembersChangeS2c c)
-        {
-            Refresh();
-        }
-
-
-        #endregion
     }
 }

@@ -1,5 +1,7 @@
+using Game.Network.Client;
 using Gameplay;
 using IAUI;
+using Proto;
 using UnityEngine;
 
 namespace Game.UI
@@ -59,7 +61,7 @@ namespace Game.UI
 
             if (modeType == GameModeType.Local)
             {
-                GameplayLocate.CreateGame(modeType, true);
+                //GameplayLocate.CreateGame(modeType, true);
                 Close();
             }
             else if (modeType == GameModeType.Single)
@@ -74,16 +76,12 @@ namespace Game.UI
 
         private void OnClickConnectMode(bool isCreateRoom)
         {
-            if (isCreateRoom)
-            {
-                GameplayLocate.CreateGame(currGameMode, true);
-                UILocate.UI.Show(UIPanelDef.RoomPanel);
-            }
-            else
-            {
-                GameplayLocate.CreateGame(currGameMode, false);
-                UILocate.UI.Show(UIPanelDef.RoomPanel);
-            }
+            GameplayCtrl.Instance.CreateGame(currGameMode, isCreateRoom);
         }
+
+        private UINetworkMsgGlue OnJoinRoomMsg = new UINetworkMsgGlue((ushort)RoomMsgDefine.JoinRoomS2c, (msgBody) =>
+        {
+            UILocate.UI.Show(UIPanelDef.RoomPanel);
+        });
     } 
 }

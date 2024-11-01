@@ -1,7 +1,5 @@
 ﻿using IAToolkit;
-using IAUI;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using YooAsset;
 
 namespace IAFramework.Server.Procedure
@@ -17,16 +15,10 @@ namespace IAFramework.Server.Procedure
             //业务层初始化
             Debug.Log("游戏初始化成功！！！！！！！！！！！");
             GameEnv.Init();
-            GameEnv.Asset.CreateGo("Test");
-
-            UIPanelCfg cfg = IAConfig.Config.UIPanelCfg[IAUI.UIPanelDef.MainGamePanel];
-            Debug.Log("UI"+cfg.script);
 
             //发送消息
             GamePatchData.Instance.SendProcessTips("游戏初始化成功 !");
-            GamePatchData.Instance.SetGameStartState(EGamePatchState.Success);
-
-            
+            GamePatchData.Instance.SetGamePatchState(EGamePatchState.Success);
         }
     }
 }

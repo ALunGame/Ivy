@@ -1,33 +1,64 @@
-﻿using IAEngine;
-using LiteNetLib;
+﻿using LiteNetLib;
 using LiteNetLib.Utils;
+using Proto;
 using ProtoBuf;
 using System;
-using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
 using UnityEngine;
 
 namespace Game.Network.Server
 {
-    internal class NetServer : MonoBehaviour, INetEventListener
+    public class NetServer : MonoBehaviour, INetEventListener
     {
         private NetManager netManager;
         private NetPacketProcessor packetProcessor;
+        //private ServerStateS2c serverState;
+
+        internal static NetworkLogicTimer LogicTimer { get; private set; }
+
+        public ushort Tick {  get; private set; }
+
+        #region 编辑器
+
+        public void OpenLog(bool pOpen)
+        {
+            NetServerLocate.Log.OpenLog = pOpen;
+        }
+
+        public bool GetOpenLogState()
+        {
+            return NetServerLocate.Log.OpenLog;
+        }
+
+        public void OpenLogWarn(bool pOpen)
+        {
+            NetServerLocate.Log.OpenWarn = pOpen;
+        }
+
+        public bool GetOpenLogWarnState()
+        {
+            return NetServerLocate.Log.OpenWarn;
+        }
+
+
+        #endregion
 
         #region Unity线程
 
         private void Awake()
         {
+            LogicTimer = new NetworkLogicTimer(OnLogicUpdate);
+
             packetProcessor = new NetPacketProcessor();
             packetProcessor.SubscribeReusable<DiscoveryPacket, IPEndPoint>(OnDiscoveryReceived);
-            packetProcessor.SubscribeReusable<JoinPacket, NetPeer>(OnJoinReceived);
             netManager = new NetManager(this)
             {
                 AutoRecycle = true,
                 BroadcastReceiveEnabled = true,
                 DisconnectTimeout = 500000000,          //临时
             };
+            //serverState = new ServerStateS2c();
 
             NetServerLocate.Init(this);
         }
@@ -35,12 +66,14 @@ namespace Game.Network.Server
         private void Update()
         {
             netManager.PollEvents();
+            LogicTimer.Update();
         }
 
         private void OnDestroy()
         {
             NetServerLocate.Clear();
             netManager.Stop();
+            LogicTimer.Stop();
         }
 
         private void OnApplicationQuit()
@@ -64,17 +97,7 @@ namespace Game.Network.Server
             _cachedProtoPacket.PutProtoTypeName(msgData.GetType().FullName);
             _cachedProtoPacket.PutMsgData(ProtoBufTool.Encode(msgData));
 
-            NetServerLocate.Log.LogWarning($"Broadcast:{msgId}->{msgData.GetType().FullName}");
-
-            //WriteSerializable(PacketType.Proto, _cachedProtoPacket);
-            //List<NetPeer> peers = NetServerLocate.TokenCenter.GetPeers(exPeer);
-            //if (peers.IsLegal())
-            //{
-            //    foreach (var item in peers)
-            //    {
-            //        item.Send(_cachedWriter.Data, 0, _cachedWriter.Length, 0, deliveryMethod);
-            //    }
-            //}
+            NetServerLocate.Log.Log($"<color=#FFBF00>Broadcast:{msgId}->{msgData.GetType().FullName}</color>");
             netManager.SendToAll(WriteSerializable(PacketType.Proto, _cachedProtoPacket), deliveryMethod, exPeer);
         }
 
@@ -87,8 +110,7 @@ namespace Game.Network.Server
             _cachedProtoPacket.PutProtoTypeName(msgData.GetType().FullName);
             _cachedProtoPacket.PutMsgData(ProtoBufTool.Encode(msgData));
 
-            NetServerLocate.Log.LogWarning($"SendTo:{msgId}->{msgData.GetType().FullName}");
-
+            NetServerLocate.Log.Log($"<color=#FFBF00>SendTo:{msgId}->{msgData.GetType().FullName}</color>");
             peer.Send(WriteSerializable(PacketType.Proto, _cachedProtoPacket), deliveryMethod);
         }
 
@@ -110,7 +132,18 @@ namespace Game.Network.Server
             if (netManager.IsRunning)
                 return;
             netManager.Start(NetworkGeneral.ServerPort);
+            LogicTimer.Start();
             NetServerLocate.Log.Log("服务器启动成功：", NetworkGeneral.ServerPort);
+        }
+
+        private void OnLogicUpdate()
+        {
+            Tick = (ushort)((Tick + 1) % NetworkGeneral.MaxGameSequence);
+            if (Tick % 2 == 0)
+            {
+                //serverState.Tick = Tick;
+            }
+            NetServerLocate.GameCtrl.UpdateLogic();
         }
 
         /// <summary>
@@ -130,9 +163,6 @@ namespace Game.Network.Server
             PacketType pt = (PacketType)packetType;
             switch (pt)
             {
-                case PacketType.JoinRoom:
-                    packetProcessor.ReadAllPackets(reader, peer);
-                    break;
                 case PacketType.Proto:
                     NetServerLocate.TokenCenter.OnReceiveMsg(peer, reader);
                     break;
@@ -186,17 +216,6 @@ namespace Game.Network.Server
         }
 
         /// <summary>
-        /// 请求加入房间
-        /// </summary>
-        /// <param name="packet"></param>
-        /// <param name="peer"></param>
-        private void OnJoinReceived(JoinPacket packet, NetPeer peer)
-        {
-            Debug.Log("[S] Join packet received: " + packet.UserName);
-            //NetServerLocate.TokenCenter.TokenEnter(peer, packet);
-        }
-
-        /// <summary>
         /// 客户端请求链接
         /// </summary>
         /// <param name="request"></param>
@@ -209,6 +228,7 @@ namespace Game.Network.Server
         public void OnPeerConnected(NetPeer peer)
         {
             NetServerLocate.Log.Log("[S] Player connected: ", peer.EndPoint);
+            NetServerLocate.TokenCenter.TokenEnter(peer);
         }
 
         public void OnPeerDisconnected(NetPeer peer, DisconnectInfo disconnectInfo)
@@ -237,7 +257,5 @@ namespace Game.Network.Server
         {
             
         }
-
-
     }
 }

@@ -1,15 +1,4 @@
-﻿using Game.Network.Client;
-using Gameplay;
-using Gameplay.Player;
-using IAUI;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Unity.VisualScripting;
-using UnityEngine;
-using UnityEngine.UI;
+﻿using IAUI;
 
 namespace Game.UI
 {

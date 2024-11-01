@@ -1,5 +1,6 @@
 ﻿using System;
 using UnityEngine;
+using UnityEngine.Rendering.Universal;
 
 namespace IAUI
 {
@@ -8,6 +9,10 @@ namespace IAUI
     /// </summary>
     public class UICenter : MonoBehaviour
     {
+        [Header("UI相机")]
+        [SerializeField]
+        private Camera uiCamera;
+
         [Header("静态画布")]
         [SerializeField]
         private UICanvas staticCanvas;
@@ -16,16 +21,21 @@ namespace IAUI
         [SerializeField]
         private UICanvas dynamicCanvas;
 
-        public UICanvas StaticCanvas { get => staticCanvas;}
-        public UICanvas DynamicCanvas { get => dynamicCanvas;}
+        public UICanvas StaticCanvas { get => staticCanvas; }
+        public UICanvas DynamicCanvas { get => dynamicCanvas; }
+
+        public Camera UICamera { get => uiCamera; }
 
         private event Action updateFunc;
-        
+
         private event Action fixedUpdateFunc;
 
         private void Awake()
         {
-            DontDestroyOnLoad(this);
+        }
+
+        public void Init()
+        {
             UILocate.SetUICenter(this);
             UILocate.Init();
         }
@@ -53,7 +63,7 @@ namespace IAUI
         /// <param name="layer"></param>
         /// <param name="canvasType"></param>
         /// <returns></returns>
-        public RectTransform GetUILayerTrans(UILayer layer,UICanvasType canvasType = UICanvasType.Static)
+        public RectTransform GetUILayerTrans(UILayer layer, UICanvasType canvasType = UICanvasType.Static)
         {
             UICanvas canvas = canvasType == UICanvasType.Static ? StaticCanvas : dynamicCanvas;
             switch (layer)
@@ -86,7 +96,7 @@ namespace IAUI
             }
             updateFunc += pUpdateFunc;
         }
-        
+
         /// <summary>
         /// 清除Update函数
         /// </summary>
@@ -99,7 +109,7 @@ namespace IAUI
             }
             updateFunc -= pUpdateFunc;
         }
-        
+
         /// <summary>
         /// 注册Update函数
         /// </summary>
@@ -112,7 +122,7 @@ namespace IAUI
             }
             fixedUpdateFunc += pfixedUpdateFunc;
         }
-        
+
         /// <summary>
         /// 清除Update函数
         /// </summary>

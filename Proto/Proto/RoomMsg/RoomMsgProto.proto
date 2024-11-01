@@ -6,13 +6,15 @@ import "TypesProto.proto";
 //指定命名空间（可选参数）如果没有，则使用C#代码的命名空间。
 option csharp_namespace = "Proto";
 
-message join_player_info {
+message join_gamer_info {
 	required int32 id = 1;				//配置Id
 	required string name = 2;		//名字
+	required int32 fightMusicId = 3;		//战斗音乐Id
 }
 
 message CreateRoomC2s {
 	required int32 gameMode = 1;
+	required join_gamer_info gamer = 2;
 } 
 
 message CreateRoomS2c {
@@ -21,22 +23,22 @@ message CreateRoomS2c {
 } 
 
 message JoinRoomC2s {
-	required join_player_info player = 1;
+	required join_gamer_info gamer = 1;
 } 
 
 message JoinRoomS2c {
 	required int32 ret_code = 1;
 	required int32 gameMode = 2;
-	required int32 roomMasterPlayerUid = 3;
-	required int32 selfPlayerUid = 4;
+	required string roomMastergamerUid = 3;
+	required string selfgamerUid = 4;
 } 
 
 message LeaveRoomS2c {
-	required int32 playerUid = 1;
+	required string gamerUid = 1;
 } 
 
 message RoomMembersChangeS2c {
-	repeated player_info players = 1;
+	repeated gamer_info gamers = 1;
 } 
 
 message StartGameC2s {
@@ -48,7 +50,7 @@ message StartGameS2c {
 	required int32 ret_code = 1;
 	required int32 gameCfgId = 2;
 	required int32 gameMode = 3;
-	repeated player_info players = 4;
+	repeated gamer_info gamers = 4;
 }
 
 message EnterMapS2c {
@@ -56,40 +58,70 @@ message EnterMapS2c {
 	required int32 mapId = 2;
 }
 
-message PlayerMoveC2s {
-	required int32 playerUid = 1;
-	required net_vector2 moveDir = 2;
+//玩家输入
+message GamerInputC2s {
+	required string gamerUid = 1;
+	required int32 commandType = 2;			//命令类型
+	required float rotation = 3;			//当前旋转
+	required int32 serverTick = 4;			//服务器帧
+	required int32 commandTick = 5;			//命令帧
 }
 
-message PlayerMoveS2c {
-	required int32 ret_code = 1;
-	required int32 playerUid = 2;
-	required net_vector2 movePos = 3;
+//玩家输入返回
+message GamerInputS2c {
+	required string gamerUid = 1;
+	required int32 moveClickType = 2;			//此次移动结果
+	required float speed = 3;					//此次移动速度
+	required int32 commandTick = 4;				//命令帧
 }
 
-message PlayerDieS2c {
-	required int32 diePlayerUid = 1;
-	required int32 rebornTime = 2;		//复活时间
-	required int32 killerPlayerUid = 3;
+//玩家基础状态
+message GamerBaseState {
+	required string gamerUid = 1;
+	required net_vector2 pos = 2;			//玩家位置
+	required int32 rotation = 3;			//玩家旋转
+	required int32 commandTick = 4;			//命令帧
 }
 
-message PlayerRebornS2c {
-	required int32 ret_code = 1;
-	required int32 playerUid = 2;
-	required net_vector2 pos = 3;		//复活位置
+//服务器状态
+message ServerStateS2c {
+	required int32 serverTick = 1;				//服务器帧
+	required int32 commandTick = 2;				//命令帧
+	required int32 gameTime = 3;				//游戏时间
+	repeated GamerBaseState gamerStates = 4;	//玩家状态
 }
 
-message PlayerPathChangeS2c {
-	required int32 playerUid = 1;
+//地图格子阵营同步
+message ChangeGridCampS2c {
+	required net_vector2 gridPos = 1;		//格子位置
+	required int32 camp = 2;				//阵营 
+}
+
+//玩家路径改变
+message GamerPathChangeS2c {
+	required string gamerUid = 1;
 	required int32 operate = 2;			    	//1,Add 2,Remove 3,Clear
 	required net_vector2 pos = 3;				//路径点
 }
 
-message CampAreaChangeS2c {
-	required int32 camp = 1;
-	required net_vector2 pos = 2;				//区域点
+message gamer_die_info {
+	required string gamerUid = 1;			//死亡玩家Uid
+	required int32 rebornTime = 2;			//复活倒计时秒
+	required string killergamerUid = 3;		//击杀玩家Uid
 }
 
+//玩家死亡
+message GamerDieS2c {
+	repeated gamer_die_info dieGamerInfos = 1;	//死亡玩家信息
+}
+
+//玩家复活
+message GamerRebornS2c {
+	required string gamerUid = 1;
+	required net_vector2 pos = 2;		//复活位置
+}
+
+//游戏结束
 message GameEndS2c {
-	repeated player_info players = 1;
+	repeated gamer_info gamers = 1;
 }

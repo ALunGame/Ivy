@@ -54,7 +54,7 @@ namespace Game.Network
     {
         internal #ClassName#(#MappingClass# InMapping) : base(InMapping)
         {
-            #AddDispatch#
+#AddDispatch#
         }
         
         #DispatcherFunc#
@@ -62,15 +62,11 @@ namespace Game.Network
     }
 }
 ";
-            string fileStr2 = @"
-            AddDispatch<#MsgDefine#>((ushort)#PackageName#Define.#MsgDefine#,On#MsgDefine#);
-";
+            string fileStr2 = @"            AddDispatch<#MsgDefine#>((ushort)#PackageName#Define.#MsgDefine#,On#MsgDefine#);";
 
             string funcServer = @"
         private void On#MsgDefine#(LiteNetLib.NetPeer peer, #MsgDefine# MsgData)
-        {
-#FuncContent#
-        }
+        {#FuncContent#}
 ";
 
             string funcClient = @"
@@ -91,7 +87,7 @@ namespace Game.Network
                 MsgDefine define = msgPackage.msgs[i];
                 if (define.msgCodeName.Contains(checkMsgCode))
                 {
-                    string tDispatchStr = fileStr2;
+                    string tDispatchStr = fileStr2 + "\n";
                     tDispatchStr = tDispatchStr.Replace("#MsgDefine#", define.msgCodeName);
                     tDispatchStr = tDispatchStr.Replace("#PackageName#", msgPackage.packageName);
                     resAddDispatchStr += tDispatchStr;
@@ -151,11 +147,11 @@ namespace Game.Network
                     contentStr = matchStr.Value;
                     if (contentStr.Length >= 2)
                     {
-                        if (contentStr[0] == '\n')
+                        if (contentStr[0] == '\n' || contentStr[0] == ' ')
                         {
                             contentStr.Remove(0);
                         }
-                        if (contentStr[contentStr.Length - 1] == '\n')
+                        if (contentStr[contentStr.Length - 1] == '\n' || contentStr[contentStr.Length - 1] == ' ')
                         {
                             contentStr.Remove(contentStr.Length - 1);
                         }

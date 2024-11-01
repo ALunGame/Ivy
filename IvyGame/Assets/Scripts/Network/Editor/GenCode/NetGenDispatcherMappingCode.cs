@@ -24,20 +24,18 @@ namespace #NameSpace#
     {
         internal #ClassName#()
         {
-            #AddDispatcher#
+#AddDispatcher#
         }
     }
 }
 ";
-            string fileStr2 = @"
-            AddDispatcher(new #TitleStr##PackageName#Dispatcher(this));
-";
+            string fileStr2 = @"            AddDispatcher(new #TitleStr##PackageName#Dispatcher(this));";
 
             string resAddDispatcherStr = "";
 
             foreach (MsgDefinePackage package in mapping.msgPackages)
             {
-                string tStr = fileStr2;
+                string tStr = fileStr2 + "\n";
                 tStr = tStr.Replace("#TitleStr#", titleStr);
                 tStr = tStr.Replace("#PackageName#", package.packageName);
                 resAddDispatcherStr += tStr;

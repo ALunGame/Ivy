@@ -5,7 +5,6 @@ namespace Game.Network.CDispatcher
     {
         internal CDispatcherMapping()
         {
-            
             AddDispatcher(new CRoomMsgDispatcher(this));
 
         }

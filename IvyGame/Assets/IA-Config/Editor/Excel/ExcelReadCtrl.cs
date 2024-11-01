@@ -34,12 +34,15 @@ namespace IAConfig.Excel
         {
             List<GenConfigInfo> configs = ReadBaseExcel(true);
             ExcelGenCode genCode = new ExcelGenCode();
-            genCode.Clear();
+            genCode.Init();
+
             foreach (GenConfigInfo info in configs)
             {
                 genCode.GenCommonExcelCode(info);
             }
+
             genCode.Save();
+
             
             //生成映射代码
             ExcelGenConfigMappingCode mappingCode = new ExcelGenConfigMappingCode();

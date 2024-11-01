@@ -9,7 +9,6 @@ namespace IAUI
         private Transform _ComTrans;
         private Action _BtnCallBack;
         
-        
         public UIBtnGlue(string pComPath, Action pBtnCallBack)
         {
             _BtnCallBack = pBtnCallBack;

@@ -126,6 +126,34 @@ namespace IAUI
             {
                 item.Destroy();
             }
+
+            activePanelDict.Clear();
+            cachePanelDict.Clear();
+        }
+
+        public void DestroyAllPanel(UIPanelDef exPaneId)
+        {
+            List<UIPanelDef> removeList = new List<UIPanelDef>();
+            foreach (var item in activePanelDict.Keys)
+            {
+                if (item != exPaneId)
+                {
+                    removeList.Add(item);
+                }
+            }
+
+            foreach (var item in removeList)
+            {
+                activePanelDict[item].Hide();
+                activePanelDict[item].Destroy();
+                activePanelDict.Remove(item);
+            }
+
+            foreach (var item in cachePanelDict.Values)
+            {
+                item.Destroy();
+            }
+            cachePanelDict.Clear();
         }
 
         #region 创建界面

@@ -14,17 +14,27 @@ namespace IAUI
         None,
 
         /// <summary>
+        /// 开始游戏界面
+        /// </summary>
+        StartGamePanel,
+
+        /// <summary>
+        /// 关卡加载界面
+        /// </summary>
+        LevelLoadingPanel,
+
+        /// <summary>
         /// 主游戏界面
         /// </summary>
         MainGamePanel,
 
         /// <summary>
-        /// 游戏房间界面
+        /// 房间界面
         /// </summary>
         RoomPanel,
 
         /// <summary>
-        /// 游戏战斗界面
+        /// 战斗界面
         /// </summary>
         FightPanel,
 

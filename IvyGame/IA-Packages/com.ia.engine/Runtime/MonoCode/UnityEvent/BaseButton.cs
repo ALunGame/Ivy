@@ -159,6 +159,20 @@ namespace IAEngine
         }
 
         /// <summary>
+        /// 检测是否有点击监听
+        /// </summary>
+        /// <returns></returns>
+        public bool HasClickEvent()
+        {
+            return onClick != null;
+        }
+
+        public void ExecuteClickFunc(PointerEventData pointerEvent)
+        {
+            onClick?.Invoke(pointerEvent);
+        }
+
+        /// <summary>
         /// 设置按下事件
         /// </summary>
         /// <param name="callback"></param>
