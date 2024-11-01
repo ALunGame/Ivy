@@ -12,17 +12,23 @@ namespace Game.UI
     public class LevelLoadingPanel : UIPanel<LevelLoadingPanel_Model>
     {
         private UIComGlue<Slider> processSlider = new UIComGlue<Slider>("Bottom/Process");
+        private Tween silderTween;
 
         public override void OnShow()
         {
             ShowProcess();
         }
 
+        public override void OnHide()
+        {
+            silderTween?.Kill();
+        }
+
         private void ShowProcess()
         {
             Slider slider = processSlider.Com;
             slider.value = 0;
-            slider.DOValue(1, BindModel.processTime);
+            silderTween = slider.DOValue(1, BindModel.processTime);
         }
     }
 }

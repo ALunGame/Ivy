@@ -1,4 +1,5 @@
-﻿using IAUI;
+﻿using Gameplay;
+using IAUI;
 
 namespace Game.UI
 {
@@ -9,11 +10,13 @@ namespace Game.UI
 
     internal class GameEndPanel : UIPanel<FightPanel_Model>
     {
-        public override void OnShow()
+        public override void OnAwake()
         {
-            base.OnShow();
+            BtnUtil.SetClick(transform, "Center/BackBtn", () =>
+            {
+                GameplayGlobal.Ctrl.ExitGame();
+                UILocate.UI.Show(UIPanelDef.MainGamePanel);
+            });
         }
-
-
     }
 }

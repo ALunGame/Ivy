@@ -43,5 +43,15 @@ namespace Gameplay.GameMode
         {
             Mode.StartGame(pGameLevelId);
         }
+
+        public override void OnEndGame()
+        {
+            Mode.EndGame();
+        }
+
+        public override void OnExitGame()
+        {
+            Mode.ExitGame();
+        }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using IAUI;
 using ProtoBuf;
 using System;
+using UnityEngine;
 
 namespace Game.Network.Client
 {
@@ -25,6 +26,7 @@ namespace Game.Network.Client
         {
             base.OnAfterShow(panel);
             NetworkEvent.RegisterEvent(panel.GetType().Name, msgId, msgFunc);
+            Debug.LogError($"OnAfterShow-->{panel.GetType().Name}::{msgId}");
         }
 
         public override void OnHide(InternalUIPanel panel)

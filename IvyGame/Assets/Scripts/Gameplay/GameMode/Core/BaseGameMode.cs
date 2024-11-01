@@ -78,6 +78,11 @@ namespace Gameplay.GameMode
 
         public virtual void EndGame() { }
 
+        public virtual void ExitGame() 
+        {
+            Clear();
+        }
+
         #endregion
 
         #region 网络事件相关

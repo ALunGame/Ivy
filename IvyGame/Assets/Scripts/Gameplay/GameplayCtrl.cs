@@ -5,6 +5,7 @@ using Gameplay.GameMap;
 using Gameplay.GameMode;
 using Gameplay.Map;
 using IAToolkit;
+using IAUI;
 using Proto;
 using System;
 using UnityEngine;
@@ -58,7 +59,19 @@ namespace Gameplay
 
         public GameDataCtrl GameData { get; private set; }
 
-        protected override void OnInit()
+        private void Update()
+        {
+            UpdateLogic();
+        }
+
+        private void OnApplicationQuit()
+        {
+            ClearLogic();
+        }
+
+        #region 逻辑生命周期
+
+        private void InitLogic()
         {
             State = GameState.None;
 
@@ -66,18 +79,6 @@ namespace Gameplay
             GameTime = 0.0f;
             GameDeltaTime = Time.deltaTime;
 
-            InitLogic();
-        }
-
-        private void Update()
-        {
-            UpdateLogic();
-        }
-
-        #region 逻辑生命周期
-
-        private void InitLogic()
-        {
             GameMode = new GameModeCtrl();
             GameMode.Init(this);
 
@@ -119,6 +120,8 @@ namespace Gameplay
         /// <param name="pNeedCreateRoom">是否创建房间，房主</param>
         public void CreateGame(GameModeType pModeType, bool pNeedCreateRoom)
         {
+            InitLogic();
+
             GameModeType = pModeType;
 
             GameMode.OnCreateGame(pModeType, pNeedCreateRoom);
@@ -192,6 +195,8 @@ namespace Gameplay
             GameMap.OnEndGame();
 
             State = GameState.End;
+
+            UILocate.UI.Show(UIPanelDef.GameEndPanel);
         }
 
         public void ExitGame()
@@ -199,6 +204,9 @@ namespace Gameplay
             GameMode.OnExitGame();
             GameData.OnExitGame();
             GameMap.OnExitGame();
+
+            ClearLogic();
+            GameObject.Destroy(this);
         }
 
         #endregion

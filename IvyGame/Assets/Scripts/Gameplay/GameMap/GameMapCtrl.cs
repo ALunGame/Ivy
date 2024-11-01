@@ -62,7 +62,6 @@ namespace Gameplay.GameMap
                 system.Init(this);
 
             ActorEvent.Init();
-            SystemEvent.Init();
         }
 
         public override void OnUpdateLogic(float pDeltaTime, float pGameTime)
@@ -80,7 +79,6 @@ namespace Gameplay.GameMap
                 system.Clear();
 
             ActorEvent.Clear();
-            SystemEvent.Clear();
         }
 
         public override void OnEnterMap(int pMapId)
@@ -92,7 +90,6 @@ namespace Gameplay.GameMap
             }
 
             ActorEvent.Clear();
-            SystemEvent.Clear();
 
             //打开界面
             LevelLoadingPanel_Model uiModel = UILocate.UI.GetPanelModel<LevelLoadingPanel_Model>(UIPanelDef.LevelLoadingPanel);
@@ -146,6 +143,25 @@ namespace Gameplay.GameMap
                 systems[systemIndex].OnStartGame();
         }
 
+        public override void OnExitGame()
+        {
+            ActorEvent.Clear();
+
+            //删除上一个地图
+            if (MapTrans != null)
+            {
+                MapState = GameMapState.UnLoad;
+
+                for (int systemIndex = 0; systemIndex < systems.Count; systemIndex++)
+                    systems[systemIndex].OnBeforeExitMap();
+
+                GameObject.Destroy(MapTrans.gameObject);
+
+                for (int systemIndex = 0; systemIndex < systems.Count; systemIndex++)
+                    systems[systemIndex].OnExitMap();
+            }
+        }
+
         public T GetSystem<T>() where T : BaseGameMapSystem
         {
             foreach (var item in systems)
@@ -168,9 +184,6 @@ namespace Gameplay.GameMap
             {
                 return;
             }
-
-            //ActorMoveSystem moveSystem = GameplayCtrl.Instance.LevelCtrl.GetSystem<ActorMoveSystem>();
-            //moveSystem.MoveTo(MapHelper.GetPlayerActor(), UIEventHelper.PointerToWorldPos(pEventData));
         }
     }
 }

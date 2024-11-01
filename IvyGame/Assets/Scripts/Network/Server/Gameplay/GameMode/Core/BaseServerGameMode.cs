@@ -49,6 +49,11 @@ namespace Game.Network.Server
 
         public virtual void EndGame() { }
 
+        public virtual void ExitGame()
+        {
+            Clear();
+        }
+
         #endregion
 
         #region 游戏规则

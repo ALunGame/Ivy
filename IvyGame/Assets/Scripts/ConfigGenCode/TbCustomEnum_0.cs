@@ -29,6 +29,11 @@ namespace IAUI
         MainGamePanel,
 
         /// <summary>
+        /// 游戏结束界面
+        /// </summary>
+        GameEndPanel,
+
+        /// <summary>
         /// 房间界面
         /// </summary>
         RoomPanel,

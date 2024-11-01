@@ -28,6 +28,7 @@ namespace Gameplay.GameData
             {
                 Gamers[i].Clear();
             }
+            Gamers.Clear();
         }
 
         public GamerData GetGamer(string pGamerUid)

@@ -59,7 +59,6 @@ namespace Game.Network.Client
         {
             netManager.Stop();
             LogicTimer.Stop();
-            NetworkEvent.Clear();
         }
 
         private void OnApplicationQuit()
@@ -70,7 +69,6 @@ namespace Game.Network.Client
         }
 
         #endregion
-
 
         #region 编辑器
 
@@ -162,11 +160,26 @@ namespace Game.Network.Client
 
         #endregion
 
+        /// <summary>
+        /// 连接服务器
+        /// </summary>
+        /// <param name="endPoint"></param>
+        /// <param name="onConnected"></param>
+        /// <param name="onDisconnected"></param>
         public void Connect(IPEndPoint endPoint, Action onConnected, Action<DisconnectInfo> onDisconnected)
         {
             this.onConnected = onConnected;
             this.onDisconnected = onDisconnected;
             netManager.Connect(endPoint, NetworkGeneral.NetConnectKey);
+        }
+
+        /// <summary>
+        /// 断开连接
+        /// </summary>
+        public void Disconnect() 
+        {
+            netManager.Stop();
+            NetworkEvent.Clear();
         }
 
         /// <summary>

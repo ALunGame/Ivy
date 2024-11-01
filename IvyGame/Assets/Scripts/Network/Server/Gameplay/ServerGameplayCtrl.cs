@@ -82,7 +82,10 @@ namespace Game.Network.Server
             float deltaTime = GameDeltaTime * TimeScale;
             GameTime -= deltaTime;
             if (GameTime < 0.0f)
+            {
                 GameTime = 0.0f;
+
+            }
 
             GameMode.UpdateLogic(deltaTime, GameTime);
             GameData.UpdateLogic(deltaTime, GameTime);  

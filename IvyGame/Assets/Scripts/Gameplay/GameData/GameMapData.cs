@@ -43,10 +43,16 @@ namespace Gameplay.GameData
             Debug.LogError("GameMapData::OnEnterMap-->>>");
         }
 
+
         public void OnStartGame(int pGameLvelId)
         {
             GameLevelCfg cfg = IAConfig.Config.GameLevelCfg[pGameLvelId];
             Debug.LogError("GameMapData::OnStartGame-->>>");
+        }
+
+        public override void OnClear()
+        {
+            mapGrid.Clear();
         }
 
         private void CreateMapGrids(MapCfg pMapCfg)

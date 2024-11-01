@@ -1,9 +1,6 @@
 ﻿using Game.Network;
 using Game.Network.Client;
 using Game.Network.Server;
-using Gameplay.GameData;
-using Gameplay.GameMap.Actor;
-using Gameplay.GameMap.System;
 using Proto;
 using UnityEngine;
 
@@ -58,10 +55,12 @@ namespace Gameplay.GameMode
         {
             if (Server != null)
             {
+                Server.EndServer();
                 GameObject.Destroy(Server.gameObject);
             }
             if (Client != null)
             {
+                Client.Disconnect();
                 GameObject.Destroy(Client.gameObject);
             }
         }

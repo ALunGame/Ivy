@@ -46,7 +46,7 @@ namespace Game.Network.Server
             Log = null;
             TokenCenter = null;
 
-            GameCtrl.Clear();
+            GameCtrl?.Clear();
             GameCtrl = null;
         }
     }

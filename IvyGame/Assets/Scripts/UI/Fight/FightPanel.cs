@@ -7,6 +7,7 @@ using Proto;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using static UnityEditor.Progress;
 
 namespace Game.UI
 {
@@ -31,6 +32,7 @@ namespace Game.UI
 
         private UINetworkMsgGlue OnGamerDieS2c;
 
+        private Tween drumsCenterTween;
         private Dictionary<GameObject, Tween> drumsTweenDict = new Dictionary<GameObject, Tween>(); 
         private LocalGamerData gamerData;
 
@@ -72,6 +74,16 @@ namespace Game.UI
         {
             CreateDrums();
             RefreshGamerInfos();
+        }
+
+        public override void OnHide()
+        {
+            drumsCenterTween?.Kill();
+            foreach (var item in drumsTweenDict.Values)
+            {
+                item.Kill();
+            }
+            drumsTweenDict.Clear();
         }
 
         private void Update()
@@ -173,7 +185,7 @@ namespace Game.UI
 
             //中间节奏提示
             Transform drumsTipTrans = drumsBoxTrans.Com.transform.Find("DrumsTip");
-            drumsTipTrans.DOScaleY(1.5f, drumTime).SetLoops(-1, LoopType.Restart).SetEase(Ease.Linear);
+            drumsCenterTween = drumsTipTrans.DOScaleY(1.5f, drumTime).SetLoops(-1, LoopType.Restart).SetEase(Ease.Linear);
         }
 
         private void HandleMoveTween(GameObject pDrumsGo, float pStartX, float pMoveTime, float pDir)

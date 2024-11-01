@@ -43,6 +43,11 @@ namespace Game.Network.Server
             Mode.StartGame(pGameLevelId);
         }
 
+        public override void OnUpdateLogic(float pDeltaTime, float pGameTime)
+        {
+            Mode.UpdateLogic(pDeltaTime, pGameTime);
+        }
+
         #region 游戏规则
 
         public virtual void GamerDie(List<string> pDieGamerUids, string pKillGamerUid)

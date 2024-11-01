@@ -13,7 +13,6 @@ namespace Game.Network.Server
     {
         private NetManager netManager;
         private NetPacketProcessor packetProcessor;
-        //private ServerStateS2c serverState;
 
         internal static NetworkLogicTimer LogicTimer { get; private set; }
 
@@ -134,6 +133,17 @@ namespace Game.Network.Server
             netManager.Start(NetworkGeneral.ServerPort);
             LogicTimer.Start();
             NetServerLocate.Log.Log("服务器启动成功：", NetworkGeneral.ServerPort);
+        }
+
+        /// <summary>
+        /// 关闭服务器
+        /// </summary>
+        public void EndServer()
+        {
+            if (!netManager.IsRunning)
+                return;
+            netManager.Stop();
+            NetServerLocate.Clear();
         }
 
         private void OnLogicUpdate()
