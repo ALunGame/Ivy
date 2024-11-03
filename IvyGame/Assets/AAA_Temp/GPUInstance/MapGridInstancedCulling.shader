@@ -73,6 +73,7 @@ Shader "Custom/URP/MapGridInstanced Culling"
                 float2 uv : TEXCOORD0;
                 float4 normalWSAndFogFactor : TEXCOORD1;
                 float3 positionWS : TEXCOORD2;
+                float4 color: TEXCOORD3;
             };
 
             Varyings Vertex(Attributes IN, uint instanceID : SV_InstanceID)
@@ -80,8 +81,8 @@ Shader "Custom/URP/MapGridInstanced Culling"
                 Varyings OUT;
 
                 #if SHADER_TARGET >= 45
-                float4x4 data = _AllMatricesBuffer[_VisibleIDsBuffer[instanceID]].instanceToObjectMatrix;
-				float4 color = _AllMatricesBuffer[_VisibleIDsBuffer[instanceID]].color;
+                float4x4 data = _AllMatricesBuffer[instanceID].instanceToObjectMatrix;
+				float4 color = _AllMatricesBuffer[instanceID].color;
                 #else
                 float4x4 data = 0;
                 float4 color = float4(1.0f, 1.0f, 1.0f, 1.0f);
@@ -98,6 +99,7 @@ Shader "Custom/URP/MapGridInstanced Culling"
                 float3 normalWS = normalize(mul(data, float4(IN.normalOS, 0))).xyz;
                 float fogFactor = ComputeFogFactor(OUT.positionCS.z);
                 OUT.normalWSAndFogFactor = float4(normalWS, fogFactor);
+                OUT.color = color;
 
                 return OUT;
             }
@@ -119,7 +121,7 @@ Shader "Custom/URP/MapGridInstanced Culling"
                 half4 color = half4(albedo.rgb * diffuse + specular + ambient, 1.0);
                 float fogFactor = IN.normalWSAndFogFactor.w;
                 color.rgb = MixFog(color.rgb, fogFactor);
-                return color;
+                return color * IN.color;
             }
             ENDHLSL
         }
@@ -157,8 +159,8 @@ Shader "Custom/URP/MapGridInstanced Culling"
                 Varyings OUT;
         
                 #if SHADER_TARGET >= 45
-                float4x4 data = _AllMatricesBuffer[_VisibleIDsBuffer[instanceID]].instanceToObjectMatrix;
-				float4 color = _AllMatricesBuffer[_VisibleIDsBuffer[instanceID]].color;
+                float4x4 data = _AllMatricesBuffer[instanceID].instanceToObjectMatrix;
+				float4 color = _AllMatricesBuffer[instanceID].color;
                 #else
                 float4x4 data = 0;
                 float4 color = float4(1.0f, 1.0f, 1.0f, 1.0f);

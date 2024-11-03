@@ -1406,7 +1406,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 264798bda8c17f94c9546bf32582e7ff, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  MapSize: {x: 100, y: 100}
+  MapSize: {x: 1000, y: 1000}
   GridMesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
   GridMaterial: {fileID: 2100000, guid: 8b5607d1985383f4db1032170a88bf4b, type: 2}
   GridBoundMin: {x: -0.5, y: -0.5, z: -0.5}

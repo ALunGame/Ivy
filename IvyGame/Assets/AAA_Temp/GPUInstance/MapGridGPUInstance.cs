@@ -60,20 +60,20 @@ namespace Test
             // 更新Buffer
             UpdateBuffers();
 
-            TestAnim();
+            //TestAnim();
 
-            // 视锥剔除
-            GeometryUtility.CalculateFrustumPlanes(Camera.main, cameraFrustumPlanes);
-            for (int i = 0; i < cameraFrustumPlanes.Length; i++)
-            {
-                var normal = -cameraFrustumPlanes[i].normal;
-                frustumPlanes[i] = new Vector4(normal.x, normal.y, normal.z, -cameraFrustumPlanes[i].distance);
-            }
+            //// 视锥剔除
+            //GeometryUtility.CalculateFrustumPlanes(Camera.main, cameraFrustumPlanes);
+            //for (int i = 0; i < cameraFrustumPlanes.Length; i++)
+            //{
+            //    var normal = -cameraFrustumPlanes[i].normal;
+            //    frustumPlanes[i] = new Vector4(normal.x, normal.y, normal.z, -cameraFrustumPlanes[i].distance);
+            //}
 
-            visibleIDsBuffer.SetCounterValue(0);
-            CullingComputeShader.SetVectorArray("_FrustumPlanes", frustumPlanes);
-            CullingComputeShader.Dispatch(kernel, Mathf.CeilToInt(instanceCount / 640f), 1, 1);
-            ComputeBuffer.CopyCount(visibleIDsBuffer, argsBuffer, sizeof(uint));
+            //visibleIDsBuffer.SetCounterValue(0);
+            //CullingComputeShader.SetVectorArray("_FrustumPlanes", frustumPlanes);
+            //CullingComputeShader.Dispatch(kernel, Mathf.CeilToInt(instanceCount / 640f), 1, 1);
+            //ComputeBuffer.CopyCount(visibleIDsBuffer, argsBuffer, sizeof(uint));
 
             // 渲染
             Bounds renderBounds = new Bounds(Vector3.zero, new Vector3(200.0f, 200.0f, 200.0f));
