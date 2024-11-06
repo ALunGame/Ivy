@@ -83,10 +83,14 @@ Shader "Custom/URP/MapGridInstanced Culling"
                 #if SHADER_TARGET >= 45
                 float4x4 data = _AllMatricesBuffer[instanceID].instanceToObjectMatrix;
 				float4 color = _AllMatricesBuffer[instanceID].color;
+
+                // float4x4 data = _AllMatricesBuffer[_VisibleIDsBuffer[instanceID]].instanceToObjectMatrix;
+				// float4 color = _AllMatricesBuffer[_VisibleIDsBuffer[instanceID]].color;
                 #else
                 float4x4 data = 0;
                 float4 color = float4(1.0f, 1.0f, 1.0f, 1.0f);
                 #endif
+
                 // float3 positionWS = mul(mul(unity_ObjectToWorld, data), IN.positionOS).xyz;
                 float3 positionWS = mul(data, IN.positionOS).xyz;
                 OUT.positionWS = positionWS;
@@ -161,6 +165,9 @@ Shader "Custom/URP/MapGridInstanced Culling"
                 #if SHADER_TARGET >= 45
                 float4x4 data = _AllMatricesBuffer[instanceID].instanceToObjectMatrix;
 				float4 color = _AllMatricesBuffer[instanceID].color;
+
+                // float4x4 data = _AllMatricesBuffer[_VisibleIDsBuffer[instanceID]].instanceToObjectMatrix;
+				// float4 color = _AllMatricesBuffer[_VisibleIDsBuffer[instanceID]].color;
                 #else
                 float4x4 data = 0;
                 float4 color = float4(1.0f, 1.0f, 1.0f, 1.0f);

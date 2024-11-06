@@ -12,7 +12,7 @@ namespace Gameplay.GameMap.Actor
 
         public override void UpdateLogic(float pTimeDelta, float pGameTime)
         {
-            SetPos(Vector2.Lerp(Data.LastPosition, Data.Position, NetworkLogicTimer.FixedDelta * 3));
+            SetPos(Vector3.MoveTowards(GetPos(), new Vector3(Data.Position.x, 0, Data.Position.y) , Data.MoveSpeed * pTimeDelta));
         }
     }
 }
