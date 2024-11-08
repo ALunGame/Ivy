@@ -13,6 +13,7 @@ namespace Gameplay.GameData
 
         private GamerInputC2s inputCommand;
         private Vector2 inputMoveDir;
+        private Vector2 lastInputMoveDir;
         private bool waitSyncState;
 
         public LocalGamerData(GamerInfo pInfo) : base(pInfo)
@@ -48,6 +49,7 @@ namespace Gameplay.GameData
 
             waitSyncState = true;
 
+            lastInputMoveDir = inputMoveDir;
             inputMoveDir = Vector2.zero;
 
             if (inputCommand.commandType == PlayerInputCommand.Move_Down)
@@ -58,6 +60,18 @@ namespace Gameplay.GameData
                 inputMoveDir.x = -1f;
             if (inputCommand.commandType == PlayerInputCommand.Move_Right)
                 inputMoveDir.x = 1f;
+
+            //切换到水平移动
+            if (lastInputMoveDir.x == 0 && inputMoveDir.x != 0)
+            {
+                Position = new Vector2(Position.x, (int)Position.y);
+            }
+            
+            //切换到竖直移动
+            if (lastInputMoveDir.y == 0 && inputMoveDir.y != 0)
+            {
+                Position = new Vector2((int)Position.x, Position.y);
+            }
         }
 
         public override void UpdateLogic(float pTimeDelta, float pGameTime)

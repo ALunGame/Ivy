@@ -78,6 +78,7 @@ namespace Game.Network.Server
         /// </summary>
         public float MoveSpeed { get; protected set; }
         public Vector2 MoveInputDir { get; protected set; }
+        public Vector2 LastMoveInputDir { get; protected set; }
         private MoveClickType buffAddSpeedType;
         private float buffAddSpeed;
         private float buffAddSpeedTime;
@@ -223,6 +224,7 @@ namespace Game.Network.Server
             //    return;
             //LastCommandTick = pMsg.commandTick;
 
+            LastMoveInputDir = MoveInputDir;
             Vector2 velocity = Vector2.zero;
 
             if (pMsg.commandType == PlayerInputCommand.Move_Up)
@@ -235,6 +237,18 @@ namespace Game.Network.Server
             if (pMsg.commandType == PlayerInputCommand.Move_Right)
                 velocity.x = 1f;
             MoveInputDir = velocity;
+
+            //切换到水平移动
+            if (LastMoveInputDir.x == 0 && MoveInputDir.x != 0)
+            {
+                Position = new Vector2(Position.x, (int)Position.y);
+            }
+            
+            //切换到竖直移动
+            if (LastMoveInputDir.y == 0 && MoveInputDir.y != 0)
+            {
+                Position = new Vector2((int)Position.x, Position.y);
+            }
 
             HandleInputMoveSpeedChange();
 

@@ -13,6 +13,7 @@ namespace Gameplay.GameMap.Actor
         public override void UpdateLogic(float pTimeDelta, float pGameTime)
         {
             SetPos(Vector3.MoveTowards(GetPos(), new Vector3(Data.Position.x, 0, Data.Position.y) , Data.MoveSpeed * pTimeDelta));
+            SetRotation(Quaternion.Euler(0, Data.Rotation, 0));
         }
     }
 }
