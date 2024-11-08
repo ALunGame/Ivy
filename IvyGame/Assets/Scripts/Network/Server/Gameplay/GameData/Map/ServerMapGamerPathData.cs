@@ -69,7 +69,13 @@ namespace Game.Network.Server
                 checkPoints[i] = new Vector2Int();
             }
             containPathRect = new RectInt(0,0,0,0);
+            pathRect = mapData.GetCampRect(Camp);
             currPoint = new Vector2Int(-1,-1);
+
+            NetServerLocate.Net.OnDrawGizmosFunc += ()=>{
+                //IAToolkit.GizmosHelper.DrawRect(pathRect, Color.black);
+                Gizmos.DrawCube(pathRect.center, new Vector3(pathRect.size.x, 10, pathRect.size.y));
+            };
         }
 
         public override void OnClear()
@@ -97,10 +103,13 @@ namespace Game.Network.Server
         /// <param name="pPosY"></param>
         public void AddPoint(Vector2Int pPoint)
         {
-            pathRect = mapData.GetCampRect(Camp);
+            if (pathDict.ContainsKey(pPoint.x) && pathDict[pPoint.x].ContainsKey(pPoint.y))
+                return;
 
-            TrySetRectX(pathRect, pPoint.x);
-            TrySetRectY(pathRect, pPoint.y);
+            //pathRect = mapData.GetCampRect(Camp);
+            Debug.LogError($"AddPoint更新区域00--->{pPoint}:{pathRect}");
+            RectEx.UpdateRect(ref pathRect, pPoint);
+            Debug.LogError($"AddPoint更新区域11--->{pPoint}:{pathRect}");
 
             UpdateContainPathRect();
 
@@ -116,6 +125,7 @@ namespace Game.Network.Server
                 {
                     PathPoint lastPoint = pathDict[currPoint.x][currPoint.y];
                     lastPoint.nextPoint = pathPoint;
+
                     pathPoint.lastPoint = lastPoint;
                 }
 
@@ -176,6 +186,7 @@ namespace Game.Network.Server
             if (pathDict.ContainsKey(pRemovePoint.x) && pathDict[pRemovePoint.x].ContainsKey(pRemovePoint.y))
                 pathDict[pRemovePoint.x].Remove(pRemovePoint.y);
 
+            Debug.LogWarning($"RemovePathPoint成功Server--{pRemovePoint}");
             //消息
             GamerPathChangeS2c msg = new GamerPathChangeS2c();
             msg.gamerUid = GamerUid;
@@ -194,10 +205,8 @@ namespace Game.Network.Server
             PathPoint last = pathDict[lastPoint.x][lastPoint.y];
             PathPoint check = pathDict[currPoint.x][currPoint.y];
 
-            last.nextPoint = check;
-
             List<PathPoint> list = new List<PathPoint>();
-            CalcPoint(check, list, check);
+            CalcPoint(last, list, check);
 
             List<Vector2Int> pointList = new List<Vector2Int>();
             foreach (PathPoint pathPoint in list)
@@ -206,9 +215,10 @@ namespace Game.Network.Server
             }
 
             //更新区域
-            pathRect = mapData.GetCampRect(Camp);
-            TrySetRectX(pathRect, check.point.x);
-            TrySetRectY(pathRect, check.point.y);
+            //pathRect = mapData.GetCampRect(Camp);
+            Debug.LogError($"RemovePath更新区域00--->{currPoint}:{pathRect}");
+            RectEx.UpdateRect(ref pathRect, currPoint);
+            Debug.LogError($"RemovePath更新区域11--->{currPoint}:{pathRect}");
 
             //清理
             check.nextPoint = null;
@@ -219,22 +229,19 @@ namespace Game.Network.Server
 
         private void CalcPoint(PathPoint point, List<PathPoint> pointList, PathPoint checkPoint)
         {
-            if (point.nextPoint == null)
+            if (point.lastPoint == null)
             {
                 return;
             }
 
-            if (point.nextPoint == checkPoint)
+            if (point.lastPoint == checkPoint)
             {
                 pointList.Add(point);
                 return;
             }
 
-            if (point != checkPoint)
-            {
-                pointList.Add(point);
-            }
-            CalcPoint(point.nextPoint, pointList, checkPoint);
+            pointList.Add(point);
+            CalcPoint(point.lastPoint, pointList, checkPoint);
         }
 
         #endregion
@@ -263,6 +270,7 @@ namespace Game.Network.Server
                 for (int y = pathRect.min.y; y <= pathRect.max.y; y++)
                 {
                     Vector2Int pos = new Vector2Int(x, y);
+                    Debug.LogError($"CaptureArea:Pos:{pos}--{!CheckInPath(pos)}-->{mapData.GetPointCamp(pos)};{Camp}");
                     //不在路径中并且阵营不同
                     if (!CheckInPath(pos) && mapData.GetPointCamp(pos) != Camp)
                     {
@@ -283,6 +291,7 @@ namespace Game.Network.Server
         //检测点是不是可以占领
         private bool CheckPointCanCapture(Vector2Int pPos)
         {
+            Debug.LogWarning($"CheckPointCanCapture:Pos:{pPos}");
             byte checkCnt = 0;
             //向左检测
             for (int leftX = pathRect.min.x; leftX <= pPos.x; leftX++)
@@ -372,7 +381,7 @@ namespace Game.Network.Server
 
         #region Helper
 
-        private void TrySetRectX(RectInt pRect, int pPosX)
+        private void TrySetRectX(ref RectInt pRect, int pPosX)
         {
             if (pPosX < pRect.min.x)
             {
@@ -384,7 +393,7 @@ namespace Game.Network.Server
             }
         }
 
-        private void TrySetRectY(RectInt pRect, int pPosY)
+        private void TrySetRectY(ref RectInt pRect, int pPosY)
         {
             if (pPosY < pRect.min.y)
             {

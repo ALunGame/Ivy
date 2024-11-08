@@ -137,14 +137,7 @@ namespace Gameplay.GameData
 
         #region 路径点
 
-        /// <summary>
-        /// 路径X坐标
-        /// </summary>
-        public HashSet<int> PathX { get; protected set; } = new HashSet<int>();
-        /// <summary>
-        /// 路径Y坐标
-        /// </summary>
-        public HashSet<int> PathY { get; protected set; } = new HashSet<int>();
+        public Dictionary<int, List<int>> PathDict { get; protected set; } = new Dictionary<int, List<int>>();
 
         public Action<Vector2Int> OnAddPathPoint;
         public Action<Vector2Int> OnRemovePathPoint;
@@ -152,27 +145,34 @@ namespace Gameplay.GameData
 
         public void AppPathPoint(Vector2Int pPos)
         {
-            if (!PathX.Contains(pPos.x))
-                PathX.Add(pPos.x);
-            if (!PathY.Contains(pPos.y))
-                PathY.Add(pPos.y);
+            if (PathDict.ContainsKey(pPos.x) && PathDict[pPos.x].Contains(pPos.y))
+            {
+                Debug.LogError($"AppPathPoint错误:{pPos}");
+                return;
+            }
+            if (!PathDict.ContainsKey(pPos.x))
+                PathDict.Add(pPos.x, new List<int>());
+            PathDict[pPos.x].Add(pPos.y);
+
             OnAddPathPoint?.Invoke(pPos);
         }
 
         public void RemovePathPoint(Vector2Int pPos)
         {
-            if (PathX.Contains(pPos.x) && PathX.Contains(pPos.y))
+            if (!PathDict.ContainsKey(pPos.x) || !PathDict[pPos.x].Contains(pPos.y))
             {
-                PathX.Remove(pPos.x);
-                PathY.Remove(pPos.y);
+                Debug.LogError($"RemovePathPoint错误:{pPos}");
+                return;
             }
+
+            Debug.LogWarning($"RemovePathPoint成功:{pPos}");
+            PathDict[pPos.x].Remove(pPos.y);
             OnRemovePathPoint?.Invoke(pPos);
         }
 
         public void ClearPath()
         {
-            PathX.Clear();
-            PathY.Clear();
+            PathDict.Clear();
             OnClearPath?.Invoke();
         } 
 

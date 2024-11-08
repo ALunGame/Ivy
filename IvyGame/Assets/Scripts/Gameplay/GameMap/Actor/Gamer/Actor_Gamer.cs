@@ -121,9 +121,20 @@ namespace Gameplay.GameMap.Actor
             GameObject pathPointGo = CachePool.GetGameObject(PathPointCachePoolName);
             pathPointGo.transform.SetParent(pathRootTrans);
             pathPointGo.transform.position = new Vector3(pPos.x, 0.1f, pPos.y);
+            pathPointGo.name = pPos.ToString();
 
             MeshRenderColorCom meshRenderColorCom = pathPointGo.transform.Find("Display/Cube").GetComponent<MeshRenderColorCom>();
             meshRenderColorCom.ChangeColor(TempConfig.CampColorDict[Camp]);
+
+            if (!PathPoint.ContainsKey(pPos.x))
+                PathPoint.Add(pPos.x, new Dictionary<int, GameObject>());
+            
+            if (PathPoint[pPos.x].ContainsKey(pPos.y))
+            {
+                Debug.LogError($"OnPathPointAdd--->{pPos}");
+                return;
+            }
+            PathPoint[pPos.x].Add(pPos.y, pathPointGo);
         }
 
         protected virtual void OnPathPointRemove(Vector2Int pPos)
@@ -131,9 +142,13 @@ namespace Gameplay.GameMap.Actor
             if (PathPoint.ContainsKey(pPos.x) && PathPoint[pPos.x].ContainsKey(pPos.y))
             {
                 GameObject pathPointGo = PathPoint[pPos.x][pPos.y];
-                PathPoint[pPos.x].Remove(pPos.x);
+                PathPoint[pPos.x].Remove(pPos.y);
 
                 CachePool.PushGameObject(PathPointCachePoolName,pathPointGo);
+            }
+            else
+            {
+                Debug.LogError($"OnPathPointRemove--->错误::{pPos}");
             }
         }
 

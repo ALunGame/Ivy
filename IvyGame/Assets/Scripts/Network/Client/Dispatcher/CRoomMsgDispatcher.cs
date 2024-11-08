@@ -3,6 +3,7 @@ using Gameplay;
 using Gameplay.GameData;
 using IAEngine;
 using Proto;
+using UnityEngine;
 
 namespace Game.Network.CDispatcher
 {
@@ -111,6 +112,7 @@ namespace Game.Network.CDispatcher
         private void OnGamerPathChangeS2c(GamerPathChangeS2c MsgData)
         {
             GamerData gamerData = GameplayGlobal.Data.Gamers.GetGamer(MsgData.gamerUid);
+            Debug.Log($"OnGamerPathChangeS2c-->{MsgData.Operate}");
             //Add
             if (MsgData.Operate == 1)
             {

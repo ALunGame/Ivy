@@ -1,6 +1,5 @@
 ﻿using LiteNetLib;
 using LiteNetLib.Utils;
-using Proto;
 using ProtoBuf;
 using System;
 using System.Net;
@@ -66,6 +65,12 @@ namespace Game.Network.Server
         {
             netManager.PollEvents();
             LogicTimer.Update();
+        }
+
+        public Action OnDrawGizmosFunc;
+        private void OnDrawGizmosSelected()
+        {
+            OnDrawGizmosFunc?.Invoke();
         }
 
         private void OnDestroy()

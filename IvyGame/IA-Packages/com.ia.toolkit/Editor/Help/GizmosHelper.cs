@@ -24,6 +24,23 @@ namespace IAToolkit
             DrawLines(line, color);
         }
 
+        public static void DrawRect(RectInt rect, Color color)
+        {
+            Vector3[] line = new Vector3[5];
+
+            line[0] = new Vector3(rect.x, rect.y, 0);
+
+            line[1] = new Vector3(rect.x + rect.width, rect.y, 0);
+
+            line[2] = new Vector3(rect.x + rect.width, rect.y + rect.height, 0);
+
+            line[3] = new Vector3(rect.x, rect.y + rect.height, 0);
+
+            line[4] = new Vector3(rect.x, rect.y, 0);
+
+            DrawLines(line, color);
+        }
+
         public static void DrawLine(Vector3 start, Vector3 end, Color color)
         {
             Gizmos.color = color;

@@ -34,7 +34,7 @@ namespace IAEngine
         /// </summary>
         /// <param name="pRect"></param>
         /// <param name="pPosX"></param>
-        public static void UpdateRectX(ref RectInt pRect, Vector2Int pPos)
+        public static void UpdateRect(ref RectInt pRect, Vector2Int pPos)
         {
             if (pRect.Equals(new RectInt(0, 0, 0, 0)))
             {

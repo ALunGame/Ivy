@@ -248,11 +248,12 @@ namespace Game.Network.Server
 
             //TODO:有一个问题，旧的阵营区域没有刷新
             RectInt rect = campRectDict[pCamp];
-            RectEx.UpdateRectX(ref rect, pPoint);
+            RectEx.UpdateRect(ref rect, pPoint);
             campRectDict[pCamp] = rect;
 
             //更新数据
             CampPoint[pPoint.x, pPoint.y] = pCamp;
+            Debug.Log($"SetPointCamp-->{pPoint}:{pCamp}");
 
             //广播
             ChangeGridCampS2c msg = new ChangeGridCampS2c();

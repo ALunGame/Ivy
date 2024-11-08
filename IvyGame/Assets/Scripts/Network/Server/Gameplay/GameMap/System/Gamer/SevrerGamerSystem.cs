@@ -33,7 +33,6 @@ namespace Game.Network.Server
         private void OnGamerGridPosChange(ServerGamerData pGamer, Vector2Int pGridPos)
         {
             ServerMapData map = NetServerLocate.GameCtrl.GameData.Map;
-            map.AddGamerPathPoint(pGamer.GamerUid, pGridPos);
 
             List<string> dieGamerUids = new List<string>();
             ServerMapGamerPathData gamerPath = map.GetGamerPathData(pGamer.GamerUid);
@@ -70,6 +69,7 @@ namespace Game.Network.Server
                 //路径连接了，清空路径
                 if (currGamerUid == pGamer.GamerUid)
                 {
+                    Debug.LogWarning($"判断路径连接了，清空路径:{currGamerUid}-->{pGamer.GamerUid}");
                     gamerPath.RemovePath(pGamer.LastGridPos, pGamer.GridPos.Value);
                 }
                 else
