@@ -64,5 +64,12 @@ namespace IAToolkit
             Gizmos.color = color;
             Gizmos.DrawWireCube(bounds.center, bounds.extents * 2);
         }
+
+        public static void DrawBounds(Vector3 center, Vector3 size, Color color)
+        {
+            Gizmos.matrix = Matrix4x4.identity;
+            Gizmos.color = color;
+            Gizmos.DrawWireCube(center, size);
+        }
     }
 }

@@ -83,6 +83,11 @@ namespace Gameplay.GameMap.Actor
             return ActorGo.transform.position;
         }
 
+        public Vector2 GetPosXZ()
+        {
+            return new Vector2();
+        }
+
         public Vector3 GetLocalPos()
         {
             return ActorGo.transform.localPosition;

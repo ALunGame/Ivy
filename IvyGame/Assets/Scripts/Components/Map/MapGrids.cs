@@ -189,8 +189,6 @@ namespace Gameplay
             //更新数据
             allMatricesBuffer.SetData(shaderArgs);
             GridMaterial.SetBuffer("_AllMatricesBuffer", allMatricesBuffer);
-
-            Debug.Log($"ChangeGridCamp:{pGridPos}-->{pCamp}");
         }
 
         public void UpdateLogic(float pDeltaTime, float pGameTime)

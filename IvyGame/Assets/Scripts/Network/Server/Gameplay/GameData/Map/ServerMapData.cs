@@ -38,6 +38,17 @@ namespace Game.Network.Server
                     CampPoint[x, y] = 0;
                 }
             }
+
+            NetServerLocate.Net.OnDrawGizmosFunc += () => {
+                //IAToolkit.GizmosHelper.DrawRect(pathRect, Color.black);
+                //Gizmos.DrawCube(pathRect.center, new Vector3(pathRect.size.x, 10, pathRect.size.y));
+
+                foreach (int camp in campRectDict.Keys)
+                {
+                    RectInt rect = campRectDict[camp];
+                    IAToolkit.GizmosHelper.DrawBounds(new Vector3(rect.center.x, 0, rect.center.y), new Vector3(rect.size.x, 1, rect.size.y), TempConfig.CampColorDict[camp]);
+                }
+            };
         }
 
         public override void OnClear()
@@ -253,7 +264,6 @@ namespace Game.Network.Server
 
             //更新数据
             CampPoint[pPoint.x, pPoint.y] = pCamp;
-            Debug.Log($"SetPointCamp-->{pPoint}:{pCamp}");
 
             //广播
             ChangeGridCampS2c msg = new ChangeGridCampS2c();

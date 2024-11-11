@@ -89,7 +89,6 @@ namespace Gameplay.GameData
 
         public override void OnReceiveServerStateMsg(ServerStateS2c pServerStateMsg, GamerBaseState pMsg)
         {
-            Debug.Log($"OnReceiveServerStateMsg-->{LastPosition}:{pMsg.Pos.ToVector2()}-->{LastPosition.Equals(pMsg.Pos.ToVector2())}");
             if (!LastPosition.Equals(pMsg.Pos.ToVector2()))
             {
                 waitSyncState = false;

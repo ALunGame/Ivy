@@ -8,7 +8,7 @@ namespace Game.Network.Server
 
         public NetServerLog() 
         {
-            OpenLog = true;
+            OpenLog = false;
         }
     }
 }
