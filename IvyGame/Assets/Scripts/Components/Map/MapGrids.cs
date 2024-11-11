@@ -36,7 +36,7 @@ namespace Gameplay
         [Header("地图大小")]
         public Vector2Int MapSize;
         [Header("格子动画时长")]
-        public float GridAnimTime = 0.5f;
+        public float GridAnimTime = 0.2f;
         [Header("格子网格")]
         public Mesh GridMesh;
         [Header("格子材质")]
@@ -104,7 +104,7 @@ namespace Gameplay
             {
                 for (int y = 0; y < MapSize.y; y++)
                 {
-                    var position = transform.position + new Vector3(x, 0, y) + GridSize;
+                    var position = transform.position + new Vector3(x, 0, y);
                     shaderArgs[index].instanceToObjectMatrix = Matrix4x4.TRS(position, Quaternion.identity, new Vector3(GridSize.x, 0.1f, GridSize.z));
                     shaderArgs[index].color = TempConfig.CampColorDict[0];
 

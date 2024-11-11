@@ -45,7 +45,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   MapSize: {x: 40, y: 40}
-  GridAnimTime: 1
+  GridAnimTime: 0.5
   GridMesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
   GridMaterial: {fileID: 2100000, guid: 5c92e5aebe151db489faaad4e86daccb, type: 2}
-  GridSize: {x: 0.5, y: 0, z: 0.5}
+  GridSize: {x: 0.9, y: 0, z: 0.9}
