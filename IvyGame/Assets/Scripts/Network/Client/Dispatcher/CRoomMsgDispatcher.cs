@@ -131,8 +131,11 @@ namespace Game.Network.CDispatcher
 
         private void OnChangeGridCampS2c(ChangeGridCampS2c MsgData)
         {
-            GameMapGridData gridData = GameplayGlobal.Data.Map.GetGridData(new UnityEngine.Vector2Int((int)MsgData.gridPos.X, (int)MsgData.gridPos.Y));
-            gridData.Camp.Value = MsgData.Camp;
+            foreach (var gridPos in MsgData.gridPosLists)
+            {
+                GameMapGridData gridData = GameplayGlobal.Data.Map.GetGridData(new Vector2Int((int)gridPos.X, (int)gridPos.Y));
+                gridData.Camp.Value = MsgData.Camp;
+            }
         }
 
         private void OnGameEndS2c(GameEndS2c MsgData)

@@ -93,8 +93,8 @@ message ServerStateS2c {
 
 //地图格子阵营同步
 message ChangeGridCampS2c {
-	required net_vector2 gridPos = 1;		//格子位置
-	required int32 camp = 2;				//阵营 
+	repeated net_vector2 gridPosList = 1;		//格子位置
+	required int32 camp = 2;					//阵营 
 }
 
 //玩家路径改变

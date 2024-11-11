@@ -87,6 +87,7 @@ namespace IAConfig.Excel.Export
 				cnf.name = (string)GetProp(pProps,"name").Parse(propDict["name"][0]);
 				cnf.img = (string)GetProp(pProps,"img").Parse(propDict["img"][0]);
 				cnf.prefab = (string)GetProp(pProps,"prefab").Parse(propDict["prefab"][0]);
+				cnf.baseSpeed = (float)GetProp(pProps,"baseSpeed").Parse(propDict["baseSpeed"][0]);
 
                 cnfs.Add(cnf);
             }
@@ -308,6 +309,7 @@ namespace IAConfig.Excel.Export
         }
     }
 }
+
 
 
 

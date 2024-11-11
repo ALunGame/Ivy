@@ -1,8 +1,8 @@
-﻿using Gameplay.GameData;
-using Gameplay.GameMap.Actor;
-using Gameplay.Map;
-using IAConfig;
+﻿using Game.Network.Client;
 using IAFramework;
+using Proto;
+using ProtoBuf;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Gameplay.GameMap.System
@@ -25,6 +25,7 @@ namespace Gameplay.GameMap.System
         public override void OnEnterMap()
         {
             CreateMapGrids();
+            NetworkEvent.RegisterEvent("GameEnvSystem", (ushort)RoomMsgDefine.ChangeGridCampS2c, OnGridsCampChange);
         }
 
         public override void OnExitMap()
@@ -34,6 +35,7 @@ namespace Gameplay.GameMap.System
                 GameObject.Destroy(mapGrids.gameObject);
                 mapGrids = null;
             }
+            NetworkEvent.RemoveEvent("GameEnvSystem");
         }
 
         private void CreateMapGrids()
@@ -45,20 +47,31 @@ namespace Gameplay.GameMap.System
             mapGrids = gridsGo.GetComponent<MapGrids>();
             mapGrids.CreateMap(GameplayGlobal.Data.Map.MapSize);
 
-            GameActorSystem actorSystem = GameplayCtrl.Instance.GameMap.GetSystem<GameActorSystem>();
-            MapCfg mapCfg = Config.MapCfg[GameplayCtrl.Instance.CurrMapId];
+            //GameActorSystem actorSystem = GameplayCtrl.Instance.GameMap.GetSystem<GameActorSystem>();
+            //MapCfg mapCfg = Config.MapCfg[GameplayCtrl.Instance.CurrMapId];
 
-            foreach (int posX in GameplayGlobal.Data.Map.MapGrid.Keys)
+            //foreach (int posX in GameplayGlobal.Data.Map.MapGrid.Keys)
+            //{
+            //    foreach (int posY in GameplayGlobal.Data.Map.MapGrid[posX].Keys)
+            //    {
+            //        GameMapGridData gridData = GameplayGlobal.Data.Map.MapGrid[posX][posY];
+            //        gridData.Camp.RegValueChangedEvent((pCamp) =>
+            //        {
+            //            //mapGrids.ChangeGridCamp(new Vector2Int(posX, posY), pCamp);
+            //        });
+            //    }
+            //}
+        }
+
+        private void OnGridsCampChange(IExtensible pMsg)
+        {
+            ChangeGridCampS2c msg = (ChangeGridCampS2c)pMsg;
+            List<Vector2Int> posList = new List<Vector2Int>();
+            foreach (var gridPos in msg.gridPosLists)
             {
-                foreach (int posY in GameplayGlobal.Data.Map.MapGrid[posX].Keys)
-                {
-                    GameMapGridData gridData = GameplayGlobal.Data.Map.MapGrid[posX][posY];
-                    gridData.Camp.RegValueChangedEvent((pCamp) =>
-                    {
-                        mapGrids.ChangeGridCamp(new Vector2Int(posX, posY), pCamp);
-                    });
-                }
+                posList.Add(new Vector2Int((int)gridPos.X, (int)gridPos.Y));
             }
+            mapGrids.ChangeGridsCamp(posList, msg.Camp);
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Gameplay;
+using Gameplay.Map;
 using IAConfig;
 using LiteNetLib;
 using Proto;
@@ -104,6 +105,9 @@ namespace Game.Network.Server
             GamerUid = pGamerUid;
             GamerId = pGamerId;
             Name = pName;
+
+            ActorCfg actorCfg = Config.ActorCfg[pGamerId];
+            SetMoveSpeed(actorCfg.baseSpeed);
 
             MoveInputDir = Vector2.zero;
             GridPos = new ServerGameDataFile<Vector2Int>(this);

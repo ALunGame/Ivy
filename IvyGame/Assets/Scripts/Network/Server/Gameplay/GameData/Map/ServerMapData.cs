@@ -264,12 +264,6 @@ namespace Game.Network.Server
 
             //更新数据
             CampPoint[pPoint.x, pPoint.y] = pCamp;
-
-            //广播
-            ChangeGridCampS2c msg = new ChangeGridCampS2c();
-            msg.gridPos = new NetVector2() { X = pPoint.x, Y = pPoint.y };
-            msg.Camp = pCamp;
-            NetServerLocate.Net.Broadcast((ushort)RoomMsgDefine.ChangeGridCampS2c, msg);
         }
 
         /// <summary>
@@ -280,13 +274,22 @@ namespace Game.Network.Server
         public void SetRectCamp(RectInt pRect, int pCamp)
         {
             NetServerLocate.Log.Log($"改变区域阵营>>{pRect}->{pCamp}");
+
+            //消息
+            ChangeGridCampS2c msg = new ChangeGridCampS2c();
+            msg.Camp = pCamp;
+
             for (int x = pRect.min.x; x <= pRect.max.x; x++)
             {
                 for (int y = pRect.min.y; y <= pRect.max.y; y++)
                 {
+                    msg.gridPosLists.Add(new NetVector2() { X = x, Y = y });
                     SetPointCamp(new Vector2Int(x, y), pCamp);
                 }
             }
+
+            //广播
+            NetServerLocate.Net.Broadcast((ushort)RoomMsgDefine.ChangeGridCampS2c, msg);
         }
 
         /// <summary>

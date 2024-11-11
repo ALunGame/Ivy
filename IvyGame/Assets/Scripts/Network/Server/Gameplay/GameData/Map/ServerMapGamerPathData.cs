@@ -5,6 +5,7 @@ using Proto;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using static Unity.Burst.Intrinsics.X86.Avx;
 
 namespace Game.Network.Server
 {
@@ -245,9 +246,11 @@ namespace Game.Network.Server
         #region 区域占领
 
         //占领区域
-        public List<Vector2Int> CaptureArea(Action<Vector2Int> changeCampCallBack)
+        public void CaptureArea(Action<Vector2Int> changeCampCallBack)
         {
-            List<Vector2Int> capturePoints = new List<Vector2Int>();
+            //广播消息
+            ChangeGridCampS2c msg = new ChangeGridCampS2c();
+            msg.Camp = Camp;
 
             //先将路径变为占领区域
             foreach (int x in pathDict.Keys)
@@ -255,7 +258,7 @@ namespace Game.Network.Server
                 foreach (int y in pathDict[x].Keys)
                 {
                     Vector2Int pos = new Vector2Int(x, y);
-                    capturePoints.Add(pos);
+                    msg.gridPosLists.Add(new NetVector2() { X = x, Y = y });
                     mapData.SetPointCamp(pos, Camp);
                     changeCampCallBack?.Invoke(pos);
                 }
@@ -272,7 +275,7 @@ namespace Game.Network.Server
                         if (CheckPointCanCapture(pos))
                         {
                             Vector2Int tPos = new Vector2Int(x, y);
-                            capturePoints.Add(tPos);
+                            msg.gridPosLists.Add(new NetVector2() { X = x, Y = y });
                             mapData.SetPointCamp(tPos, Camp);
                             changeCampCallBack?.Invoke(tPos);
                         }
@@ -280,7 +283,8 @@ namespace Game.Network.Server
                 }
             }
 
-            return capturePoints;
+            //广播
+            NetServerLocate.Net.Broadcast((ushort)RoomMsgDefine.ChangeGridCampS2c, msg);
         }
 
         //检测点是不是可以占领

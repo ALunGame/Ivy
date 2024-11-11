@@ -31,6 +31,11 @@ namespace Gameplay.Map
         /// </summary>
         public string prefab;
 
+        /// <summary>
+        /// 基础移速
+        /// </summary>
+        public float baseSpeed;
+
     }
 
 }
