@@ -139,6 +139,19 @@ namespace Gameplay.GameMap.System
             return null;
         }
 
+        public List<T> GetActors<T>() where T : ActorModel 
+        {
+            List<T> resActors = new List<T>();
+            for (int i = 0; i < ActorList.Count; i++)
+            {
+                if (ActorList[i] is T)
+                {
+                    resActors.Add((T)ActorList[i]);
+                }
+            }
+            return resActors;
+        }
+
         public void RemoveActor(ActorModel pActor)
         {
             List<ActorModel> actors = ActorDict[pActor.Type];

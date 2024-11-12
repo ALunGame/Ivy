@@ -9,7 +9,7 @@ namespace Gameplay.GameMap.Actor
 {
     public abstract class Actor_InternalGamer : ActorModel
     {
-        public Dictionary<int, Dictionary<int, GameObject>> PathPoint = new Dictionary<int, Dictionary<int, GameObject>>();
+        public Dictionary<int, Dictionary<int, MapGamerPath>> PathPoint = new Dictionary<int, Dictionary<int, MapGamerPath>>();
 
         public float Speed { get; private set; }
 
@@ -18,6 +18,12 @@ namespace Gameplay.GameMap.Actor
         public Actor_InternalGamer(string pUid, int pId, ActorType pType, GameObject pActorGo) : base(pUid, pId, pType, pActorGo)
         {
 
+        }
+
+        public Vector2Int GetGridPos()
+        {
+            Vector3 tPos = GetPos();
+            return GameplayGlobal.Data.Map.PosToGrid(new Vector2(tPos.x, tPos.z));
         }
 
         public void SetSpeed(float pSpeed)
@@ -61,6 +67,17 @@ namespace Gameplay.GameMap.Actor
         }
         protected virtual void OnInit() { }
 
+        public override void UpdateLogic(float pTimeDelta, float pGameTime)
+        {
+            foreach (var item in PathPoint.Values)
+            {
+                foreach (var pathCom in item.Values)
+                {
+                    pathCom.UpdateLogic(pTimeDelta, pGameTime);
+                }
+            }
+        }
+
         public sealed override void Clear()
         {
             RemoveDataChangeEvent();
@@ -100,6 +117,7 @@ namespace Gameplay.GameMap.Actor
 
         #region 路径点改变
 
+        private int currPathCnt = 0;
         protected virtual void OnPathPointAdd(Vector2Int pPos)
         {
             if (!CachePool.HasGameObjectPool(PathPointCachePoolName))
@@ -127,24 +145,38 @@ namespace Gameplay.GameMap.Actor
             meshRenderColorCom.ChangeColor(TempConfig.CampColorDict[Camp]);
 
             if (!PathPoint.ContainsKey(pPos.x))
-                PathPoint.Add(pPos.x, new Dictionary<int, GameObject>());
+                PathPoint.Add(pPos.x, new Dictionary<int, MapGamerPath>());
             
             if (PathPoint[pPos.x].ContainsKey(pPos.y))
             {
                 Debug.LogError($"OnPathPointAdd--->{pPos}");
                 return;
             }
-            PathPoint[pPos.x].Add(pPos.y, pathPointGo);
+
+            MapGamerPath mapGamerPath = pathPointGo.GetComponent<MapGamerPath>();
+
+            currPathCnt++;
+            PathPoint[pPos.x].Add(pPos.y, mapGamerPath);
+
+            if (currPathCnt % 5 == 0)
+            {
+                mapGamerPath.SetAnimCfg(Random.Range(1, MapGrids.AnimGridCfgList.Count - 1));
+            }
+            else
+            {
+                mapGamerPath.SetAnimCfg(0);
+            }
         }
 
         protected virtual void OnPathPointRemove(Vector2Int pPos)
         {
             if (PathPoint.ContainsKey(pPos.x) && PathPoint[pPos.x].ContainsKey(pPos.y))
             {
-                GameObject pathPointGo = PathPoint[pPos.x][pPos.y];
+                currPathCnt--;
+                MapGamerPath mapGamerPath = PathPoint[pPos.x][pPos.y];
                 PathPoint[pPos.x].Remove(pPos.y);
 
-                CachePool.PushGameObject(PathPointCachePoolName,pathPointGo);
+                CachePool.PushGameObject(PathPointCachePoolName, mapGamerPath.gameObject);
             }
             else
             {
@@ -156,12 +188,13 @@ namespace Gameplay.GameMap.Actor
         {
             foreach (var item in PathPoint.Values)
             {
-                foreach (var go in item.Values)
+                foreach (var pathCom in item.Values)
                 {
-                    CachePool.PushGameObject(PathPointCachePoolName, go);
+                    CachePool.PushGameObject(PathPointCachePoolName, pathCom.gameObject);
                 }
             }
             PathPoint.Clear();
+            currPathCnt = 0;
         }
 
         #endregion

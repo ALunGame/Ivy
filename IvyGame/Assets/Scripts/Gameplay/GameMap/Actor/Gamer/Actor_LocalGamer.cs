@@ -17,6 +17,8 @@ namespace Gameplay.GameMap.Actor
 
         public override void UpdateLogic(float pTimeDelta, float pGameTime)
         {
+            base.UpdateLogic(pTimeDelta, pGameTime);
+
             if (!Data.Position.Equals(currTargetPos))
             {
                 currMoveTime = 0;

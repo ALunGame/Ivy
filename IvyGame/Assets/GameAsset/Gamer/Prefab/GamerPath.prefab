@@ -106,6 +106,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8101401246802493881}
+  - component: {fileID: 4483214328211812011}
   m_Layer: 0
   m_Name: GamerPath
   m_TagString: Untagged
@@ -129,6 +130,22 @@ Transform:
   - {fileID: 6804213527234343514}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &4483214328211812011
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4845298896898842841}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a6171b4a94370a14d951f180fedd251b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  displayTrans: {fileID: 6804213527234343514}
+  animIndex: 0
+  currScaleY: 0
+  AnimTime: 0.5
 --- !u!1 &7362784863074865254
 GameObject:
   m_ObjectHideFlags: 0

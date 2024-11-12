@@ -339,10 +339,8 @@ namespace Game.Network.Server
         /// <returns></returns>
         public bool RandomGetCampRect(int pWidth, int pHeight, int pCheckCamp, out RectInt OutRect)
         {
-            Dictionary<int, HashSet<int>> usePointMap = new Dictionary<int, HashSet<int>>();
-
-            Dictionary<int, int> xMap = RandomHelper.GetRandomNumList(pWidth, Size.x - pWidth);
-            Dictionary<int, int> yMap = RandomHelper.GetRandomNumList(pHeight, Size.y - pHeight);
+            Dictionary<int, int> xMap = RandomHelper.GetRandomNumList(0, Size.x - pWidth - 1);
+            Dictionary<int, int> yMap = RandomHelper.GetRandomNumList(0, Size.y - pHeight - 1);
 
             foreach (int key1 in xMap.Keys)
             {

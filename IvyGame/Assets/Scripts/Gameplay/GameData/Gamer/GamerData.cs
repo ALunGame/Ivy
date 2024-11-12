@@ -40,6 +40,11 @@ namespace Gameplay.GameData
         public Vector2 LastPosition { get; protected set; }
 
         /// <summary>
+        /// 玩家网格位置
+        /// </summary>
+        public GameDataField<Vector2Int> GridPos { get; protected set; }
+
+        /// <summary>
         /// 玩家旋转
         /// </summary>
         public float Rotation { get; protected set; }
@@ -85,6 +90,9 @@ namespace Gameplay.GameData
 
             Rotation = pInfo.Rotation;
             MoveSpeed = pInfo.moveSpeed;
+
+            GridPos = new GameDataField<Vector2Int>(this);
+            GridPos.SetValueWithoutNotify(GameplayGlobal.Data.Map.PosToGrid(Position));
 
             IsAlive = new GameDataField<bool>(this);
             IsAlive.SetValueWithoutNotify(true);

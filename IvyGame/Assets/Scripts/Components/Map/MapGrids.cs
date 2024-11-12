@@ -1,4 +1,5 @@
 using Game;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using InteropServices = System.Runtime.InteropServices;
@@ -7,18 +8,31 @@ namespace Gameplay
 {
     public class MapGrids : MonoBehaviour
     {
+        //网格动画
+        public class GridAnimCfg
+        {
+            public float minScaleY;
+            public float maxScaleY;
+        }
+
+        public static List<GridAnimCfg> AnimGridCfgList = new List<GridAnimCfg>()
+        {
+            new GridAnimCfg(){ minScaleY = 0.1f, maxScaleY = 0.1f},
+            new GridAnimCfg(){ minScaleY = 1.5f, maxScaleY = 2.0f},
+            new GridAnimCfg(){ minScaleY = 2.5f, maxScaleY = 3.0f},
+        };
+
+        public static float GetAnimScaleY(float pCurrScaleY, int pAnimIndex)
+        {
+            GridAnimCfg animCfg = AnimGridCfgList[pAnimIndex];
+            return animCfg.minScaleY == pCurrScaleY ? animCfg.maxScaleY : animCfg.minScaleY;
+        }
+
         //实例化参数
         struct InstanceParam
         {
             public Color color;
             public Matrix4x4 instanceToObjectMatrix;        //实例化到物方矩阵
-        }
-
-        //网格动画
-        class GridAnimCfg
-        {
-            public float minScaleY;
-            public float maxScaleY;
         }
 
         //逻辑数据
@@ -28,6 +42,9 @@ namespace Gameplay
             public Vector3 position;        //位置
             public int camp;                //阵营
             public float currScaleY;        //当前的Y轴缩放
+
+            public bool inPassed;           //正在经过
+            public float passedScaleY;       //经过缩放
 
             public int animCfgIndex;        //动画配置Index
             public float animTime;          //动画时间
@@ -55,12 +72,6 @@ namespace Gameplay
         private Dictionary<int, Dictionary<int, int>> gridIndexMap = new Dictionary<int, Dictionary<int, int>>();
         private Dictionary<int, GridParam> gridDataDict = new Dictionary<int, GridParam>();
         private HashSet<int> animIndexList = new HashSet<int>();
-        private List<GridAnimCfg> animGridCfgList = new List<GridAnimCfg>()
-        {
-            new GridAnimCfg(){ minScaleY = 2.5f, maxScaleY = 3.0f},
-            new GridAnimCfg(){ minScaleY = 1.5f, maxScaleY = 2.0f},
-            new GridAnimCfg(){ minScaleY = 0.1f, maxScaleY = 0.1f},
-        };
         private Bounds renderBounds = new Bounds();
 
         private void OnDrawGizmosSelected()
@@ -153,7 +164,7 @@ namespace Gameplay
         public void ChangeGridsCamp(List<Vector2Int> pGridPosList, int pCamp, int pAnimCfgIndex = -1)
         {
             if (pAnimCfgIndex == -1)
-                pAnimCfgIndex = UnityEngine.Random.Range(0, animGridCfgList.Count - 1);
+                pAnimCfgIndex = UnityEngine.Random.Range(0, AnimGridCfgList.Count - 1);
             for (int i = 0; i < pGridPosList.Count; i++)
             {
                 ChangeGridCamp(pGridPosList[i], pCamp, pAnimCfgIndex);
@@ -172,6 +183,7 @@ namespace Gameplay
             gridParam.camp = pCamp;
             gridParam.animTime = 0;
             gridParam.animCfgIndex = pAnimCfgIndex;
+            gridParam.inPassed = false;
 
             //阵营空
             if (pCamp == 0)
@@ -194,6 +206,77 @@ namespace Gameplay
             GridMaterial.SetBuffer("_AllMatricesBuffer", allMatricesBuffer);
         }
 
+
+        private Dictionary<string, List<int>> PassedCampGridDict = new Dictionary<string, List<int>>();   
+        private Vector2Int PassSize = new Vector2Int(4, 4);
+        private List<float> PassDisSize = new List<float>()
+        {
+            0.5f,
+            1.0f,
+            1.5f,
+            2.0f,
+            3.0f,
+        };
+        public void PassCampRect(string gamerUid, Vector2Int pCurrGridPos)
+        {
+            if (PassedCampGridDict.ContainsKey(gamerUid))
+            {
+                List<int> gridIndexList = PassedCampGridDict[gamerUid];
+                foreach (var index in gridIndexList)
+                {
+                    GridParam gridParam = gridDataDict[index];
+                    gridParam.inPassed = false;
+                }
+                gridIndexList.Clear();
+            }
+
+            int currIndex = gridIndexMap[pCurrGridPos.x][pCurrGridPos.y];
+            GridParam currGridParam = gridDataDict[currIndex];
+            if (currGridParam.camp == 0)
+            {
+                return;
+            }
+
+            bool needRefresh = false;
+
+            Vector2Int leftDownPos = pCurrGridPos - (PassSize / 2);
+            for (int x = leftDownPos.x; x <= leftDownPos.x + PassSize.x; x++)
+            {
+                for (int y = leftDownPos.y; y <= leftDownPos.y + PassSize.y; y++)
+                {
+                    if (gridIndexMap.ContainsKey(x) && gridIndexMap[x].ContainsKey(y))
+                    {
+                        int gridIndex = gridIndexMap[x][y];
+                        GridParam gridParam = gridDataDict[gridIndex];
+                        if (gridParam.camp != 0)
+                        {
+                            gridParam.inPassed = true;
+                            int xDis = Mathf.Abs(pCurrGridPos.x - x);
+                            int yDis = Mathf.Abs(pCurrGridPos.y - y);
+                            int resDis = xDis > yDis ? xDis : yDis;
+                            float scaleY = PassDisSize[resDis];
+                            gridParam.passedScaleY = scaleY;
+
+                            needRefresh = true;
+                            //更新显示
+                            shaderArgs[gridIndex].instanceToObjectMatrix = Matrix4x4.TRS(gridParam.position, Quaternion.identity, new Vector3(GridSize.x, scaleY, GridSize.z));
+
+                            if (!PassedCampGridDict.ContainsKey(gamerUid))
+                                PassedCampGridDict.Add(gamerUid, new List<int>());
+                            PassedCampGridDict[gamerUid].Add(gridIndex);
+                        }
+                    }
+                }
+            }
+
+            if (needRefresh)
+            {
+                //更新数据
+                allMatricesBuffer.SetData(shaderArgs);
+                GridMaterial.SetBuffer("_AllMatricesBuffer", allMatricesBuffer);
+            }
+        }
+
         public void UpdateLogic(float pDeltaTime, float pGameTime)
         {
             if (allMatricesBuffer == null)
@@ -206,12 +289,6 @@ namespace Gameplay
 
             // 渲染
             Graphics.DrawMeshInstancedIndirect(GridMesh, 0, GridMaterial, renderBounds, argsBuffer);
-        }
-
-        private float GetAnimScaleY(float pCurrScaleY, int pAnimIndex)
-        {
-            GridAnimCfg animCfg = animGridCfgList[pAnimIndex];
-            return animCfg.minScaleY == pCurrScaleY ? animCfg.maxScaleY : animCfg.minScaleY;
         }
 
         private void PlayAnim(float pTimeDelta)

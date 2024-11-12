@@ -1,5 +1,4 @@
-﻿using Cysharp.Threading.Tasks;
-using Game.Helper;
+﻿using Game.Helper;
 using Game.UI;
 using Gameplay.GameMap.Actor;
 using Gameplay.GameMap.System;
@@ -49,8 +48,10 @@ namespace Gameplay.GameMap
         private List<BaseGameMapSystem> systems = new List<BaseGameMapSystem>()
         {
             new GameActorSystem(),
-            new GameEnvSystem(),
             new GameGamerSystem(),
+            new GameMapGridsSystem(),
+
+            new GameEnvSystem(),
             new GameCameraSystem()
         };
 
