@@ -199,6 +199,39 @@ namespace Proto
     }
 
     [global::ProtoBuf.ProtoContract()]
+    public partial class GamerSkillInputC2s : global::ProtoBuf.IExtensible
+    {
+        private global::ProtoBuf.IExtension __pbn__extensionData;
+        global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+            => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+
+        [global::ProtoBuf.ProtoMember(1, IsRequired = true)]
+        public string gamerUid { get; set; }
+
+        [global::ProtoBuf.ProtoMember(2, IsRequired = true)]
+        public int skillId { get; set; }
+
+    }
+
+    [global::ProtoBuf.ProtoContract()]
+    public partial class GamerSkillInputS2c : global::ProtoBuf.IExtensible
+    {
+        private global::ProtoBuf.IExtension __pbn__extensionData;
+        global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+            => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+
+        [global::ProtoBuf.ProtoMember(1, Name = @"ret_code", IsRequired = true)]
+        public int RetCode { get; set; }
+
+        [global::ProtoBuf.ProtoMember(2, IsRequired = true)]
+        public string gamerUid { get; set; }
+
+        [global::ProtoBuf.ProtoMember(3, Name = @"pos", IsRequired = true)]
+        public NetVector2 Pos { get; set; }
+
+    }
+
+    [global::ProtoBuf.ProtoContract()]
     public partial class GamerBaseState : global::ProtoBuf.IExtensible
     {
         private global::ProtoBuf.IExtension __pbn__extensionData;

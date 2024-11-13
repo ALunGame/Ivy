@@ -2,6 +2,8 @@
 using Game.Network.Client;
 using Gameplay;
 using Gameplay.GameData;
+using IAConfig;
+using IAEngine;
 using IAUI;
 using Proto;
 using System.Collections.Generic;
@@ -19,6 +21,7 @@ namespace Game.UI
     {
         private UIComGlue<RectTransform> gameInfoTrans = new UIComGlue<RectTransform>("Top/GameInfo");
         private UIComGlue<RectTransform> moveBoxTrans = new UIComGlue<RectTransform>("Left/MoveBox");
+        private UIComGlue<RectTransform> skillBoxTrans = new UIComGlue<RectTransform>("Right/SkillBox");
         private UIComGlue<RectTransform> drumsBoxTrans = new UIComGlue<RectTransform>("Center/DrumsBox");
 
         private UIComGlue<Text> killInfo = new UIComGlue<Text>("Top/GameInfo/KillInfo/Num");
@@ -37,12 +40,21 @@ namespace Game.UI
         private Dictionary<GameObject, Tween> drumsTweenDict = new Dictionary<GameObject, Tween>();
         private Tween clickTypeTween;
 
+        private TimerModel dashTimer;
+        private bool isDashInCd;
+
         private LocalGamerData gamerData;
 
         private Vector2Int moveDir = new Vector2Int();
 
         public override void OnAwake()
         {
+            //冲刺配置
+            dashTimer = new TimerModel(GetType(), int.Parse(Config.MiscCfg["DashCdTime"].value), () =>
+            {
+                TextUtil.SetText(transform, "Right/SkillBox/DashBtn/Txt", "冲刺");
+                isDashInCd = false;
+            }, 1);
             gamerData = GameplayGlobal.Data.Gamers.GetGamer(GameplayGlobal.Data.SelfGamerUid) as LocalGamerData;
 
             updateGlue.SetFunc(Update);
@@ -65,6 +77,11 @@ namespace Game.UI
             BtnUtil.SetClick(transform, "Left/MoveBox/RightBtn", () =>
             {
                 SendMoveMsg(1, 0, 0);
+            });
+
+            BtnUtil.SetClick(transform, "Right/SkillBox/DashBtn", () =>
+            {
+                SendDaskSkillMsg();
             });
 
             OnGamerDieS2c = new UINetworkMsgGlue(this, (ushort)RoomMsgDefine.GamerDieS2c, (msgBody) =>
@@ -140,6 +157,8 @@ namespace Game.UI
         private void RefreshGameInfo()
         {
             gameTimeInfo.Com.text = $"{(int)GameplayGlobal.Ctrl.GameTime}s";
+
+            RefreshDashCd();
         }
 
         private void RefreshGamerInfos()
@@ -167,6 +186,18 @@ namespace Game.UI
             }
         }
 
+        private void RefreshDashCd()
+        {
+            if (!isDashInCd)
+            {
+                return;
+            }
+
+            dashTimer.Update(Time.deltaTime);
+            float cdTime = dashTimer.GetCdTime();
+            TextUtil.SetText(transform, "Right/SkillBox/DashBtn/Txt", $"{cdTime}/S");
+        }
+
         #endregion
 
         #region 移动
@@ -189,11 +220,31 @@ namespace Game.UI
             {
                 SendMoveMsg(0, -1, 90);
             }
+            if (Input.GetKeyUp(KeyCode.Space))
+            {
+                SendDaskSkillMsg();
+            }
         }
 
         private void SendMoveMsg(int x, int y, float rotate)
         {
             gamerData.SetMoveInput(new Vector2(x, y), rotate);
+        }
+
+        private void SendDaskSkillMsg()
+        {
+            if (isDashInCd)
+            {
+                return;
+            }
+
+            isDashInCd = true;
+            dashTimer.Start();
+
+            GamerSkillInputC2s msg = new GamerSkillInputC2s();
+            msg.gamerUid = gamerData.GamerUid;
+            msg.skillId = 1;
+            NetClientLocate.Net.Send((ushort)RoomMsgDefine.GamerSkillInputC2s, msg);
         }
 
         #endregion

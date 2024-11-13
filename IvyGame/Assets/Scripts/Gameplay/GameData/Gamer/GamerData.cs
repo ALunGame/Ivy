@@ -195,5 +195,11 @@ namespace Gameplay.GameData
             Position = pMsg.Pos.ToVector2();
             Rotation = pMsg.Rotation;
         }
+
+        public void ForceSetPos(NetVector2 pPos)
+        {
+            Position = pPos.ToVector2();
+            LastPosition = Position;
+        }
     }
 }

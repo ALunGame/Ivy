@@ -71,6 +71,19 @@ message GamerInputS2c {
 	required int32 moveClickType = 2;			//此次移动结果
 }
 
+//玩家技能输入
+message GamerSkillInputC2s {
+	required string gamerUid = 1;
+	required int32 skillId = 2;				//技能Id
+}
+
+//玩家技能输入返回
+message GamerSkillInputS2c {
+	required int32 ret_code = 1;
+	required string gamerUid = 2;	
+	required net_vector2 pos = 3;			//更新玩家位置
+}
+
 //玩家基础状态
 message GamerBaseState {
 	required string gamerUid = 1;

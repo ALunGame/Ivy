@@ -149,7 +149,5 @@ namespace Game.Network
         public const int Move_Down  = 2;
         public const int Move_Left  = 3;
         public const int Move_Right = 4;
-
-        public const int Dash = 5;
     }
 }

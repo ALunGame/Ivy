@@ -12,6 +12,7 @@ namespace Game.Network.SDispatcher
             AddDispatch<JoinRoomC2s>((ushort)RoomMsgDefine.JoinRoomC2s,OnJoinRoomC2s);
             AddDispatch<StartGameC2s>((ushort)RoomMsgDefine.StartGameC2s,OnStartGameC2s);
             AddDispatch<GamerInputC2s>((ushort)RoomMsgDefine.GamerInputC2s,OnGamerInputC2s);
+            AddDispatch<GamerSkillInputC2s>((ushort)RoomMsgDefine.GamerSkillInputC2s,OnGamerSkillInputC2s);
 
         }
         
@@ -46,6 +47,11 @@ namespace Game.Network.SDispatcher
         private void OnGamerInputC2s(LiteNetLib.NetPeer peer, GamerInputC2s MsgData)
         {
             NetServerLocate.GameCtrl.OnGamerInput(peer, MsgData);
+        }
+
+        private void OnGamerSkillInputC2s(LiteNetLib.NetPeer peer, GamerSkillInputC2s MsgData)
+        {
+            NetServerLocate.GameCtrl.OnGamerSkillInput(peer, MsgData);
         }
 
 

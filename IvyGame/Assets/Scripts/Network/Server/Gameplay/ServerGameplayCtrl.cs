@@ -270,7 +270,18 @@ namespace Game.Network.Server
                 return;
             }
 
-            gamer.OnRecInputMsg(pMsgData);
+            gamer.OnRecMoveInputMsg(pMsgData);
+        }
+
+        public void OnGamerSkillInput(NetPeer pPeer, GamerSkillInputC2s pMsgData)
+        {
+            ServerGamerData gamer = GameData.GetGamer(pMsgData.gamerUid);
+            if (gamer == null)
+            {
+                return;
+            }
+
+            gamer.OnRecSkillInputMsg(pMsgData);
         }
 
         #endregion

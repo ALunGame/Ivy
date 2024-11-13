@@ -69,15 +69,18 @@ namespace IAEngine
             if (isPaused)
                 return;
 
-            //检测执行次数
-            if (limitExecuteCnt != -1 && executedCnt >= limitExecuteCnt)
-                return;
-
             timer += pTimeDelta;
             if (timer >= intervalTime)
             {
                 executedCnt++;
                 action?.Invoke();
+            }
+
+            //检测执行次数
+            if (limitExecuteCnt != -1 && executedCnt >= limitExecuteCnt)
+            {
+                isPaused = true;
+                return;
             }
         }
 
@@ -86,6 +89,20 @@ namespace IAEngine
             timer = 0;
             executedCnt = 0;
             isPaused = true;
+        }
+
+        /// <summary>
+        /// 获得Cd时间
+        /// </summary>
+        /// <returns></returns>
+        public float GetCdTime()
+        {
+            return intervalTime - timer;
+        }
+
+        public bool IsPaused()
+        {
+            return isPaused;
         }
     }
 }

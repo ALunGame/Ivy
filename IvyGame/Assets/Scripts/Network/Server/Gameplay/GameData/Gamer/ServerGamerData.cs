@@ -245,7 +245,35 @@ namespace Game.Network.Server
             FightDrumsMusicCfg cfg = IAConfig.Config.FightDrumsMusicCfg[pMusicId];
             DrumsMusicId = pMusicId;
             DrumsTime = cfg.drumsTime;
-        } 
+        }
+
+        #endregion
+
+        #region 数据收集
+
+        public GamerInfo CollectGamerInfo()
+        {
+            GamerInfo info = new GamerInfo();
+            info.Uid = GamerUid;
+            info.Name = Name;
+            info.Id = GamerId;
+            info.Camp = Camp;
+            info.Pos = Position.ToNetVector2();
+            info.Rotation = (int)Rotation;
+            info.moveSpeed = (int)MoveSpeed;
+            info.fightMusicId = DrumsMusicId;
+            return info;
+        }
+
+        public GamerBaseState CollectGamerState()
+        {
+            GamerBaseState info = new GamerBaseState();
+            info.gamerUid = GamerUid;
+            info.Pos = Position.ToNetVector2();
+            info.Rotation = (int)Rotation;
+            info.commandTick = LastCommandTick;
+            return info;
+        }
 
         #endregion
 
@@ -283,7 +311,9 @@ namespace Game.Network.Server
             }
         }
 
-        public void OnRecInputMsg(GamerInputC2s pMsg)
+        #region 网络消息
+
+        public void OnRecMoveInputMsg(GamerInputC2s pMsg)
         {
             Rotation = pMsg.Rotation;
 
@@ -306,7 +336,7 @@ namespace Game.Network.Server
             {
                 Position = new Vector2(Position.x, (int)Position.y);
             }
-            
+
             //切换到竖直移动
             if (LastMoveInputDir.y == 0 && MoveInputDir.y != 0)
             {
@@ -331,43 +361,53 @@ namespace Game.Network.Server
             Debug.LogWarning($"Input:{buffAddSpeedTypeTimer}-{DrumsTime}:{buffAddSpeedType}::{MoveSpeed}");
         }
 
-        public void OnRecDashMsg()
+        public void OnRecSkillInputMsg(GamerSkillInputC2s pMsg)
         {
+            GamerSkillInputS2c sendMsg = new GamerSkillInputS2c();
+            sendMsg.gamerUid = GamerUid;
             if (isDashInCd)
             {
+                sendMsg.RetCode = 1;
                 Debug.LogError($"冲刺Cd中:{GamerUid}");
-                return;
             }
-            isDashInCd = true;
+            else
+            {
+                sendMsg.RetCode = 0;
 
-            //0，开启计时器
-            dashTimer.Start();
-            //1，占领格子
-            //2，发送消息
+                //0，设置Cd
+                isDashInCd = true;
+                //1，开启计时器
+                dashTimer.Start();
+                //2，瞬移
+                Vector2Int dashDir = new Vector2Int((int)MoveInputDir.x, (int)MoveInputDir.y);
+                if (dashDir == Vector2Int.zero)
+                {
+                    dashDir = new Vector2Int(1, 0);
+                }
+                Debug.LogError($"当前格子位置:{GridPos.Value}");
+
+                for (int i = 0; i < dashGridCount; i++)
+                {
+                    Vector2Int newGridPos = GridPos.Value + dashDir;
+                    if (NetServerLocate.GameCtrl.GameData.Map.CheckPointIsLegal(newGridPos.x, newGridPos.y))
+                    {
+                        GridPos.Value = newGridPos;
+                        Debug.LogError($"瞬移格子:{GridPos.Value}");
+                    }
+                }
+                Position = new Vector2(GridPos.Value.x, GridPos.Value.y);
+                sendMsg.Pos = Position.ToNetVector2();
+                Debug.LogError($"瞬移位置:{Position}");
+
+                //测试
+                //MoveInputDir = Vector2.zero;
+            }
+
+            NetServerLocate.Net.Broadcast((ushort)RoomMsgDefine.GamerSkillInputS2c, sendMsg);
         }
 
-        public GamerInfo CollectGamerInfo()
-        {
-            GamerInfo info = new GamerInfo();
-            info.Uid = GamerUid;
-            info.Name = Name;
-            info.Id = GamerId;
-            info.Camp = Camp;
-            info.Pos = Position.ToNetVector2();
-            info.Rotation = (int)Rotation;
-            info.moveSpeed = (int)MoveSpeed;
-            info.fightMusicId = DrumsMusicId;
-            return info;
-        }
+        #endregion
 
-        public GamerBaseState CollectGamerState()
-        {
-            GamerBaseState info = new GamerBaseState();
-            info.gamerUid = GamerUid;
-            info.Pos = Position.ToNetVector2();
-            info.Rotation = (int)Rotation;
-            info.commandTick = LastCommandTick;
-            return info;
-        }
+
     }
 }

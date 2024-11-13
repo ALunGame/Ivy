@@ -1,6 +1,8 @@
 ﻿using Game.Network.Client;
 using Gameplay;
 using Gameplay.GameData;
+using Gameplay.GameMap.Actor;
+using Gameplay.GameMap.System;
 using IAEngine;
 using Proto;
 using UnityEngine;
@@ -19,6 +21,7 @@ namespace Game.Network.CDispatcher
             AddDispatch<EnterMapS2c>((ushort)RoomMsgDefine.EnterMapS2c,OnEnterMapS2c);
             AddDispatch<ServerStateS2c>((ushort)RoomMsgDefine.ServerStateS2c,OnServerStateS2c);
             AddDispatch<GamerInputS2c>((ushort)RoomMsgDefine.GamerInputS2c,OnGamerInputS2c);
+            AddDispatch<GamerSkillInputS2c>((ushort)RoomMsgDefine.GamerSkillInputS2c,OnGamerSkillInputS2c);
             AddDispatch<GamerDieS2c>((ushort)RoomMsgDefine.GamerDieS2c,OnGamerDieS2c);
             AddDispatch<GamerRebornS2c>((ushort)RoomMsgDefine.GamerRebornS2c,OnGamerRebornS2c);
             AddDispatch<GamerPathChangeS2c>((ushort)RoomMsgDefine.GamerPathChangeS2c,OnGamerPathChangeS2c);
@@ -86,6 +89,22 @@ namespace Game.Network.CDispatcher
             
         }
 
+        private void OnGamerSkillInputS2c(GamerSkillInputS2c MsgData)
+        {
+            if (MsgData.RetCode != 0)
+            {
+                return;
+            }
+
+            //数据
+            GamerData gamer = GameplayGlobal.Data.Gamers.GetGamer(MsgData.gamerUid);
+            gamer.ForceSetPos(MsgData.Pos);
+
+            //表现
+            Actor_InternalGamer actor = GameplayGlobal.Map.GetSystem<GameActorSystem>().GetActor(MsgData.gamerUid) as Actor_InternalGamer;
+            actor.SetPos(MsgData.Pos.ToVector2());
+        }
+
         private void OnGamerDieS2c(GamerDieS2c MsgData)
         {
             if (MsgData.dieGamerInfos.IsLegal())
@@ -142,6 +161,8 @@ namespace Game.Network.CDispatcher
         {
             GameplayGlobal.Ctrl.EndGame();
         }
+
+
     }
 }
 
