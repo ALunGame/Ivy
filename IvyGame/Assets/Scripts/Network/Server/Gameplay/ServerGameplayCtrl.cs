@@ -84,7 +84,6 @@ namespace Game.Network.Server
             if (GameTime < 0.0f)
             {
                 GameTime = 0.0f;
-
             }
 
             GameMode.UpdateLogic(deltaTime, GameTime);

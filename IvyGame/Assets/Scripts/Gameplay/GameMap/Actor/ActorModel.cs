@@ -1,4 +1,5 @@
-﻿using Gameplay.Map;
+﻿using Gameplay.GameData;
+using Gameplay.Map;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -23,6 +24,8 @@ namespace Gameplay.GameMap.Actor
 
         public GameObject ActorGo { get; private set; }
 
+        private List<InternalActorModelDataFile> actorDataFiles = new List<InternalActorModelDataFile>();
+
         public ActorModel(string pUid, int pId, ActorType pType, GameObject pActorGo)
         {
             Uid = pUid;
@@ -38,9 +41,31 @@ namespace Gameplay.GameMap.Actor
             SetEditorDisplayName();
         }
 
-        public virtual void Init() { }
+        public void Init() 
+        {
+            OnInit();
+        }
 
-        public virtual void Clear() { }
+        protected virtual void OnInit()
+        {
+
+        }
+
+        public void Clear() 
+        {
+            foreach (var field in actorDataFiles)
+            {
+                field.Clear();
+            }
+            actorDataFiles.Clear();
+
+            OnClear();
+        }
+
+        protected virtual void OnClear()
+        {
+
+        }
 
         public virtual void UpdateLogic(float pTimeDelta, float pGameTime)
         {
@@ -72,6 +97,15 @@ namespace Gameplay.GameMap.Actor
         public virtual void OnMoveFail()
         {
 
+        }
+
+        #endregion
+
+        #region DataFiles
+
+        internal void AddGameDataField(InternalActorModelDataFile pFile)
+        {
+            actorDataFiles.Add(pFile);
         }
 
         #endregion

@@ -1,6 +1,7 @@
 ﻿using Gameplay;
 using Gameplay.Map;
 using IAConfig;
+using IAEngine;
 using LiteNetLib;
 using Proto;
 using UnityEngine;
@@ -75,14 +76,26 @@ namespace Game.Network.Server
         public float Rotation { get; protected set; }
 
         /// <summary>
-        /// 玩家移动速度
+        /// 基础移动速度
+        /// </summary>
+        public float BaseMoveSpeed { get; protected set; }
+
+        /// <summary>
+        /// 当前玩家移动速度
         /// </summary>
         public float MoveSpeed { get; protected set; }
         public Vector2 MoveInputDir { get; protected set; }
         public Vector2 LastMoveInputDir { get; protected set; }
+
+        //节奏加速
+        private float buffAddSpeedTypeTimer;
         private MoveClickType buffAddSpeedType;
-        private float buffAddSpeed;
         private float buffAddSpeedTime;
+
+        //冲刺Cd
+        private TimerModel dashTimer;
+        private int dashGridCount;
+        private bool isDashInCd;
 
         /// <summary>
         /// 上一次处理的命令帧
@@ -107,6 +120,7 @@ namespace Game.Network.Server
             Name = pName;
 
             ActorCfg actorCfg = Config.ActorCfg[pGamerId];
+            BaseMoveSpeed = actorCfg.baseSpeed;
             SetMoveSpeed(actorCfg.baseSpeed);
 
             MoveInputDir = Vector2.zero;
@@ -117,8 +131,15 @@ namespace Game.Network.Server
 
             RebornTime = new ServerGameDataFile<float>(this);
             RebornTime.SetValueWithoutNotify(0);
-        }
 
+            //冲刺配置
+            dashTimer = new TimerModel(GetType(), int.Parse(Config.MiscCfg["DashCdTime"].value), () =>
+            {
+                isDashInCd = false;
+            }, 1);
+            dashGridCount = int.Parse(Config.MiscCfg["DashGridCnt"].value);
+            isDashInCd = false;
+        }
 
         public override void UpdateLogic(float pTimeDelta, float pGameTime)
         {
@@ -133,6 +154,12 @@ namespace Game.Network.Server
                 return;
             }
 
+            //计算点击类型
+            CalcCurrMoveClickType(pTimeDelta);
+
+            //更新计时器
+            dashTimer.Update(pTimeDelta);
+
             //更新速度
             if (buffAddSpeedTime > 0)
             {
@@ -140,10 +167,11 @@ namespace Game.Network.Server
 
                 if (buffAddSpeedTime <= 0)
                 {
-                    //MoveSpeed -= buffAddSpeed;
+                    SetMoveSpeed(BaseMoveSpeed);
                 }
             }
 
+            //更新位置
             if (!MoveInputDir.Equals(Vector2.zero))
             {
                 Vector2 newPos = Position + (MoveInputDir.normalized * MoveSpeed * pTimeDelta);
@@ -185,7 +213,6 @@ namespace Game.Network.Server
 
         #endregion
 
-
         #region Set
 
         public void SetPos(Vector2 pPos)
@@ -222,11 +249,43 @@ namespace Game.Network.Server
 
         #endregion
 
-        public virtual void OnRecInputMsg(GamerInputC2s pMsg)
+        //计算当前时间处于什么点击类型
+        private void CalcCurrMoveClickType(float pTimeDelta)
         {
-            //if (NetworkGeneral.SeqDiff(pMsg.commandTick, LastCommandTick) <= 0)
-            //    return;
-            //LastCommandTick = pMsg.commandTick;
+            if (buffAddSpeedTypeTimer > DrumsTime)
+            {
+                buffAddSpeedType = MoveClickType.Miss;
+                buffAddSpeedTypeTimer = 0;
+            }
+
+            buffAddSpeedTypeTimer += pTimeDelta;
+            float offsetTime = DrumsTime - buffAddSpeedTypeTimer;
+
+            //普通
+            if (0 < offsetTime && offsetTime < DrumsTime * 0.6f)
+            {
+                buffAddSpeedType = MoveClickType.Normal;
+            }
+            //优秀
+            else if (DrumsTime * 0.6f <= offsetTime && offsetTime < DrumsTime * 0.8f)
+            { 
+                buffAddSpeedType = MoveClickType.Good;
+            }
+            //完美
+            else if (DrumsTime * 0.8f <= offsetTime && offsetTime <= DrumsTime)
+            {
+                buffAddSpeedType = MoveClickType.Perfect;
+            }
+            //失误
+            else
+            {
+                buffAddSpeedType = MoveClickType.Miss;
+            }
+        }
+
+        public void OnRecInputMsg(GamerInputC2s pMsg)
+        {
+            Rotation = pMsg.Rotation;
 
             LastMoveInputDir = MoveInputDir;
             Vector2 velocity = Vector2.zero;
@@ -256,42 +315,35 @@ namespace Game.Network.Server
 
             HandleInputMoveSpeedChange();
 
-            Rotation = pMsg.Rotation;
+            //发送移动结果
+            GamerInputS2c msg = new GamerInputS2c();
+            msg.gamerUid = GamerUid;
+            msg.moveClickType = (int)buffAddSpeedType;
+            NetServerLocate.Net.SendTo(Peer, (ushort)RoomMsgDefine.GamerInputS2c, msg);
         }
 
         private void HandleInputMoveSpeedChange()
         {
-            float offsetTime = NetServerLocate.GameCtrl.GameTime % DrumsTime;
-            buffAddSpeedType = MoveClickType.Miss;
+            MoveClickCfg moveClickCfg = TempConfig.MoveClickCfgDict[buffAddSpeedType];
+            buffAddSpeedTime = moveClickCfg.buffTime;
+            SetMoveSpeed(BaseMoveSpeed * moveClickCfg.addSpeedRate);
 
-            //普通
-            if (0 < offsetTime && offsetTime < DrumsTime * 0.2f)
+            Debug.LogWarning($"Input:{buffAddSpeedTypeTimer}-{DrumsTime}:{buffAddSpeedType}::{MoveSpeed}");
+        }
+
+        public void OnRecDashMsg()
+        {
+            if (isDashInCd)
             {
-                buffAddSpeed = 2;
-                buffAddSpeedTime = 1;
-                buffAddSpeedType = MoveClickType.Normal;
+                Debug.LogError($"冲刺Cd中:{GamerUid}");
+                return;
             }
-            //优秀
-            else if (DrumsTime * 0.2f <= offsetTime && offsetTime < DrumsTime * 0.8f)
-            {
-                buffAddSpeed = 4;
-                buffAddSpeedTime = 2;
-                buffAddSpeedType = MoveClickType.Good;
-            }
-            //完美
-            else if (DrumsTime * 0.8f <= offsetTime && offsetTime <= DrumsTime)
-            {
-                buffAddSpeed = 6;
-                buffAddSpeedTime = 3;
-                buffAddSpeedType = MoveClickType.Perfect;
-            }
-            //失误
-            else 
-            {
-                buffAddSpeed = 0;
-                buffAddSpeedTime = 0;
-                buffAddSpeedType = MoveClickType.Miss;
-            }
+            isDashInCd = true;
+
+            //0，开启计时器
+            dashTimer.Start();
+            //1，占领格子
+            //2，发送消息
         }
 
         public GamerInfo CollectGamerInfo()

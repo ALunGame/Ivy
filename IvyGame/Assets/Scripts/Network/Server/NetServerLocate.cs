@@ -1,7 +1,4 @@
-﻿using Gameplay;
-using UnityEngine;
-
-namespace Game.Network.Server
+﻿namespace Game.Network.Server
 {
     internal static class NetServerLocate
     {

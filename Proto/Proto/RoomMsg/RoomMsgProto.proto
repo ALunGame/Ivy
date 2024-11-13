@@ -63,16 +63,12 @@ message GamerInputC2s {
 	required string gamerUid = 1;
 	required int32 commandType = 2;			//命令类型
 	required float rotation = 3;			//当前旋转
-	required int32 serverTick = 4;			//服务器帧
-	required int32 commandTick = 5;			//命令帧
 }
 
 //玩家输入返回
 message GamerInputS2c {
 	required string gamerUid = 1;
 	required int32 moveClickType = 2;			//此次移动结果
-	required float speed = 3;					//此次移动速度
-	required int32 commandTick = 4;				//命令帧
 }
 
 //玩家基础状态

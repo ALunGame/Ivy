@@ -21,15 +21,15 @@ namespace Gameplay.GameData
         }
 
         /// <summary>
-        /// 设置输入
+        /// 设置移动输入
         /// </summary>
         /// <param name="pVelocity"></param>
         /// <param name="pRotation"></param>
-        public void SetInput(Vector2 pVelocity, float pRotation)
+        public void SetMoveInput(Vector2 pVelocity, float pRotation)
         {
             inputCommand = new GamerInputC2s();
             inputCommand.gamerUid = GamerUid;
-            inputCommand.commandType = 0;
+            inputCommand.commandType = PlayerInputCommand.None;
 
             if (pVelocity.x < -0.5f)
                 inputCommand.commandType = PlayerInputCommand.Move_Left;
@@ -72,6 +72,11 @@ namespace Gameplay.GameData
             {
                 Position = new Vector2((int)Position.x, Position.y);
             }
+        }
+
+        public void SetDashInput()
+        {
+
         }
 
         public override void UpdateLogic(float pTimeDelta, float pGameTime)

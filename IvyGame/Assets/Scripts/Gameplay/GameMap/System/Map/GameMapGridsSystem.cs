@@ -26,6 +26,17 @@ namespace Gameplay.GameMap.System
         public override void OnStartGame()
         {
             allGamers = GameplayGlobal.Map.GetSystem<GameActorSystem>().GetActors<Actor_InternalGamer>();
+            if (allGamers.IsLegal())
+            {
+                for (int i = 0; i < allGamers.Count; i++)
+                {
+                    Actor_InternalGamer gamer = allGamers[i];
+                    gamer.GridPos.RegValueChangedEvent((gridPos) =>
+                    {
+                        MapGrids?.OnGamerGridPosChange(gamer.Uid, gridPos);
+                    });
+                }
+            }
         }
 
         public override void OnUpdate(float pDeltaTime, float pGameTime)
@@ -33,17 +44,6 @@ namespace Gameplay.GameMap.System
             if (MapGrids)
             {
                 MapGrids.UpdateLogic(pDeltaTime, pGameTime);
-                if (allGamers.IsLegal())
-                {
-                    for (int i = 0; i < allGamers.Count; i++)
-                    {
-                        //if (allGamers[i].Speed > 0)
-                        //{
-
-                        //}
-                        MapGrids.PassCampRect(allGamers[i].Uid, allGamers[i].GetGridPos());
-                    }
-                }
             }
         }
 

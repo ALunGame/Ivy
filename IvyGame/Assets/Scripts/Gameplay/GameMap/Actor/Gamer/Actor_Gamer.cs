@@ -9,21 +9,26 @@ namespace Gameplay.GameMap.Actor
 {
     public abstract class Actor_InternalGamer : ActorModel
     {
-        public Dictionary<int, Dictionary<int, MapGamerPath>> PathPoint = new Dictionary<int, Dictionary<int, MapGamerPath>>();
-
         public float Speed { get; private set; }
 
         public int Camp { get; private set; }
 
-        public Actor_InternalGamer(string pUid, int pId, ActorType pType, GameObject pActorGo) : base(pUid, pId, pType, pActorGo)
-        {
+        public ActorModelDataFile<Vector2Int> GridPos { get; private set; }
 
+        public Dictionary<int, Dictionary<int, MapGamerPath>> PathPoint = new Dictionary<int, Dictionary<int, MapGamerPath>>();
+
+        public Actor_InternalGamer(string pUid, int pId, ActorType pType, GameObject pActorGo) : base(pUid, pId, pType, pActorGo) { }
+
+        protected override void OnInit()
+        {
+            GridPos = new ActorModelDataFile<Vector2Int>(this);
         }
 
-        public Vector2Int GetGridPos()
+        protected override void OnPosChange()
         {
             Vector3 tPos = GetPos();
-            return GameplayGlobal.Data.Map.PosToGrid(new Vector2(tPos.x, tPos.z));
+            Vector2Int tGridPos = GameplayGlobal.Data.Map.PosToGrid(new Vector2(tPos.x, tPos.z));
+            GridPos.Value = tGridPos;
         }
 
         public void SetSpeed(float pSpeed)
@@ -61,12 +66,6 @@ namespace Gameplay.GameMap.Actor
 
         #region 生命周期
 
-        public sealed override void Init()
-        {
-            OnInit();
-        }
-        protected virtual void OnInit() { }
-
         public override void UpdateLogic(float pTimeDelta, float pGameTime)
         {
             foreach (var item in PathPoint.Values)
@@ -78,12 +77,11 @@ namespace Gameplay.GameMap.Actor
             }
         }
 
-        public sealed override void Clear()
+        protected override void OnClear() 
         {
             RemoveDataChangeEvent();
             OnClear();
         }
-        protected virtual void OnClear() { }
 
         #endregion
 
@@ -160,11 +158,11 @@ namespace Gameplay.GameMap.Actor
 
             if (currPathCnt % 5 == 0)
             {
-                mapGamerPath.SetAnimCfg(Random.Range(1, MapGrids.AnimGridCfgList.Count - 1));
+                mapGamerPath.SetAnimCfg(new Vector2(1.5f, 2.5f));
             }
             else
             {
-                mapGamerPath.SetAnimCfg(0);
+                mapGamerPath.SetAnimCfg(new Vector2(0.1f, 0.1f));
             }
         }
 

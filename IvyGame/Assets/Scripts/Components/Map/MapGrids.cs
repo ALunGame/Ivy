@@ -1,4 +1,5 @@
 using Game;
+using IAEngine;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -8,24 +9,13 @@ namespace Gameplay
 {
     public class MapGrids : MonoBehaviour
     {
-        //网格动画
+        //网格动画配置
+        [Serializable]
         public class GridAnimCfg
         {
             public float minScaleY;
             public float maxScaleY;
-        }
-
-        public static List<GridAnimCfg> AnimGridCfgList = new List<GridAnimCfg>()
-        {
-            new GridAnimCfg(){ minScaleY = 0.1f, maxScaleY = 0.1f},
-            new GridAnimCfg(){ minScaleY = 1.5f, maxScaleY = 2.0f},
-            new GridAnimCfg(){ minScaleY = 2.5f, maxScaleY = 3.0f},
-        };
-
-        public static float GetAnimScaleY(float pCurrScaleY, int pAnimIndex)
-        {
-            GridAnimCfg animCfg = AnimGridCfgList[pAnimIndex];
-            return animCfg.minScaleY == pCurrScaleY ? animCfg.maxScaleY : animCfg.minScaleY;
+            public int weight;
         }
 
         //实例化参数
@@ -60,7 +50,10 @@ namespace Gameplay
         public Material GridMaterial;
         [Header("格子大小")]
         public Vector3 GridSize;
+        [Header("格子动画配置")]
+        public List<GridAnimCfg> GridAnimCfgs = new List<GridAnimCfg>();
 
+        //格子数量
         private int instanceCount;
         //物体的复合变换矩阵Buffer
         private ComputeBuffer allMatricesBuffer;
@@ -72,6 +65,7 @@ namespace Gameplay
         private Dictionary<int, Dictionary<int, int>> gridIndexMap = new Dictionary<int, Dictionary<int, int>>();
         private Dictionary<int, GridParam> gridDataDict = new Dictionary<int, GridParam>();
         private HashSet<int> animIndexList = new HashSet<int>();
+        //渲染区域
         private Bounds renderBounds = new Bounds();
 
         private void OnDrawGizmosSelected()
@@ -163,15 +157,45 @@ namespace Gameplay
 
         public void ChangeGridsCamp(List<Vector2Int> pGridPosList, int pCamp, int pAnimCfgIndex = -1)
         {
-            if (pAnimCfgIndex == -1)
-                pAnimCfgIndex = UnityEngine.Random.Range(0, AnimGridCfgList.Count - 1);
+            int resAnimCfgIndex = -1;
+            float resScaleY = 0.1f;
+            if (pCamp == 0) 
+            {
+                resAnimCfgIndex = -1;
+                resScaleY = 0.1f;
+            }
+            else
+            {
+                GridAnimCfg resCfg = null;
+                if (pAnimCfgIndex != -1)
+                {
+                    resCfg = GridAnimCfgs[pAnimCfgIndex];
+                }
+                else
+                {
+                    List<int> weightIndexs = new List<int>();
+                    for (int i = 0; i < GridAnimCfgs.Count; i++)
+                    {
+                        weightIndexs.Add(GridAnimCfgs[i].weight);
+                    }
+                    if (!RandomHelper.GetRandomValueByWeight(GridAnimCfgs, weightIndexs, out resAnimCfgIndex, out resCfg))
+                    {
+                        resAnimCfgIndex = UnityEngine.Random.Range(0, GridAnimCfgs.Count - 1);
+                        resCfg = GridAnimCfgs[resAnimCfgIndex];
+                    }
+                }
+
+                resScaleY = resCfg.minScaleY;
+            }
+
+                
             for (int i = 0; i < pGridPosList.Count; i++)
             {
-                ChangeGridCamp(pGridPosList[i], pCamp, pAnimCfgIndex);
+                ChangeGridCamp(pGridPosList[i], pCamp, resAnimCfgIndex, resScaleY);
             }
         }
 
-        private void ChangeGridCamp(Vector2Int pGridPos, int pCamp, int pAnimCfgIndex)
+        private void ChangeGridCamp(Vector2Int pGridPos, int pCamp, int pAnimCfgIndex, float pChangeScaleY)
         {
             if (!gridIndexMap.ContainsKey(pGridPos.x) || !gridIndexMap[pGridPos.x].ContainsKey(pGridPos.y))
             {
@@ -190,14 +214,14 @@ namespace Gameplay
             {
                 animIndexList.Remove(index);
 
-                shaderArgs[index].instanceToObjectMatrix = Matrix4x4.TRS(gridParam.position, Quaternion.identity, new Vector3(GridSize.x, 0.1f, GridSize.z));
+                shaderArgs[index].instanceToObjectMatrix = Matrix4x4.TRS(gridParam.position, Quaternion.identity, new Vector3(GridSize.x, pChangeScaleY, GridSize.z));
                 shaderArgs[index].color = TempConfig.CampColorDict[0];
             }
             else
             {
                 animIndexList.Add(index);
 
-                shaderArgs[index].instanceToObjectMatrix = Matrix4x4.TRS(gridParam.position, Quaternion.identity, new Vector3(GridSize.x, 1, GridSize.z));
+                shaderArgs[index].instanceToObjectMatrix = Matrix4x4.TRS(gridParam.position, Quaternion.identity, new Vector3(GridSize.x, pChangeScaleY, GridSize.z));
                 shaderArgs[index].color = TempConfig.CampColorDict[pCamp];
             }
 
@@ -206,66 +230,42 @@ namespace Gameplay
             GridMaterial.SetBuffer("_AllMatricesBuffer", allMatricesBuffer);
         }
 
-
-        private Dictionary<string, List<int>> PassedCampGridDict = new Dictionary<string, List<int>>();   
-        private Vector2Int PassSize = new Vector2Int(4, 4);
-        private List<float> PassDisSize = new List<float>()
+        public void UpdateLogic(float pDeltaTime, float pGameTime)
         {
-            0.5f,
-            1.0f,
-            1.5f,
-            2.0f,
-            3.0f,
-        };
-        public void PassCampRect(string gamerUid, Vector2Int pCurrGridPos)
-        {
-            if (PassedCampGridDict.ContainsKey(gamerUid))
-            {
-                List<int> gridIndexList = PassedCampGridDict[gamerUid];
-                foreach (var index in gridIndexList)
-                {
-                    GridParam gridParam = gridDataDict[index];
-                    gridParam.inPassed = false;
-                }
-                gridIndexList.Clear();
-            }
-
-            int currIndex = gridIndexMap[pCurrGridPos.x][pCurrGridPos.y];
-            GridParam currGridParam = gridDataDict[currIndex];
-            if (currGridParam.camp == 0)
+            if (allMatricesBuffer == null)
             {
                 return;
             }
 
+            //动画
+            PlayGridAnim(Time.deltaTime);
+
+            //渲染
+            Graphics.DrawMeshInstancedIndirect(GridMesh, 0, GridMaterial, renderBounds, argsBuffer);
+        }
+
+        //获得需要播放的缩放
+        public float GetPlayAnimScaleY(float pCurrScaleY, int pAnimIndex)
+        {
+            GridAnimCfg animCfg = GridAnimCfgs[pAnimIndex];
+            return animCfg.minScaleY == pCurrScaleY ? animCfg.maxScaleY : animCfg.minScaleY;
+        }
+
+        //播放格子缩放动画
+        private void PlayGridAnim(float pTimeDelta)
+        {
             bool needRefresh = false;
-
-            Vector2Int leftDownPos = pCurrGridPos - (PassSize / 2);
-            for (int x = leftDownPos.x; x <= leftDownPos.x + PassSize.x; x++)
+            foreach (int index in animIndexList)
             {
-                for (int y = leftDownPos.y; y <= leftDownPos.y + PassSize.y; y++)
+                GridParam gridParam = gridDataDict[index];
+                gridParam.animTime += pTimeDelta;
+                if (gridParam.animTime >= GridAnimTime)
                 {
-                    if (gridIndexMap.ContainsKey(x) && gridIndexMap[x].ContainsKey(y))
-                    {
-                        int gridIndex = gridIndexMap[x][y];
-                        GridParam gridParam = gridDataDict[gridIndex];
-                        if (gridParam.camp != 0)
-                        {
-                            gridParam.inPassed = true;
-                            int xDis = Mathf.Abs(pCurrGridPos.x - x);
-                            int yDis = Mathf.Abs(pCurrGridPos.y - y);
-                            int resDis = xDis > yDis ? xDis : yDis;
-                            float scaleY = PassDisSize[resDis];
-                            gridParam.passedScaleY = scaleY;
-
-                            needRefresh = true;
-                            //更新显示
-                            shaderArgs[gridIndex].instanceToObjectMatrix = Matrix4x4.TRS(gridParam.position, Quaternion.identity, new Vector3(GridSize.x, scaleY, GridSize.z));
-
-                            if (!PassedCampGridDict.ContainsKey(gamerUid))
-                                PassedCampGridDict.Add(gamerUid, new List<int>());
-                            PassedCampGridDict[gamerUid].Add(gridIndex);
-                        }
-                    }
+                    float newScale = GetPlayAnimScaleY(gridParam.currScaleY, gridParam.animCfgIndex);
+                    shaderArgs[index].instanceToObjectMatrix = Matrix4x4.TRS(gridParam.position, Quaternion.identity, new Vector3(GridSize.x, newScale, GridSize.z));
+                    gridParam.animTime = 0;
+                    gridParam.currScaleY = newScale;
+                    needRefresh = true;
                 }
             }
 
@@ -277,34 +277,65 @@ namespace Gameplay
             }
         }
 
-        public void UpdateLogic(float pDeltaTime, float pGameTime)
+        private Dictionary<string, List<int>> gamerPassedGridDict = new Dictionary<string, List<int>>();
+        private Vector2Int gamerPassSize = new Vector2Int(4, 4);
+        private List<float> gamerPassDisGridSize = new List<float>()
         {
-            if (allMatricesBuffer == null)
+            0.5f,
+            1.0f,
+            1.5f,
+            2.0f,
+            3.0f,
+        };
+        public void OnGamerGridPosChange(string pGamerUid, Vector2Int pGridPos)
+        {
+            if (gamerPassedGridDict.ContainsKey(pGamerUid))
+            {
+                List<int> gridIndexList = gamerPassedGridDict[pGamerUid];
+                foreach (var index in gridIndexList)
+                {
+                    GridParam gridParam = gridDataDict[index];
+                    gridParam.inPassed = false;
+                }
+                gridIndexList.Clear();
+            }
+
+            int currIndex = gridIndexMap[pGridPos.x][pGridPos.y];
+            GridParam currGridParam = gridDataDict[currIndex];
+            if (currGridParam.camp == 0)
             {
                 return;
             }
 
-            // 动画
-            PlayAnim(Time.deltaTime);
-
-            // 渲染
-            Graphics.DrawMeshInstancedIndirect(GridMesh, 0, GridMaterial, renderBounds, argsBuffer);
-        }
-
-        private void PlayAnim(float pTimeDelta)
-        {
             bool needRefresh = false;
-            foreach (int index in animIndexList)
+
+            Vector2Int leftDownPos = pGridPos - (gamerPassSize / 2);
+            for (int x = leftDownPos.x; x <= leftDownPos.x + gamerPassSize.x; x++)
             {
-                GridParam gridParam = gridDataDict[index];
-                gridParam.animTime += pTimeDelta;
-                if (gridParam.animTime >= GridAnimTime)
+                for (int y = leftDownPos.y; y <= leftDownPos.y + gamerPassSize.y; y++)
                 {
-                    float newScale = GetAnimScaleY(gridParam.currScaleY, gridParam.animCfgIndex);
-                    shaderArgs[index].instanceToObjectMatrix = Matrix4x4.TRS(gridParam.position, Quaternion.identity, new Vector3(GridSize.x, newScale, GridSize.z));
-                    gridParam.animTime = 0;
-                    gridParam.currScaleY = newScale;
-                    needRefresh = true;
+                    if (gridIndexMap.ContainsKey(x) && gridIndexMap[x].ContainsKey(y))
+                    {
+                        int gridIndex = gridIndexMap[x][y];
+                        GridParam gridParam = gridDataDict[gridIndex];
+                        if (gridParam.camp != 0)
+                        {
+                            gridParam.inPassed = true;
+                            int xDis = Mathf.Abs(pGridPos.x - x);
+                            int yDis = Mathf.Abs(pGridPos.y - y);
+                            int resDis = xDis > yDis ? xDis : yDis;
+                            float scaleY = gamerPassDisGridSize[resDis];
+                            gridParam.passedScaleY = scaleY;
+
+                            needRefresh = true;
+                            //更新显示
+                            shaderArgs[gridIndex].instanceToObjectMatrix = Matrix4x4.TRS(gridParam.position, Quaternion.identity, new Vector3(GridSize.x, scaleY, GridSize.z));
+
+                            if (!gamerPassedGridDict.ContainsKey(pGamerUid))
+                                gamerPassedGridDict.Add(pGamerUid, new List<int>());
+                            gamerPassedGridDict[pGamerUid].Add(gridIndex);
+                        }
+                    }
                 }
             }
 

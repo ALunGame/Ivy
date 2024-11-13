@@ -181,12 +181,6 @@ namespace Proto
         [global::ProtoBuf.ProtoMember(3, Name = @"rotation", IsRequired = true)]
         public float Rotation { get; set; }
 
-        [global::ProtoBuf.ProtoMember(4, IsRequired = true)]
-        public int serverTick { get; set; }
-
-        [global::ProtoBuf.ProtoMember(5, IsRequired = true)]
-        public int commandTick { get; set; }
-
     }
 
     [global::ProtoBuf.ProtoContract()]
@@ -201,12 +195,6 @@ namespace Proto
 
         [global::ProtoBuf.ProtoMember(2, IsRequired = true)]
         public int moveClickType { get; set; }
-
-        [global::ProtoBuf.ProtoMember(3, Name = @"speed", IsRequired = true)]
-        public float Speed { get; set; }
-
-        [global::ProtoBuf.ProtoMember(4, IsRequired = true)]
-        public int commandTick { get; set; }
 
     }
 

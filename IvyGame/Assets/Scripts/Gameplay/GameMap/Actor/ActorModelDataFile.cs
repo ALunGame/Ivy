@@ -1,12 +1,12 @@
 ﻿using System;
 
-namespace Game.Network.Server
+namespace Gameplay.GameMap.Actor
 {
-    internal class InternalServerGameDataFile
+    public class InternalActorModelDataFile
     {
-        public InternalServerGameDataFile(BaseServerGameData pGameData)
+        public InternalActorModelDataFile(ActorModel pActor)
         {
-            pGameData.AddGameDataField(this);
+            pActor.AddGameDataField(this);
         }
 
         public virtual void Clear()
@@ -15,7 +15,7 @@ namespace Game.Network.Server
         }
     }
 
-    internal class ServerGameDataFile<T> : InternalServerGameDataFile where T : struct
+    public class ActorModelDataFile<T> : InternalActorModelDataFile where T : struct
     {
         private T _value;
         public T Value
@@ -35,7 +35,7 @@ namespace Game.Network.Server
 
         private Action<T> changeNotifys = null;
 
-        public ServerGameDataFile(BaseServerGameData pGameData) : base(pGameData)
+        public ActorModelDataFile(ActorModel pActor) : base(pActor)
         {
         }
 

@@ -1,30 +1,47 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 namespace Game
 {
-
-    public class PlayerCfg
+    public enum MoveClickType
     {
-        public string PrefabName;
-
-        public string PathPrefabName;
+        Miss,
+        Normal,
+        Good,
+        Perfect,
     }
 
+    public class MoveClickCfg
+    {
+        public float buffTime;              //添加速度时间
+        public float addSpeedRate;          //添加速度倍率
+
+        public MoveClickCfg(float pBuffTime, float pAddSpeedRate)
+        {
+            buffTime = pBuffTime;
+            addSpeedRate = pAddSpeedRate;
+        }
+    }
+
+    /// <summary>
+    /// 临时配置
+    /// </summary>
     public static class TempConfig
     {
-        public static Vector2Int MapSize = new Vector2Int(100, 100);
+        /// <summary>
+        /// 点击类型配置
+        /// </summary>
+        public static Dictionary<MoveClickType, MoveClickCfg> MoveClickCfgDict = new Dictionary<MoveClickType, MoveClickCfg>()
+        {
+            { MoveClickType.Miss, new MoveClickCfg(0, 1) },
+            { MoveClickType.Normal, new MoveClickCfg(1, 1.2f) },
+            { MoveClickType.Good, new MoveClickCfg(2, 1.5f) },
+            { MoveClickType.Perfect, new MoveClickCfg(3, 2f) },
+        };
 
-        public static Vector2 GridSize = new Vector2(1, 1);
-
-        public static int RebornTime = 3;
-
-        public static int GameTotalTime = 90;
-
+        /// <summary>
+        /// 阵营颜色
+        /// </summary>
         public static Dictionary<int, Color> CampColorDict = new Dictionary<int, Color>()
         {
             {0,Color.white },

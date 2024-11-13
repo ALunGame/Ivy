@@ -142,8 +142,6 @@ namespace Game.Network.CDispatcher
         {
             GameplayGlobal.Ctrl.EndGame();
         }
-
-
     }
 }
 

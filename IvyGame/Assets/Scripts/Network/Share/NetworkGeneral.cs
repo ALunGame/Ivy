@@ -121,14 +121,6 @@ namespace Game.Network
         Die,
     }
 
-    internal enum MoveClickType
-    {
-        Miss,
-        Normal,
-        Good, 
-        Perfect,
-    }
-
     public enum GameState
     {
         None,
@@ -152,9 +144,12 @@ namespace Game.Network
     public class PlayerInputCommand
     {
         public const int None       = 0;
+
         public const int Move_Up    = 1;
         public const int Move_Down  = 2;
         public const int Move_Left  = 3;
         public const int Move_Right = 4;
+
+        public const int Dash = 5;
     }
 }

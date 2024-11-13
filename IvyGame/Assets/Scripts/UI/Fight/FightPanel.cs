@@ -7,7 +7,6 @@ using Proto;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using static UnityEditor.Progress;
 
 namespace Game.UI
 {
@@ -24,6 +23,7 @@ namespace Game.UI
 
         private UIComGlue<Text> killInfo = new UIComGlue<Text>("Top/GameInfo/KillInfo/Num");
         private UIComGlue<Text> gameTimeInfo = new UIComGlue<Text>("Top/GameInfo/GameTime/Num");
+        private UIComGlue<Text> clickTypeTipTrans = new UIComGlue<Text>("Center/DrumsBox/ClickTypeTip");
 
         private UICacheGlue drumsPointCache = new UICacheGlue("Prefabs/DrumsPoint", "Center/DrumsBox/Points", true);
         private UICacheGlue gamerInfoCache = new UICacheGlue("Prefabs/GamerInfo", "Top/GamerList", true);
@@ -31,9 +31,12 @@ namespace Game.UI
         private UIUpdateGlue updateGlue = new UIUpdateGlue();
 
         private UINetworkMsgGlue OnGamerDieS2c;
+        private UINetworkMsgGlue OnGamerInputS2c;
 
         private Tween drumsCenterTween;
-        private Dictionary<GameObject, Tween> drumsTweenDict = new Dictionary<GameObject, Tween>(); 
+        private Dictionary<GameObject, Tween> drumsTweenDict = new Dictionary<GameObject, Tween>();
+        private Tween clickTypeTween;
+
         private LocalGamerData gamerData;
 
         private Vector2Int moveDir = new Vector2Int();
@@ -67,6 +70,41 @@ namespace Game.UI
             OnGamerDieS2c = new UINetworkMsgGlue(this, (ushort)RoomMsgDefine.GamerDieS2c, (msgBody) =>
             {
                 RefreshGamerInfos();
+            });
+
+            OnGamerInputS2c = new UINetworkMsgGlue(this, (ushort)RoomMsgDefine.GamerInputS2c, (msgBody) =>
+            {
+                clickTypeTween?.Kill();
+
+                clickTypeTipTrans.Com.gameObject.SetActive(true);
+
+                GamerInputS2c msg = (GamerInputS2c)msgBody;
+                MoveClickType clickType = (MoveClickType)msg.moveClickType;
+                string clickTypeStr = "";
+                switch (clickType)
+                {
+                    case MoveClickType.Miss:
+                        clickTypeStr = "MISS";
+                        break;
+                    case MoveClickType.Normal:
+                        clickTypeStr = "普通";
+                        break;
+                    case MoveClickType.Good:
+                        clickTypeStr = "优秀";
+                        break;
+                    case MoveClickType.Perfect:
+                        clickTypeStr = "完美";
+                        break;
+                }
+                clickTypeTipTrans.Com.text = clickTypeStr;
+
+                clickTypeTipTrans.Com.gameObject.SetActive(true);
+
+                RectTransform rectTrans = clickTypeTipTrans.Com.GetComponent<RectTransform>();
+                clickTypeTween = rectTrans.DOShakeScale(1).OnComplete(() =>
+                {
+                    clickTypeTipTrans.Com.gameObject.SetActive(false);
+                });
             });
         }
 
@@ -155,7 +193,7 @@ namespace Game.UI
 
         private void SendMoveMsg(int x, int y, float rotate)
         {
-            gamerData.SetInput(new Vector2(x, y), rotate);
+            gamerData.SetMoveInput(new Vector2(x, y), rotate);
         }
 
         #endregion

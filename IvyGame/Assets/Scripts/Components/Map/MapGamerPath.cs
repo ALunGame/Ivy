@@ -11,30 +11,31 @@ namespace Gameplay
 
         public int animIndex = -1;
         public float currScaleY;
+        public Vector2 ScaleRect = new Vector2();
 
         public float AnimTime = 0.5f;
 
         public void UpdateLogic(float pDeltaTime, float pGameTime)
         {
-            if (animIndex == -1) 
+            if (animIndex == -1)
             {
                 return;
             }
             animTimer += pDeltaTime;
             if (animTimer >= AnimTime)
             {
-                float newScale = MapGrids.GetAnimScaleY(currScaleY, animIndex);
-                displayTrans.localScale = new Vector3 (displayTrans.localScale.x, newScale, displayTrans.localScale.z);
+                float newScale = ScaleRect.x == currScaleY ? ScaleRect.y : ScaleRect.x;
+                displayTrans.localScale = new Vector3(displayTrans.localScale.x, newScale, displayTrans.localScale.z);
                 animTimer = 0;
                 currScaleY = newScale;
             }
         }
 
-        public void SetAnimCfg(int pAnimIndex)
+        public void SetAnimCfg(Vector2 pSizeRect)
         {
-            animIndex = pAnimIndex;
+            ScaleRect = pSizeRect;
             animTimer = 0;
-            currScaleY = MapGrids.AnimGridCfgList[animIndex].minScaleY;
+            currScaleY = ScaleRect.x;
         }
     }
 }

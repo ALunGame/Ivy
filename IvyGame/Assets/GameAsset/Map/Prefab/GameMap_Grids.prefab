@@ -49,3 +49,13 @@ MonoBehaviour:
   GridMesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
   GridMaterial: {fileID: 2100000, guid: 5c92e5aebe151db489faaad4e86daccb, type: 2}
   GridSize: {x: 0.9, y: 0, z: 0.9}
+  GridAnimCfgs:
+  - minScaleY: 0.1
+    maxScaleY: 0.1
+    weight: 10
+  - minScaleY: 1.5
+    maxScaleY: 2
+    weight: 40
+  - minScaleY: 2.5
+    maxScaleY: 3
+    weight: 70
