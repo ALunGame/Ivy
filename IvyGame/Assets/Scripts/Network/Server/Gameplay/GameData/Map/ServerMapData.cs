@@ -4,6 +4,7 @@ using Proto;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using static IAEngine.RectEx;
 
 namespace Game.Network.Server
 {
@@ -229,41 +230,46 @@ namespace Game.Network.Server
                 return;
             }
 
-            //添加寻路
+            //旧阵营
             int oldCamp = CampPoint[pPoint.x, pPoint.y];
-            if (oldCamp != 0)
-            {
-                if (!campPathGridDict.ContainsKey(oldCamp))
-                {
-                    PathGrid pathGrid = new PathGrid();
-                    pathGrid.FinderType = FinderType.Four;
-                    campPathGridDict.Add(oldCamp, pathGrid);
-                    campPathGridDict[oldCamp].Create(Size.x, Size.y, false);
-                }
-                campPathGridDict[oldCamp].SetObs(pPoint.x, pPoint.y, false);
-            }
-
-            if (!campPathGridDict.ContainsKey(pCamp))
-            {
-                PathGrid pathGrid = new PathGrid();
-                pathGrid.FinderType = FinderType.Four;
-                campPathGridDict.Add(pCamp, pathGrid);
-                campPathGridDict[pCamp].Create(Size.x, Size.y, false);
-            }
-            campPathGridDict[pCamp].SetObs(pPoint.x, pPoint.y, true);
-
 
             //更新区域
             if (!campRectDict.ContainsKey(pCamp))
                 campRectDict.Add(pCamp, new RectInt());
-
-            //TODO:有一个问题，旧的阵营区域没有刷新
             RectInt rect = campRectDict[pCamp];
-            RectEx.UpdateRect(ref rect, pPoint);
+            RectEx.UpdateRectOnAddPoint(ref rect, pPoint);
             campRectDict[pCamp] = rect;
 
             //更新数据
             CampPoint[pPoint.x, pPoint.y] = pCamp;
+
+            //更新删除的区域
+            if (oldCamp != 0)
+            {
+                UpdateRectOnRemoveCamp(oldCamp, pPoint);
+            }
+        }
+
+        //当删除阵营时更新阵营区域
+        private void UpdateRectOnRemoveCamp(int pCamp, Vector2Int pPoint) 
+        {
+            RectInt campRect = campRectDict[pCamp];
+            if (RectEx.CheckInBorder(campRect, pPoint, out RectBorder border))
+            {
+                List<Vector2Int> points = RectEx.GetPointListByBorder(campRect, border);
+                for (int i = 0; i < points.Count; i++)
+                {
+                    //有一个还在边框内，不需要更新
+                    if (GetPointCamp(points[i]) == pCamp)
+                    {
+                        return;
+                    }
+                }
+
+                //更新边框
+                RectEx.RemoveRectBorder(ref campRect, border);
+                campRectDict[pCamp] = campRect;
+            }
         }
 
         /// <summary>
@@ -375,16 +381,6 @@ namespace Game.Network.Server
                     }
                 }
             }
-
-            //for (int x = posX; x < posX + width; x++)
-            //{
-            //    for (int y = posY; y < posY + height; y++)
-            //    {
-            //        if (!usePointMap.ContainsKey(x))
-            //            usePointMap.Add(x, new HashSet<int>());
-            //        usePointMap[x].Add(y);
-            //    }
-            //}
 
             return true;
         }

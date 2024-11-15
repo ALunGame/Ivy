@@ -18,7 +18,7 @@ namespace Game.Network.Client
         private Action onConnected;
         private Action<DisconnectInfo> onDisconnected;
 
-        internal NetworkLogicTimer LogicTimer { get; private set; }
+        private NetworkLogicTimer logicTimer;
 
         private int ping;
 
@@ -39,7 +39,7 @@ namespace Game.Network.Client
             };
             netManager.Start();
 
-            LogicTimer = new NetworkLogicTimer(OnLogicUpdate);
+            logicTimer = new NetworkLogicTimer(OnLogicUpdate);
 
             NetClientLocate.Init(this);
         }
@@ -47,7 +47,7 @@ namespace Game.Network.Client
         private void Update()
         {
             netManager.PollEvents();
-            LogicTimer.Update();
+            logicTimer.Update();
         }
 
         private void OnLogicUpdate()
@@ -58,13 +58,13 @@ namespace Game.Network.Client
         private void OnDestroy()
         {
             netManager.Stop();
-            LogicTimer.Stop();
+            logicTimer.Stop();
         }
 
         private void OnApplicationQuit()
         {
             netManager.Stop();
-            LogicTimer.Stop();
+            logicTimer.Stop();
             NetworkEvent.Clear();
         }
 
@@ -192,7 +192,7 @@ namespace Game.Network.Client
             netServer = peer;
 
             onConnected?.Invoke();
-            LogicTimer.Start();
+            logicTimer.Start();
         }
 
         /// <summary>
@@ -209,7 +209,7 @@ namespace Game.Network.Client
                 onDisconnected(disconnectInfo);
                 onDisconnected = null;
             }
-            LogicTimer.Stop();
+            logicTimer.Stop();
         }
 
         /// <summary>

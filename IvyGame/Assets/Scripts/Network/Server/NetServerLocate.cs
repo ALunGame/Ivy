@@ -17,11 +17,6 @@
         /// </summary>
         public static ServerTokenCenter TokenCenter { get; private set; }
 
-        ///// <summary>
-        ///// 游戏
-        ///// </summary>
-        //public static ServerGameInstance Game { get; private set; }
-
         /// <summary>
         /// 游戏控制层
         /// </summary>

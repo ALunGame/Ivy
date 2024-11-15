@@ -4,6 +4,7 @@ using ProtoBuf;
 using System;
 using System.Net;
 using System.Net.Sockets;
+using System.Threading;
 using UnityEngine;
 
 namespace Game.Network.Server
@@ -13,7 +14,8 @@ namespace Game.Network.Server
         private NetManager netManager;
         private NetPacketProcessor packetProcessor;
 
-        internal static NetworkLogicTimer LogicTimer { get; private set; }
+        private Thread logicThread;
+        private NetworkLogicTimer logicTimer;
 
         public ushort Tick {  get; private set; }
 
@@ -46,7 +48,7 @@ namespace Game.Network.Server
 
         private void Awake()
         {
-            LogicTimer = new NetworkLogicTimer(OnLogicUpdate);
+            logicTimer = new NetworkLogicTimer(OnLogicUpdate);
 
             packetProcessor = new NetPacketProcessor();
             packetProcessor.SubscribeReusable<DiscoveryPacket, IPEndPoint>(OnDiscoveryReceived);
@@ -54,7 +56,6 @@ namespace Game.Network.Server
             {
                 AutoRecycle = true,
                 BroadcastReceiveEnabled = true,
-                DisconnectTimeout = 500000000,          //临时
             };
             //serverState = new ServerStateS2c();
 
@@ -64,7 +65,7 @@ namespace Game.Network.Server
         private void Update()
         {
             netManager.PollEvents();
-            LogicTimer.Update();
+            logicTimer.Update();
         }
 
         public Action OnDrawGizmosFunc;
@@ -75,13 +76,24 @@ namespace Game.Network.Server
 
         private void OnDestroy()
         {
+            logicTimer.Stop();
+            if (logicThread != null)
+            {
+                logicThread.Join();
+                logicThread = null;
+            }
+
             NetServerLocate.Clear();
             netManager.Stop();
-            LogicTimer.Stop();
         }
 
         private void OnApplicationQuit()
         {
+            if (logicThread != null)
+            {
+                logicThread.Join();
+                logicThread = null;
+            }
             netManager.Stop();
         }
 
@@ -136,7 +148,10 @@ namespace Game.Network.Server
             if (netManager.IsRunning)
                 return;
             netManager.Start(NetworkGeneral.ServerPort);
-            LogicTimer.Start();
+            logicTimer.Start();
+            //logicThread = new Thread(UpdateThread) { Name = "NetServer.Update", IsBackground = true };
+            //logicThread.Start();
+
             NetServerLocate.Log.Log("服务器启动成功：", NetworkGeneral.ServerPort);
         }
 
@@ -148,16 +163,28 @@ namespace Game.Network.Server
             if (!netManager.IsRunning)
                 return;
             netManager.Stop();
+            if (logicThread != null)
+            {
+                logicThread.Join();
+                logicThread = null;
+            }
             NetServerLocate.Clear();
+        }
+
+        /// <summary>
+        /// 机制不对
+        /// </summary>
+        private void UpdateThread()
+        {
+            while (netManager.IsRunning)
+            {
+                OnLogicUpdate();
+            }
         }
 
         private void OnLogicUpdate()
         {
             Tick = (ushort)((Tick + 1) % NetworkGeneral.MaxGameSequence);
-            if (Tick % 2 == 0)
-            {
-                //serverState.Tick = Tick;
-            }
             NetServerLocate.GameCtrl.UpdateLogic();
         }
 

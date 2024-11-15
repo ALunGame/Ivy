@@ -1,11 +1,9 @@
 ﻿using Game.AStar;
 using IAEngine;
-using IAToolkit;
 using Proto;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
-using static Unity.Burst.Intrinsics.X86.Avx;
 
 namespace Game.Network.Server
 {
@@ -23,7 +21,6 @@ namespace Game.Network.Server
 
         private ServerMapData mapData;
         private RectInt pathRect;
-        private RectInt containPathRect;
         private Vector2Int[] checkPoints = new Vector2Int[4];
 
         class PathPoint
@@ -70,15 +67,11 @@ namespace Game.Network.Server
             {
                 checkPoints[i] = new Vector2Int();
             }
-            containPathRect = new RectInt(0,0,0,0);
             pathRect = mapData.GetCampRect(Camp);
             currPoint = new Vector2Int(-1,-1);
 
             NetServerLocate.Net.OnDrawGizmosFunc += ()=>{
-                //IAToolkit.GizmosHelper.DrawRect(pathRect, Color.black);
-                //Gizmos.DrawCube(pathRect.center, new Vector3(pathRect.size.x, 10, pathRect.size.y));
-
-                //IAToolkit.GizmosHelper.DrawBounds(new Vector3(pathRect.center.x, 0, pathRect.center.y), new Vector3(pathRect.size.x, 1, pathRect.size.y), Color.blue);
+                IAToolkit.GizmosHelper.DrawBounds(new Vector3(pathRect.center.x, 0, pathRect.center.y), new Vector3(pathRect.size.x, 1, pathRect.size.y), Color.blue);
             };
         }
 
@@ -110,9 +103,7 @@ namespace Game.Network.Server
             if (pathDict.ContainsKey(pPoint.x) && pathDict[pPoint.x].ContainsKey(pPoint.y))
                 return;
 
-            RectEx.UpdateRect(ref pathRect, pPoint);
-
-            UpdateContainPathRect();
+            RectEx.UpdateRectOnAddPoint(ref pathRect, pPoint);
 
             if (!pathDict.ContainsKey(pPoint.x))
                 pathDict.Add(pPoint.x, new Dictionary<int, PathPoint>());
@@ -140,43 +131,6 @@ namespace Game.Network.Server
             msg.Operate = 1;
             msg.Pos = pPoint.ToNetVector2();
             NetServerLocate.Net.Broadcast((ushort)RoomMsgDefine.GamerPathChangeS2c, msg);
-        }
-
-        //更新包围框
-        private void UpdateContainPathRect()
-        {
-            Vector2Int leftDownPoint = pathRect.min;
-            if (leftDownPoint.x <= 0)
-                leftDownPoint.x = 0;
-            else if (leftDownPoint.x >= mapData.Size.x)
-                leftDownPoint.x = mapData.Size.x;
-            else
-                leftDownPoint.x -= 1;
-
-            if (leftDownPoint.y <= 0)
-                leftDownPoint.y = 0;
-            else if (leftDownPoint.y >= mapData.Size.y)
-                leftDownPoint.y = mapData.Size.y;
-            else
-                leftDownPoint.y -= 1;
-
-            Vector2Int rightUpPoint = pathRect.max;
-            if (rightUpPoint.x <= 0)
-                rightUpPoint.x = 0;
-            else if (rightUpPoint.x >= mapData.Size.x)
-                rightUpPoint.x = mapData.Size.x;
-            else
-                rightUpPoint.x += 1;
-
-            if (rightUpPoint.y <= 0)
-                rightUpPoint.y = 0;
-            else if (rightUpPoint.y >= mapData.Size.y)
-                rightUpPoint.y = mapData.Size.y;
-            else
-                rightUpPoint.y += 1;
-
-            containPathRect.min = leftDownPoint;
-            containPathRect.max = rightUpPoint;
         }
 
         /// <summary>
@@ -215,7 +169,7 @@ namespace Game.Network.Server
             }
 
             //更新区域
-            RectEx.UpdateRect(ref pathRect, currPoint);
+            RectEx.UpdateRectOnAddPoint(ref pathRect, currPoint);
 
             //清理
             check.nextPoint = null;
@@ -245,6 +199,7 @@ namespace Game.Network.Server
 
         #region 区域占领
 
+        private Dictionary<int, HashSet<int>> closeCheckPos = new Dictionary<int, HashSet<int>>();
         //占领区域
         public void CaptureArea(Action<Vector2Int> changeCampCallBack)
         {
@@ -264,6 +219,7 @@ namespace Game.Network.Server
                 }
             }
 
+            //计算区域内的点
             for (int x = pathRect.min.x; x <= pathRect.max.x; x++)
             {
                 for (int y = pathRect.min.y; y <= pathRect.max.y; y++)
@@ -272,6 +228,7 @@ namespace Game.Network.Server
                     //不在路径中并且阵营不同
                     if (!CheckInPath(pos) && mapData.GetPointCamp(pos) != Camp)
                     {
+                        closeCheckPos.Clear();
                         if (CheckPointCanCapture(pos))
                         {
                             Vector2Int tPos = new Vector2Int(x, y);
@@ -283,92 +240,75 @@ namespace Game.Network.Server
                 }
             }
 
+            //更新区域范围
+            pathRect = mapData.GetCampRect(Camp);
+
             //广播
             NetServerLocate.Net.Broadcast((ushort)RoomMsgDefine.ChangeGridCampS2c, msg);
         }
 
         //检测点是不是可以占领
+        private List<Vector2Int> dirPosList = new List<Vector2Int>()
+        {
+            new Vector2Int(0, 1),
+            new Vector2Int(0, -1),
+            new Vector2Int(-1, 0),
+            new Vector2Int(1, 0),
+        };
         private bool CheckPointCanCapture(Vector2Int pPos)
         {
-            byte checkCnt = 0;
-            //向左检测
-            for (int leftX = pathRect.min.x; leftX <= pPos.x; leftX++)
-            {
-                if (mapData.GetPointCamp(leftX, pPos.y) == Camp)
-                {
-                    checkCnt++;
-                    checkPoints[0] = new Vector2Int(leftX, pPos.y);
-                    break;
-                }
-            }
-            //向右检测
-            for (int rightX = pPos.x; rightX <= pathRect.max.x; rightX++)
-            {
-                if (mapData.GetPointCamp(rightX, pPos.y) == Camp)
-                {
-                    checkCnt++;
-                    checkPoints[1] = new Vector2Int(rightX, pPos.y);
-                    break;
-                }
-            }
-
-            //向上检测
-            for (int upY = pPos.y; upY <= pathRect.max.y; upY++)
-            {
-                if (mapData.GetPointCamp(pPos.x, upY) == Camp)
-                {
-                    checkCnt++;
-                    checkPoints[2] = new Vector2Int(pPos.x, upY);
-                    break;
-                }
-            }
-            //向下检测
-            for (int downY = pathRect.min.y; downY <= pPos.y; downY++)
-            {
-                if (mapData.GetPointCamp(pPos.x, downY) == Camp)
-                {
-                    checkCnt++;
-                    checkPoints[3] = new Vector2Int(pPos.x, downY);
-                    break;
-                }
-            }
-
-            //四个方向没全
-            if (checkCnt != 4)
+            if (!pathRect.Contains(pPos))
             {
                 return false;
             }
 
-            //return true;
-            Vector2Int pointB = containPathRect.min;
-            if (pointB.Equals(pathRect.min))
+            //在边界
+            if (mapData.GetPointCamp(pPos.x, pPos.y) == Camp
+            || (closeCheckPos.ContainsKey(pPos.x) && closeCheckPos[pPos.x].Contains(pPos.y)))
             {
-                pointB = containPathRect.max;
+                return true;
             }
 
-            return !CheckTowPointIsConnect(pPos, pointB);
-        }
+            int resCnt = 0;
+            for (int i = 0; i < dirPosList.Count; i++)
+            {
+                Vector2Int tPos = dirPosList[i] + pPos;
 
-        //检测俩点相连
-        private bool CheckTowPointIsConnect(Vector2Int pointA, Vector2Int pointB)
-        {
-            PathGrid pathGrid = mapData.GetPathGrid(Camp);
-            PathNode startNode = pathGrid.GetNode(pointA.x, pointA.y);
-            PathNode targetNode = pathGrid.GetNode(pointB.x, pointB.y);
+                //在边界
+                if (mapData.GetPointCamp(tPos.x, tPos.y) == Camp 
+                || (closeCheckPos.ContainsKey(tPos.x) && closeCheckPos[tPos.x].Contains(tPos.y)))
+                {
+                    resCnt++;
+                }
+                else
+                {
+                    //加入忽略
+                    if (!closeCheckPos.ContainsKey(pPos.x))
+                        closeCheckPos.Add(pPos.x, new HashSet<int>());
+                    closeCheckPos[pPos.x].Add(pPos.y);
 
-            List<Vector2Int> pathList = pathGrid.FindPath(startNode, targetNode, CheckPathNodeNeedCheck);
-            return pathList.IsLegal();
-        }
+                    if (CheckPointCanCapture(tPos))
+                    {
+                        resCnt++;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
+            }
 
-        private bool CheckPathNodeNeedCheck(int x, int y)
-        {
-            Vector2Int pos = new Vector2Int(x, y);
-            return containPathRect.Contains(pos);
+            return resCnt == 4;
         }
 
         #endregion
 
         #region Check
+
+        public bool CheckInPath(int pPosX, int pPosY)
+        {
+            return pathDict.ContainsKey(pPosX) && pathDict[pPosX].ContainsKey(pPosY);
+        }
 
         public bool CheckInPath(Vector2Int pPoint)
         {
