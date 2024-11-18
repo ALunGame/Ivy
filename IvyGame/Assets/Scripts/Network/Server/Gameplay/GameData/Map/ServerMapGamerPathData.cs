@@ -3,7 +3,9 @@ using IAEngine;
 using Proto;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
+using static UnityEditor.PlayerSettings;
 
 namespace Game.Network.Server
 {
@@ -70,7 +72,7 @@ namespace Game.Network.Server
             pathRect = mapData.GetCampRect(Camp);
             currPoint = new Vector2Int(-1,-1);
 
-            NetServerLocate.Net.OnDrawGizmosFunc += ()=>{
+            NetServerLocate.NetCom.OnDrawGizmosFunc += ()=>{
                 IAToolkit.GizmosHelper.DrawBounds(new Vector3(pathRect.center.x, 0, pathRect.center.y), new Vector3(pathRect.size.x, 1, pathRect.size.y), Color.blue);
             };
         }
@@ -199,10 +201,13 @@ namespace Game.Network.Server
 
         #region 区域占领
 
+        private Dictionary<int, Dictionary<int, int>> needCheckCapturePos = new Dictionary<int, Dictionary<int, int>>();
         private Dictionary<int, HashSet<int>> closeCheckPos = new Dictionary<int, HashSet<int>>();
         //占领区域
         public void CaptureArea(Action<Vector2Int> changeCampCallBack)
         {
+            needCheckCapturePos.Clear();
+
             //广播消息
             ChangeGridCampS2c msg = new ChangeGridCampS2c();
             msg.Camp = Camp;
@@ -228,14 +233,28 @@ namespace Game.Network.Server
                     //不在路径中并且阵营不同
                     if (!CheckInPath(pos) && mapData.GetPointCamp(pos) != Camp)
                     {
-                        closeCheckPos.Clear();
-                        if (CheckPointCanCapture(pos))
-                        {
-                            Vector2Int tPos = new Vector2Int(x, y);
-                            msg.gridPosLists.Add(new NetVector2() { X = x, Y = y });
-                            mapData.SetPointCamp(tPos, Camp);
-                            changeCampCallBack?.Invoke(tPos);
-                        }
+                        if (!needCheckCapturePos.ContainsKey(pos.x))
+                            needCheckCapturePos.Add(pos.x, new Dictionary<int, int>());
+                        needCheckCapturePos[pos.x].Add(pos.y, 0);  
+                    }
+                }
+            }
+
+            List<int> xList = needCheckCapturePos.Keys.ToList();
+            for (int i = 0; i < xList.Count; i++)
+            {
+                int x = xList[i];
+                List<int> yList = needCheckCapturePos[x].Keys.ToList();
+                for (int j = 0; j < yList.Count; j++)
+                {
+                    int y = yList[j];
+                    closeCheckPos.Clear();
+                    if (CheckPointCanCapture(new Vector2Int(x, y)))
+                    {
+                        Vector2Int tPos = new Vector2Int(x, y);
+                        msg.gridPosLists.Add(new NetVector2() { X = x, Y = y });
+                        mapData.SetPointCamp(tPos, Camp);
+                        changeCampCallBack?.Invoke(tPos);
                     }
                 }
             }
@@ -257,14 +276,14 @@ namespace Game.Network.Server
         };
         private bool CheckPointCanCapture(Vector2Int pPos)
         {
-            if (!pathRect.Contains(pPos))
+            if (!needCheckCapturePos.ContainsKey(pPos.x) || !needCheckCapturePos[pPos.x].ContainsKey(pPos.y))
             {
                 return false;
             }
 
             //在边界
             if (mapData.GetPointCamp(pPos.x, pPos.y) == Camp
-            || (closeCheckPos.ContainsKey(pPos.x) && closeCheckPos[pPos.x].Contains(pPos.y)))
+            || needCheckCapturePos[pPos.x][pPos.y] == 1)
             {
                 return true;
             }
@@ -282,23 +301,45 @@ namespace Game.Network.Server
                 }
                 else
                 {
-                    //加入忽略
-                    if (!closeCheckPos.ContainsKey(pPos.x))
-                        closeCheckPos.Add(pPos.x, new HashSet<int>());
-                    closeCheckPos[pPos.x].Add(pPos.y);
+                    //获取缓存值
+                    int tValue = 0;
+                    if (needCheckCapturePos.ContainsKey(tPos.x) && needCheckCapturePos[tPos.x].ContainsKey(tPos.y))
+                        tValue = needCheckCapturePos[tPos.x][tPos.y];
 
-                    if (CheckPointCanCapture(tPos))
+                    //已经检测为不封闭
+                    if (tValue == -1)
+                    {
+                        needCheckCapturePos[pPos.x][pPos.y] = -1;
+                        return false;
+                    }
+                    //已经检测为封闭
+                    else if (tValue == 1)
                     {
                         resCnt++;
                     }
                     else
                     {
-                        return false;
+                        //加入忽略
+                        if (!closeCheckPos.ContainsKey(pPos.x))
+                            closeCheckPos.Add(pPos.x, new HashSet<int>());
+                        closeCheckPos[pPos.x].Add(pPos.y);
+
+                        if (CheckPointCanCapture(tPos))
+                        {
+                            resCnt++;
+                        }
+                        else
+                        {
+                            needCheckCapturePos[pPos.x][pPos.y] = -1;
+                            return false;
+                        }
                     }
                 }
             }
 
-            return resCnt == 4;
+            bool success = resCnt == 4;
+            needCheckCapturePos[pPos.x][pPos.y] = success ? 1 : -1;
+            return success;
         }
 
         #endregion

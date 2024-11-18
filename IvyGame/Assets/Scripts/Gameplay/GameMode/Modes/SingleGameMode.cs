@@ -1,6 +1,8 @@
 ﻿using Game.Network;
 using Game.Network.Client;
 using Game.Network.Server;
+using Game.Network.Server.Com;
+using IAUI;
 using Proto;
 using UnityEngine;
 
@@ -11,7 +13,7 @@ namespace Gameplay.GameMode
     /// </summary>
     public class SingleGameMode : BaseGameMode
     {
-        private NetServer Server;
+        private NetServerCom Server;
 
         private NetClient Client;
 
@@ -24,7 +26,8 @@ namespace Gameplay.GameMode
             //创建房间服务器
             if (CreateRoom)
             {
-                Server = GameModeGo.AddComponent<NetServer>();
+                Server = GameModeGo.AddComponent<NetServerCom>();
+                Server.Init();
                 Server.StartServer();
             }
 

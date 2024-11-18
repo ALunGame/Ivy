@@ -1,11 +1,18 @@
-﻿namespace Game.Network.Server
+﻿using Game.Network.Server.Com;
+
+namespace Game.Network.Server
 {
     internal static class NetServerLocate
     {
         /// <summary>
+        /// 挂载网络服务的组件
+        /// </summary>
+        public static NetServerCom NetCom { get; private set; }
+
+        /// <summary>
         /// 网络服务
         /// </summary>
-        public static NetServer Net { get; private set;}
+        public static NetServer02 Net { get; private set;}
 
         /// <summary>
         /// 日志
@@ -22,9 +29,10 @@
         /// </summary>
         public static ServerGameplayCtrl GameCtrl { get; private set; }
 
-        public static void Init(NetServer netServer)
+        public static void Init(NetServerCom netServerCom)
         {
-            Net = netServer;
+            NetCom = netServerCom;
+            Net = netServerCom.NetServer;
             Log = new NetServerLog();
             TokenCenter = new ServerTokenCenter();
 

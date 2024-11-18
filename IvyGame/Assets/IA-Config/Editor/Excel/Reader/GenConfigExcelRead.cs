@@ -16,6 +16,7 @@ namespace IAConfig
         public List<string> filePaths = new List<string>();
         public string sheetName;
         public string comment;
+        public bool needPreload = false;
 
         public bool isRead = false;
 
@@ -91,6 +92,7 @@ namespace IAConfig
                 info.filePaths = ExcelReader.GetCellValue(sheet, row, 4).Split(",").ToList();
                 info.sheetName = ExcelReader.GetCellValue(sheet, row, 5);
                 info.comment = ExcelReader.GetCellValue(sheet, row, 6);
+                info.needPreload = ExcelReader.GetCellValue(sheet, row, 7) == "1" ? true : false;
                 
                 infos.Add(info);
             }

@@ -188,8 +188,8 @@ namespace IAEngine
         /// <returns></returns>
         public static Vector2Int RandomGetPoint(this RectInt pRect)
         {
-            int x = UnityEngine.Random.Range(pRect.min.x, pRect.max.x);
-            int y = UnityEngine.Random.Range(pRect.min.y, pRect.max.y);
+            int x = RandomHelper.Range(pRect.min.x, pRect.max.x);
+            int y = RandomHelper.Range(pRect.min.y, pRect.max.y);
             return new Vector2Int(x, y);
         }
     }

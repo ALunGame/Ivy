@@ -128,6 +128,21 @@ namespace IAConfig
         }
 
 
+        public static void Preload()
+        {
+
+            var tPreLoadMapCfg = Config.MapCfg;
+
+            var tPreLoadActorCfg = Config.ActorCfg;
+
+            var tPreLoadGameLevelCfg = Config.GameLevelCfg;
+
+            var tPreLoadMiscCfg = Config.MiscCfg;
+
+            var tPreLoadFightDrumsMusicCfg = Config.FightDrumsMusicCfg;
+
+        }
+
         public static void Reload()
         {
 

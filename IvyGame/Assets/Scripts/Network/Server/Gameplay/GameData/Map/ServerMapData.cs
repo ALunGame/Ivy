@@ -40,7 +40,7 @@ namespace Game.Network.Server
                 }
             }
 
-            NetServerLocate.Net.OnDrawGizmosFunc += () => {
+            NetServerLocate.NetCom.OnDrawGizmosFunc += () => {
                 //IAToolkit.GizmosHelper.DrawRect(pathRect, Color.black);
                 //Gizmos.DrawCube(pathRect.center, new Vector3(pathRect.size.x, 10, pathRect.size.y));
 

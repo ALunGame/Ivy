@@ -1,65 +1,61 @@
-﻿using LiteNetLib;
+﻿using IAConfig;
+using IAEngine;
+using LiteNetLib;
 using LiteNetLib.Utils;
 using ProtoBuf;
 using System;
 using System.Net;
 using System.Net.Sockets;
-using System.Threading;
-using UnityEngine;
 
 namespace Game.Network.Server
 {
-    public class NetServer : MonoBehaviour, INetEventListener
+    public class NetServer02 : INetEventListener
     {
         private NetManager netManager;
         private NetPacketProcessor packetProcessor;
-
-        private Thread logicThread;
         private NetworkLogicTimer logicTimer;
+        private readonly object _activeLock = new object();
+        private bool isActive = false;
 
-        public ushort Tick {  get; private set; }
+        private NetDataWriter _cachedWriter = new NetDataWriter();
+        private NetProtoPacket _cachedProtoPacket = new NetProtoPacket();
 
-        #region 编辑器
+        public ushort Tick { get; private set; }
 
-        public void OpenLog(bool pOpen)
+        public void Init()
         {
-            NetServerLocate.Log.OpenLog = pOpen;
-        }
-
-        public bool GetOpenLogState()
-        {
-            return NetServerLocate.Log.OpenLog;
-        }
-
-        public void OpenLogWarn(bool pOpen)
-        {
-            NetServerLocate.Log.OpenWarn = pOpen;
-        }
-
-        public bool GetOpenLogWarnState()
-        {
-            return NetServerLocate.Log.OpenWarn;
-        }
-
-
-        #endregion
-
-        #region Unity线程
-
-        private void Awake()
-        {
-            logicTimer = new NetworkLogicTimer(OnLogicUpdate);
-
             packetProcessor = new NetPacketProcessor();
             packetProcessor.SubscribeReusable<DiscoveryPacket, IPEndPoint>(OnDiscoveryReceived);
+
+            logicTimer = new NetworkLogicTimer(OnLogicUpdate);
             netManager = new NetManager(this)
             {
                 AutoRecycle = true,
                 BroadcastReceiveEnabled = true,
             };
-            //serverState = new ServerStateS2c();
 
-            //NetServerLocate.Init(this);
+            Config.Preload();
+        }
+
+        public void Start()
+        {
+            SetActive(true);
+
+            if (netManager.IsRunning)
+                return;
+
+            netManager.Start(NetworkGeneral.ServerPort);
+            logicTimer.Start();
+
+            TaskHelper.AddTask(() =>
+            {
+                while (isActive)
+                {
+                    Update();
+                }
+            }, () =>
+            {
+            });
         }
 
         private void Update()
@@ -68,41 +64,32 @@ namespace Game.Network.Server
             logicTimer.Update();
         }
 
-        public Action OnDrawGizmosFunc;
-        private void OnDrawGizmosSelected()
+        private void OnLogicUpdate()
         {
-            OnDrawGizmosFunc?.Invoke();
+            Tick = (ushort)((Tick + 1) % NetworkGeneral.MaxGameSequence);
+            NetServerLocate.GameCtrl.UpdateLogic();
         }
 
-        private void OnDestroy()
+        public void Stop()
         {
-            logicTimer.Stop();
-            if (logicThread != null)
-            {
-                logicThread.Join();
-                logicThread = null;
-            }
+            SetActive(false);
+
+            if (!netManager.IsRunning)
+                return;
 
             NetServerLocate.Clear();
             netManager.Stop();
         }
 
-        private void OnApplicationQuit()
+        private void SetActive(bool pIsActive)
         {
-            if (logicThread != null)
+            lock (_activeLock)
             {
-                logicThread.Join();
-                logicThread = null;
+                isActive = pIsActive;
             }
-            netManager.Stop();
         }
 
-        #endregion
-
-        #region 消息通信
-
-        private NetDataWriter _cachedWriter = new NetDataWriter();
-        private NetProtoPacket _cachedProtoPacket = new NetProtoPacket();
+        #region 消息发送
 
         /// <summary>
         /// 消息广播
@@ -140,52 +127,19 @@ namespace Game.Network.Server
 
         #endregion
 
-        /// <summary>
-        /// 开始服务器监听
-        /// </summary>
-        public void StartServer()
-        {
-            if (netManager.IsRunning)
-                return;
-            netManager.Start(NetworkGeneral.ServerPort);
-            logicTimer.Start();
-            //logicThread = new Thread(UpdateThread) { Name = "NetServer.Update", IsBackground = true };
-            //logicThread.Start();
-
-            NetServerLocate.Log.Log("服务器启动成功：", NetworkGeneral.ServerPort);
-        }
+        #region 消息接收
 
         /// <summary>
-        /// 关闭服务器
+        /// 当收到客户端广播消息
         /// </summary>
-        public void EndServer()
+        /// <param name="packet"></param>
+        /// <param name="peer"></param>
+        private void OnDiscoveryReceived(DiscoveryPacket packet, IPEndPoint remoteEndPoint)
         {
-            if (!netManager.IsRunning)
-                return;
-            netManager.Stop();
-            if (logicThread != null)
-            {
-                logicThread.Join();
-                logicThread = null;
-            }
-            NetServerLocate.Clear();
-        }
-
-        /// <summary>
-        /// 机制不对
-        /// </summary>
-        private void UpdateThread()
-        {
-            while (netManager.IsRunning)
-            {
-                OnLogicUpdate();
-            }
-        }
-
-        private void OnLogicUpdate()
-        {
-            Tick = (ushort)((Tick + 1) % NetworkGeneral.MaxGameSequence);
-            NetServerLocate.GameCtrl.UpdateLogic();
+            _cachedWriter.Reset();
+            _cachedWriter.Put((byte)PacketType.Discovery);
+            packetProcessor.Write(_cachedWriter, new DiscoveryPacket { DiscoveryStr = "SDiscovery" });
+            netManager.SendUnconnectedMessage(_cachedWriter, remoteEndPoint);
         }
 
         /// <summary>
@@ -209,7 +163,7 @@ namespace Game.Network.Server
                     NetServerLocate.TokenCenter.OnReceiveMsg(peer, reader);
                     break;
                 default:
-                    Debug.Log("Unhandled packet: " + pt);
+                    NetServerLocate.Log.Log("Unhandled packet: " + pt);
                     break;
             }
         }
@@ -236,26 +190,26 @@ namespace Game.Network.Server
                         packetProcessor.ReadAllPackets(reader, remoteEndPoint);
                         break;
                     default:
-                        Debug.Log("Unhandled packet: " + pt);
+                        NetServerLocate.Log.Log("Unhandled packet: " + pt);
                         break;
                 }
             }
         }
 
         /// <summary>
-        /// 寻找服务器
+        /// 更新延迟信息
         /// </summary>
-        /// <param name="packet"></param>
         /// <param name="peer"></param>
-        private void OnDiscoveryReceived(DiscoveryPacket packet, IPEndPoint remoteEndPoint)
+        /// <param name="latency"></param>
+        /// <exception cref="NotImplementedException"></exception>
+        public void OnNetworkLatencyUpdate(NetPeer peer, int latency)
         {
-            Debug.Log("[S] Discovery packet received: " + packet.DiscoveryStr);
 
-            _cachedWriter.Reset();
-            _cachedWriter.Put((byte)PacketType.Discovery);
-            packetProcessor.Write(_cachedWriter, new DiscoveryPacket { DiscoveryStr = "SDiscovery" });
-            netManager.SendUnconnectedMessage(_cachedWriter, remoteEndPoint);
         }
+
+        #endregion
+
+        #region 连接状态
 
         /// <summary>
         /// 客户端请求链接
@@ -267,12 +221,23 @@ namespace Game.Network.Server
             request.AcceptIfKey(NetworkGeneral.NetConnectKey);
         }
 
+        /// <summary>
+        /// 客户端连接成功
+        /// </summary>
+        /// <param name="peer"></param>
+        /// <exception cref="NotImplementedException"></exception>
         public void OnPeerConnected(NetPeer peer)
         {
             NetServerLocate.Log.Log("[S] Player connected: ", peer.EndPoint);
             NetServerLocate.TokenCenter.TokenEnter(peer);
         }
 
+        /// <summary>
+        /// 客户端断开连接
+        /// </summary>
+        /// <param name="peer"></param>
+        /// <param name="disconnectInfo"></param>
+        /// <exception cref="NotImplementedException"></exception>
         public void OnPeerDisconnected(NetPeer peer, DisconnectInfo disconnectInfo)
         {
             NetServerLocate.Log.Log("[S] Player disconnected: ", peer.EndPoint, disconnectInfo.Reason);
@@ -287,17 +252,8 @@ namespace Game.Network.Server
         public void OnNetworkError(IPEndPoint endPoint, SocketError socketError)
         {
             NetServerLocate.Log.LogError("[S] NetworkError: ", endPoint, socketError);
-        }
+        } 
 
-        /// <summary>
-        /// 更新延迟信息
-        /// </summary>
-        /// <param name="peer"></param>
-        /// <param name="latency"></param>
-        /// <exception cref="NotImplementedException"></exception>
-        public void OnNetworkLatencyUpdate(NetPeer peer, int latency)
-        {
-            
-        }
+        #endregion
     }
 }

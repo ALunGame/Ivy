@@ -19,13 +19,21 @@ namespace IAConfig
     {
         #CNFSTR#
 
+        public static void Preload()
+        {
+#PRELOAD#
+        }
+
         public static void Reload()
         {
 #RELOADVALUE#
         }
     }
 }";
-        
+
+        private const string PreloadCode = @"
+            var tPreLoad#NAME# = Config.#NAME#;";
+
         private const string RelaodCode = @"
             if(#NAME#!= null)
 				#NAME#.Clear();";
@@ -58,6 +66,7 @@ namespace IAConfig
             //命名空间
             string usingNameStr = "";
             string cnfStr = "";
+            string preloadValue = "";
             string reloadValue = "";
             List<string> usingNames = new List<string>();
             foreach (var item in pInfos)
@@ -71,12 +80,21 @@ namespace IAConfig
                     usingNameStr = usingNameStr + str;
                 }
 
+                if (item.needPreload)
+                {
+                    //Preload
+                    string preloadStr = PreloadCode;
+                    preloadStr = Regex.Replace(preloadStr, "#NAME#", item.className) + "\n";
+                    preloadValue += preloadStr;
+                }
+
                 //Reload
                 string reloadStr = RelaodCode;
                 reloadStr = Regex.Replace(reloadStr, "#NAME#", "_" + item.className) + "\n";
                 reloadValue += reloadStr;
             }
             resStr = Regex.Replace(resStr, "#USINGNAME#", usingNameStr);
+            resStr = Regex.Replace(resStr, "#PRELOAD#", preloadValue);
             resStr = Regex.Replace(resStr, "#CNFSTR#", cnfStr);
             resStr = Regex.Replace(resStr, "#RELOADVALUE#", reloadValue);
 

@@ -1,10 +1,23 @@
-﻿using System.Collections.Generic;
-using UnityEngine;
+﻿using System;
+using System.Collections.Generic;
 
 namespace IAEngine
 {
     public static class RandomHelper
     {
+        private static Random random = new Random();
+
+        /// <summary>
+        /// 随机整数
+        /// </summary>
+        /// <param name="pMin">最小数（包含）</param>
+        /// <param name="pMax">最大数（包含）</param>
+        /// <returns></returns>
+        public static int Range(int pMin, int pMax)
+        {
+            return random.Next(pMin, pMax + 1);
+        }
+
         /// <summary>
         /// 获得一个打乱的字典
         /// </summary>
@@ -22,7 +35,7 @@ namespace IAEngine
             int num, tmp;
             for (int i = pMin; i <= pMax; i++)
             {
-                num = UnityEngine.Random.Range(pMin, pMax);
+                num = Range(pMin, pMax);
                 tmp = rsMap[i];
                 rsMap[i] = rsMap[num];
                 rsMap[num] = tmp;
@@ -61,7 +74,7 @@ namespace IAEngine
                 sum += pWeightList[i];
             }
 
-            int compareWeight = Random.Range(0, sum + 1);
+            int compareWeight = Range(0, sum + 1);
             int weightIndex = 0;
             while (sum > 0) 
             {
