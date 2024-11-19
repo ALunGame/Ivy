@@ -102,7 +102,7 @@ message ServerStateS2c {
 
 //地图格子阵营同步
 message ChangeGridCampS2c {
-	repeated net_vector2 gridPosList = 1;		//格子位置
+	repeated net_vector2_int gridPosList = 1;		//格子位置
 	required int32 camp = 2;					//阵营 
 }
 

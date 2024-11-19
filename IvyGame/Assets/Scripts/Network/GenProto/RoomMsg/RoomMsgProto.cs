@@ -281,7 +281,7 @@ namespace Proto
             => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
 
         [global::ProtoBuf.ProtoMember(1, Name = @"gridPosList")]
-        public global::System.Collections.Generic.List<NetVector2> gridPosLists { get; } = new global::System.Collections.Generic.List<NetVector2>();
+        public global::System.Collections.Generic.List<NetVector2Int> gridPosLists { get; } = new global::System.Collections.Generic.List<NetVector2Int>();
 
         [global::ProtoBuf.ProtoMember(2, Name = @"camp", IsRequired = true)]
         public int Camp { get; set; }

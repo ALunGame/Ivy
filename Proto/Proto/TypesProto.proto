@@ -5,6 +5,11 @@ package Types;
 //指定命名空间（可选参数）如果没有，则使用C#代码的命名空间。
 option csharp_namespace = "Proto";
 
+message net_vector2_int {
+	required sint32 x = 1;
+	required sint32 y = 2;
+}
+
 message net_vector2 {
 	required float x = 1;
 	required float y = 2;

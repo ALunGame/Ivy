@@ -1,11 +1,9 @@
-﻿using Game.AStar;
-using IAEngine;
+﻿using IAEngine;
 using Proto;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using static UnityEditor.PlayerSettings;
 
 namespace Game.Network.Server
 {
@@ -203,14 +201,15 @@ namespace Game.Network.Server
 
         private Dictionary<int, Dictionary<int, int>> needCheckCapturePos = new Dictionary<int, Dictionary<int, int>>();
         private Dictionary<int, HashSet<int>> closeCheckPos = new Dictionary<int, HashSet<int>>();
+        private ChangeGridCampS2c changeGridMsg = new ChangeGridCampS2c();
         //占领区域
         public void CaptureArea(Action<Vector2Int> changeCampCallBack)
         {
             needCheckCapturePos.Clear();
 
             //广播消息
-            ChangeGridCampS2c msg = new ChangeGridCampS2c();
-            msg.Camp = Camp;
+            changeGridMsg.Camp = Camp;
+            changeGridMsg.gridPosLists.Clear();
 
             //先将路径变为占领区域
             foreach (int x in pathDict.Keys)
@@ -218,7 +217,7 @@ namespace Game.Network.Server
                 foreach (int y in pathDict[x].Keys)
                 {
                     Vector2Int pos = new Vector2Int(x, y);
-                    msg.gridPosLists.Add(new NetVector2() { X = x, Y = y });
+                    AddChangeGridCampMsg(new NetVector2Int() { X = x, Y = y });
                     mapData.SetPointCamp(pos, Camp);
                     changeCampCallBack?.Invoke(pos);
                 }
@@ -252,7 +251,7 @@ namespace Game.Network.Server
                     if (CheckPointCanCapture(new Vector2Int(x, y)))
                     {
                         Vector2Int tPos = new Vector2Int(x, y);
-                        msg.gridPosLists.Add(new NetVector2() { X = x, Y = y });
+                        AddChangeGridCampMsg(new NetVector2Int() { X = x, Y = y });
                         mapData.SetPointCamp(tPos, Camp);
                         changeCampCallBack?.Invoke(tPos);
                     }
@@ -262,8 +261,23 @@ namespace Game.Network.Server
             //更新区域范围
             pathRect = mapData.GetCampRect(Camp);
 
-            //广播
-            NetServerLocate.Net.Broadcast((ushort)RoomMsgDefine.ChangeGridCampS2c, msg);
+            AddChangeGridCampMsg(null, true);
+        }
+
+
+        private void AddChangeGridCampMsg(NetVector2Int pPos, bool pForceSendLeft = false)
+        {
+            if (pPos != null)
+            {
+                changeGridMsg.gridPosLists.Add(pPos);
+            }
+
+            if (changeGridMsg.gridPosLists.Count >= 50 ||pForceSendLeft)
+            {
+                //广播
+                NetServerLocate.Net.Broadcast((ushort)RoomMsgDefine.ChangeGridCampS2c, changeGridMsg);
+                changeGridMsg.gridPosLists.Clear();
+            }
         }
 
         //检测点是不是可以占领

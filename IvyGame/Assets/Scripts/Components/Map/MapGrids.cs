@@ -193,6 +193,10 @@ namespace Gameplay
             {
                 ChangeGridCamp(pGridPosList[i], pCamp, resAnimCfgIndex, resScaleY);
             }
+
+            //更新数据
+            allMatricesBuffer.SetData(shaderArgs);
+            GridMaterial.SetBuffer("_AllMatricesBuffer", allMatricesBuffer);
         }
 
         private void ChangeGridCamp(Vector2Int pGridPos, int pCamp, int pAnimCfgIndex, float pChangeScaleY)
@@ -224,10 +228,6 @@ namespace Gameplay
                 shaderArgs[index].instanceToObjectMatrix = Matrix4x4.TRS(gridParam.position, Quaternion.identity, new Vector3(GridSize.x, pChangeScaleY, GridSize.z));
                 shaderArgs[index].color = TempConfig.CampColorDict[pCamp];
             }
-
-            //更新数据
-            allMatricesBuffer.SetData(shaderArgs);
-            GridMaterial.SetBuffer("_AllMatricesBuffer", allMatricesBuffer);
         }
 
         public void UpdateLogic(float pDeltaTime, float pGameTime)

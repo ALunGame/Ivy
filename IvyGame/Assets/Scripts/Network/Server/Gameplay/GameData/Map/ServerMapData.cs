@@ -289,7 +289,7 @@ namespace Game.Network.Server
             {
                 for (int y = pRect.min.y; y <= pRect.max.y; y++)
                 {
-                    msg.gridPosLists.Add(new NetVector2() { X = x, Y = y });
+                    msg.gridPosLists.Add(new NetVector2Int() { X = x, Y = y });
                     SetPointCamp(new Vector2Int(x, y), pCamp);
                 }
             }

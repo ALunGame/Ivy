@@ -23,12 +23,22 @@ namespace IAUI
 
         public UICanvas StaticCanvas { get => staticCanvas; }
         public UICanvas DynamicCanvas { get => dynamicCanvas; }
-
         public Camera UICamera { get => uiCamera; }
 
-        private event Action updateFunc;
+        /// <summary>
+        /// UI更新 时间缩放
+        /// </summary>
+        public float TimeScale { get; set; }
+        /// <summary>
+        /// UI更新 时间间隔
+        /// </summary>
+        public float DeltaTime { get; set; }
+        /// <summary>
+        /// UI更新 总时间
+        /// </summary>
+        public float TotalTime { get; set; }
 
-        private event Action fixedUpdateFunc;
+        private event Action<float, float> updateFunc;
 
         private void Awake()
         {
@@ -36,24 +46,24 @@ namespace IAUI
 
         public void Init()
         {
+            TimeScale = 1.0f;
+            TotalTime = 0.0f;
+            DeltaTime = Time.deltaTime;
+
             UILocate.SetUICenter(this);
             UILocate.Init();
         }
 
         private void Update()
         {
-            updateFunc?.Invoke();
-        }
-
-        private void FixedUpdate()
-        {
-            fixedUpdateFunc?.Invoke();
+            float deltaTime = DeltaTime * TimeScale;
+            TotalTime += deltaTime;
+            updateFunc?.Invoke(deltaTime, TotalTime);
         }
 
         private void OnDestroy()
         {
             updateFunc = null;
-            fixedUpdateFunc = null;
             UILocate.Clear();
         }
 
@@ -88,7 +98,7 @@ namespace IAUI
         /// 注册Update函数
         /// </summary>
         /// <param name="pUpdateFunc"></param>
-        public void RegUpdateFunc(Action pUpdateFunc)
+        public void RegUpdateFunc(Action<float, float> pUpdateFunc)
         {
             if (pUpdateFunc == null)
             {
@@ -101,39 +111,13 @@ namespace IAUI
         /// 清除Update函数
         /// </summary>
         /// <param name="pUpdateFunc"></param>
-        public void RemoveUpdateFunc(Action pUpdateFunc)
+        public void RemoveUpdateFunc(Action<float, float> pUpdateFunc)
         {
             if (pUpdateFunc == null)
             {
                 return;
             }
             updateFunc -= pUpdateFunc;
-        }
-
-        /// <summary>
-        /// 注册Update函数
-        /// </summary>
-        /// <param name="pUpdateFunc"></param>
-        public void RegFixedUpdateFunc(Action pfixedUpdateFunc)
-        {
-            if (pfixedUpdateFunc == null)
-            {
-                return;
-            }
-            fixedUpdateFunc += pfixedUpdateFunc;
-        }
-
-        /// <summary>
-        /// 清除Update函数
-        /// </summary>
-        /// <param name="pUpdateFunc"></param>
-        public void RemoveFixedUpdateFunc(Action pfixedUpdateFunc)
-        {
-            if (pfixedUpdateFunc == null)
-            {
-                return;
-            }
-            fixedUpdateFunc -= pfixedUpdateFunc;
         }
     }
 }

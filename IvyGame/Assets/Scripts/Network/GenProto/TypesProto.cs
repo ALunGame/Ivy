@@ -9,6 +9,21 @@
 namespace Proto
 {
 
+    [global::ProtoBuf.ProtoContract(Name = @"net_vector2_int")]
+    public partial class NetVector2Int : global::ProtoBuf.IExtensible
+    {
+        private global::ProtoBuf.IExtension __pbn__extensionData;
+        global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+            => global::ProtoBuf.Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
+
+        [global::ProtoBuf.ProtoMember(1, Name = @"x", DataFormat = global::ProtoBuf.DataFormat.ZigZag, IsRequired = true)]
+        public int X { get; set; }
+
+        [global::ProtoBuf.ProtoMember(2, Name = @"y", DataFormat = global::ProtoBuf.DataFormat.ZigZag, IsRequired = true)]
+        public int Y { get; set; }
+
+    }
+
     [global::ProtoBuf.ProtoContract(Name = @"net_vector2")]
     public partial class NetVector2 : global::ProtoBuf.IExtensible
     {

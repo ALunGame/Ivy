@@ -226,6 +226,9 @@ namespace Proto
         [global::ProtoBuf.ProtoMember(2, IsRequired = true)]
         public string gamerUid { get; set; }
 
+        [global::ProtoBuf.ProtoMember(3, Name = @"pos", IsRequired = true)]
+        public NetVector2 Pos { get; set; }
+
     }
 
     [global::ProtoBuf.ProtoContract()]

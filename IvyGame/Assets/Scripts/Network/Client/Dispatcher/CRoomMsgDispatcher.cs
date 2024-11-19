@@ -152,7 +152,7 @@ namespace Game.Network.CDispatcher
         {
             foreach (var gridPos in MsgData.gridPosLists)
             {
-                GameMapGridData gridData = GameplayGlobal.Data.Map.GetGridData(new Vector2Int((int)gridPos.X, (int)gridPos.Y));
+                GameMapGridData gridData = GameplayGlobal.Data.Map.GetGridData(new Vector2Int(gridPos.X, gridPos.Y));
                 gridData.Camp.Value = MsgData.Camp;
             }
         }

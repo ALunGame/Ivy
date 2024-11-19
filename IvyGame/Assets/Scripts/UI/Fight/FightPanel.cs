@@ -141,7 +141,7 @@ namespace Game.UI
             drumsTweenDict.Clear();
         }
 
-        private void Update()
+        private void Update(float pDeltaTime, float pGameTime)
         {
             Refresh();
             HandleInputMove();

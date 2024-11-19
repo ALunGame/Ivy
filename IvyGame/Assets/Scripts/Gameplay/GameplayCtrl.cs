@@ -97,6 +97,7 @@ namespace Gameplay
             }
 
             float deltaTime = GameDeltaTime * TimeScale;
+            GameTime += deltaTime;
             GameMode.UpdateLogic(deltaTime, GameTime);
             GameData.UpdateLogic(deltaTime, GameTime);
             GameMap.UpdateLogic(deltaTime, GameTime);
