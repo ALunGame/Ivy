@@ -1,5 +1,4 @@
 ﻿using Game.Network;
-using IAConfig;
 using Proto;
 using System;
 using System.Collections.Generic;
@@ -79,6 +78,16 @@ namespace Gameplay.GameData
         /// </summary>
         public GameDataField<int> DieCnt { get; protected set; }
 
+        /// <summary>
+        /// 鼓点音乐Id
+        /// </summary>
+        public int DrumsMusicId { get; protected set; }
+
+        /// <summary>
+        /// 鼓点间隔时间
+        /// </summary>
+        public float DrumsTime { get; protected set; }
+
         public GamerData(GamerInfo pInfo)
         {
             GamerUid = pInfo.Uid;
@@ -90,6 +99,8 @@ namespace Gameplay.GameData
 
             Rotation = pInfo.Rotation;
             MoveSpeed = pInfo.moveSpeed;
+
+            SetDrumsMusicId(pInfo.fightMusicId);
 
             GridPos = new GameDataField<Vector2Int>(this);
             GridPos.SetValueWithoutNotify(GameplayGlobal.Data.Map.PosToGrid(Position));
@@ -111,6 +122,18 @@ namespace Gameplay.GameData
         {
             base.UpdateLogic(pTimeDelta, pGameTime);
         }
+
+        #region Set
+
+        public void SetDrumsMusicId(int pMusicId)
+        {
+            FightDrumsMusicCfg cfg = IAConfig.Config.FightDrumsMusicCfg[pMusicId];
+            DrumsMusicId = pMusicId;
+            DrumsTime = cfg.drumsTime;
+        }
+
+
+        #endregion
 
         #region 玩家状态
 

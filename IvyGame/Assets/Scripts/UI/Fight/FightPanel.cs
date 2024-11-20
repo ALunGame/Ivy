@@ -6,6 +6,7 @@ using IAConfig;
 using IAEngine;
 using IAUI;
 using Proto;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -28,7 +29,7 @@ namespace Game.UI
         private UIComGlue<Text> gameTimeInfo = new UIComGlue<Text>("Top/GameInfo/GameTime/Num");
         private UIComGlue<Text> clickTypeTipTrans = new UIComGlue<Text>("Center/DrumsBox/ClickTypeTip");
 
-        private UICacheGlue drumsPointCache = new UICacheGlue("Prefabs/DrumsPoint", "Center/DrumsBox/Points", true);
+        private UICacheGlue drumsPointCache = new UICacheGlue("Prefabs/DrumsPoint", "Center/DrumsBox/Points", true, false);
         private UICacheGlue gamerInfoCache = new UICacheGlue("Prefabs/GamerInfo", "Top/GamerList", true);
 
         private UIUpdateGlue updateGlue = new UIUpdateGlue();
@@ -36,8 +37,14 @@ namespace Game.UI
         private UINetworkMsgGlue OnGamerDieS2c;
         private UINetworkMsgGlue OnGamerInputS2c;
 
+        private float drumTime = 0.3f;
+        private float drumCnt = 4;
+        private float drumOffset = 70;
+        private float drumSpeed = 0;
+        private List<GameObject> drumsGoList = new List<GameObject>();
+
         private Tween drumsCenterTween;
-        private Dictionary<GameObject, Tween> drumsTweenDict = new Dictionary<GameObject, Tween>();
+
         private Tween clickTypeTween;
 
         private TimerModel dashTimer;
@@ -59,6 +66,92 @@ namespace Game.UI
 
             updateGlue.SetFunc(Update);
 
+            InitDrums();
+            InitBtnClick();
+
+            OnGamerDieS2c = new UINetworkMsgGlue(this, (ushort)RoomMsgDefine.GamerDieS2c, (msgBody) =>
+            {
+                RefreshGamerInfos();
+            });
+
+            OnGamerInputS2c = new UINetworkMsgGlue(this, (ushort)RoomMsgDefine.GamerInputS2c, (msgBody) =>
+            {
+                clickTypeTween?.Kill();
+
+                clickTypeTipTrans.Com.gameObject.SetActive(true);
+
+                GamerInputS2c msg = (GamerInputS2c)msgBody;
+                MoveClickType clickType = (MoveClickType)msg.moveClickType;
+
+                Vector3 doScaleValue = Vector3.one;
+                string clickTypeStr = "";
+                switch (clickType)
+                {
+                    case MoveClickType.Miss:
+                        doScaleValue *= 0.8f;
+                        clickTypeStr = "MISS";
+                        break;
+                    case MoveClickType.Normal:
+                        doScaleValue *= 1f;
+                        clickTypeStr = "普通";
+                        break;
+                    case MoveClickType.Good:
+                        doScaleValue *= 1.3f;
+                        clickTypeStr = "优秀";
+                        break;
+                    case MoveClickType.Perfect:
+                        doScaleValue *= 1.6f;
+                        clickTypeStr = "完美";
+                        break;
+                }
+                clickTypeTipTrans.Com.text = clickTypeStr;
+
+                clickTypeTipTrans.Com.gameObject.SetActive(true);
+
+                RectTransform rectTrans = clickTypeTipTrans.Com.GetComponent<RectTransform>();
+                rectTrans.localScale = new Vector3(0.5f, 0.5f, 0.5f);
+                clickTypeTween = rectTrans.DOScale(doScaleValue, 0.2f).SetEase(Ease.OutElastic).OnComplete(() =>
+                {
+                    clickTypeTipTrans.Com.gameObject.SetActive(false);
+                });
+            });
+        }
+
+        public override void OnShow()
+        {
+            //CreateDrums();
+            RefreshGamerInfos();
+        }
+
+        public override void OnHide()
+        {
+            drumsCenterTween?.Kill();
+        }
+
+        private void InitDrums()
+        {
+            drumTime = gamerData.DrumsTime;
+            drumSpeed = drumOffset * drumCnt / (drumTime * drumCnt);
+
+            //创建节奏点
+            for (int i = 0; i < drumCnt * 2; i++)
+            {
+                int tmpValue = i < drumCnt ? -1 : 1;
+
+                GameObject tGo = drumsPointCache.Take();
+                tGo.name = i.ToString();
+                tGo.transform.localPosition = new Vector3((i % drumCnt) * drumOffset * tmpValue, 0, 0);
+
+                drumsGoList.Add(tGo);
+            }
+
+            //中间节奏提示
+            Transform drumsTipTrans = drumsBoxTrans.Com.transform.Find("DrumsTip");
+            drumsCenterTween = drumsTipTrans.DOScaleY(1.5f, drumTime).SetLoops(-1, LoopType.Restart).SetEase(Ease.Linear);
+        }
+
+        private void InitBtnClick()
+        {
             BtnUtil.SetClick(transform, "Left/MoveBox/UpBtn", () =>
             {
                 SendMoveMsg(0, 1, 270);
@@ -83,68 +176,13 @@ namespace Game.UI
             {
                 SendDaskSkillMsg();
             });
-
-            OnGamerDieS2c = new UINetworkMsgGlue(this, (ushort)RoomMsgDefine.GamerDieS2c, (msgBody) =>
-            {
-                RefreshGamerInfos();
-            });
-
-            OnGamerInputS2c = new UINetworkMsgGlue(this, (ushort)RoomMsgDefine.GamerInputS2c, (msgBody) =>
-            {
-                clickTypeTween?.Kill();
-
-                clickTypeTipTrans.Com.gameObject.SetActive(true);
-
-                GamerInputS2c msg = (GamerInputS2c)msgBody;
-                MoveClickType clickType = (MoveClickType)msg.moveClickType;
-                string clickTypeStr = "";
-                switch (clickType)
-                {
-                    case MoveClickType.Miss:
-                        clickTypeStr = "MISS";
-                        break;
-                    case MoveClickType.Normal:
-                        clickTypeStr = "普通";
-                        break;
-                    case MoveClickType.Good:
-                        clickTypeStr = "优秀";
-                        break;
-                    case MoveClickType.Perfect:
-                        clickTypeStr = "完美";
-                        break;
-                }
-                clickTypeTipTrans.Com.text = clickTypeStr;
-
-                clickTypeTipTrans.Com.gameObject.SetActive(true);
-
-                RectTransform rectTrans = clickTypeTipTrans.Com.GetComponent<RectTransform>();
-                clickTypeTween = rectTrans.DOShakeScale(1).OnComplete(() =>
-                {
-                    clickTypeTipTrans.Com.gameObject.SetActive(false);
-                });
-            });
-        }
-
-        public override void OnShow()
-        {
-            CreateDrums();
-            RefreshGamerInfos();
-        }
-
-        public override void OnHide()
-        {
-            drumsCenterTween?.Kill();
-            foreach (var item in drumsTweenDict.Values)
-            {
-                item.Kill();
-            }
-            drumsTweenDict.Clear();
         }
 
         private void Update(float pDeltaTime, float pGameTime)
         {
             Refresh();
             HandleInputMove();
+            UpdateDrumsPoints(pDeltaTime);
         }
 
         private void Refresh()
@@ -251,47 +289,20 @@ namespace Game.UI
 
         #region 鼓点
 
-        private float drumTime = 0.3f;
-        private float drumCnt = 4;
-        private float drumOffset = 70;
-
-        private void CreateDrums()
+        private void UpdateDrumsPoints(float pDeltaTime)
         {
-            
-            //左右各四个，间隔固定，向中间移动，移动到中间自动换到边缘
-            for (int i = 0; i < 4; i++)
+            for (int i = 0; i < 8; i++)
             {
-                GameObject drumsGo = drumsPointCache.Take();
-                HandleMoveTween(drumsGo, drumOffset * i, drumTime * i, 1);
+                int tmpValue = i < 4 ? 1 : -1;
+                float xDelta = tmpValue * drumSpeed * pDeltaTime;
+                GameObject drumsGo = drumsGoList[i];
+                drumsGo.transform.localPosition += new Vector3(xDelta, 0, 0);
+
+                if (Mathf.Abs(drumsGo.transform.localPosition.x) <= 6f)
+                {
+                    drumsGo.transform.localPosition = new Vector3(4 * drumOffset * tmpValue * -1, 0, 0);
+                }
             }
-
-            for (int i = 0; i < 4; i++)
-            {
-                GameObject drumsGo = drumsPointCache.Take();
-                HandleMoveTween(drumsGo, (drumOffset * i)*(-1), drumTime * i, -1);
-            }
-
-
-            //中间节奏提示
-            Transform drumsTipTrans = drumsBoxTrans.Com.transform.Find("DrumsTip");
-            drumsCenterTween = drumsTipTrans.DOScaleY(1.5f, drumTime).SetLoops(-1, LoopType.Restart).SetEase(Ease.Linear);
-        }
-
-        private void HandleMoveTween(GameObject pDrumsGo, float pStartX, float pMoveTime, float pDir)
-        {
-            if (drumsTweenDict.ContainsKey(pDrumsGo))
-            {
-                Tween tween = drumsTweenDict[pDrumsGo];
-                DOTween.Kill(tween);
-                drumsTweenDict.Remove(pDrumsGo);
-            }
-
-            pDrumsGo.transform.localPosition = new Vector3(pStartX, 6, 0);
-            Tween newTween = pDrumsGo.transform.DOLocalMoveX(0, pMoveTime).OnComplete(() =>
-            {
-                HandleMoveTween(pDrumsGo, drumOffset * drumCnt * pDir, drumTime * drumCnt, pDir);
-            }).SetEase(Ease.Linear);
-            drumsTweenDict.Add(pDrumsGo, newTween);
         }
 
         #endregion

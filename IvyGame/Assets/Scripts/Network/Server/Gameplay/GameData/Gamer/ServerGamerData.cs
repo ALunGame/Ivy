@@ -26,16 +26,6 @@ namespace Game.Network.Server
         public int GamerId { get; protected set; }
 
         /// <summary>
-        /// 鼓点音乐Id
-        /// </summary>
-        public int DrumsMusicId { get; protected set; }
-
-        /// <summary>
-        /// 鼓点间隔时间
-        /// </summary>
-        public float DrumsTime { get; protected set; }
-
-        /// <summary>
         /// 玩家名字
         /// </summary>
         public string Name { get; protected set; }
@@ -111,6 +101,16 @@ namespace Game.Network.Server
         /// 死亡数
         /// </summary>
         public int DieCnt { get; protected set; }
+
+        /// <summary>
+        /// 鼓点音乐Id
+        /// </summary>
+        public int DrumsMusicId { get; protected set; }
+
+        /// <summary>
+        /// 鼓点间隔时间
+        /// </summary>
+        public float DrumsTime { get; protected set; }
 
         public ServerGamerData(NetPeer pPeer, string pGamerUid, int pGamerId, string pName)
         {
