@@ -159,7 +159,7 @@ PlayerSettings:
   androidMaxAspectRatio: 2.1
   applicationIdentifier:
     Android: com.iagame.ivy
-    Standalone: com.Unity-Technologies.com.unity.template.urp-blank
+    Standalone: com.iagame.ivy
     iPhone: com.Unity-Technologies.com.unity.template.urp-blank
   buildNumber:
     Standalone: 0

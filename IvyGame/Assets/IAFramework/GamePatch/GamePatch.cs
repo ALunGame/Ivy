@@ -1,3 +1,6 @@
+using Cysharp.Threading.Tasks;
+using GameContext;
+using IAEngine;
 using IAFramework.Patch;
 using IAFramework.UI;
 using IAUI;
@@ -74,8 +77,30 @@ namespace IAFramework
             //发送消息
             GamePatchData.Instance.SendProcessTips("游戏初始化成功 !");
             GamePatchData.Instance.SetGamePatchState(EGamePatchState.Success);
+
+            //StartGame().Forget();
         }
-        
+
+
+        public async UniTaskVoid StartGame()
+        {
+            CachePool.Init();
+
+            //游戏存档初始化
+            GameContextLocate.Init();
+
+            //UI初始化
+            UICenter uICenter = GameObject.Find("Game/UICenter").GetComponent<UICenter>();
+            uICenter.Init();
+            await UniTask.Yield(PlayerLoopTiming.Update);
+
+            //显示起始UI
+            UILocate.UI.Show(UIPanelDef.MainGamePanel);
+            await UniTask.Yield(PlayerLoopTiming.Update);
+
+            GamePatchData.Instance.SetGamePatchState(EGamePatchState.GameStartSuccess);
+        }
+
         private void OnApplicationQuit()
         {
             GameEnv.Clear();
