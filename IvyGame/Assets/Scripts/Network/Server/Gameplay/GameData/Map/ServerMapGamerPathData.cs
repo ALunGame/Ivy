@@ -71,7 +71,9 @@ namespace Game.Network.Server
             currPoint = new Vector2Int(-1,-1);
 
             NetServerLocate.NetCom.OnDrawGizmosFunc += ()=>{
-                IAToolkit.GizmosHelper.DrawBounds(new Vector3(pathRect.center.x, 0, pathRect.center.y), new Vector3(pathRect.size.x, 1, pathRect.size.y), Color.blue);
+#if UNITY_EDITOR
+                IAToolkit.GizmosHelper.DrawBounds(new Vector3(pathRect.center.x, 0, pathRect.center.y), new Vector3(pathRect.size.x, 1, pathRect.size.y), Color.blue); 
+#endif
             };
         }
 

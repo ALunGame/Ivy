@@ -109,7 +109,9 @@ namespace Gameplay
 
         private void OnDrawGizmosSelected()
         {
-            IAToolkit.GizmosHelper.DrawBounds(renderBounds, Color.blue);
+#if UNITY_EDITOR
+            IAToolkit.GizmosHelper.DrawBounds(renderBounds, Color.blue); 
+#endif
         }
 
         private void OnDisable()

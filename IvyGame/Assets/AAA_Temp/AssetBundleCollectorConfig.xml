@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root Version="v2.1">
+  <Common ShowPackageView="True" ShowEditorAlias="True" UniqueBundleName="True" />
+  <Package PackageName="DefaultPackage" PackageDesc="" AutoAddressable="False" LocationToLower="False" IncludeAssetGUID="False" IgnoreRuleName="NormalIgnoreRule">
+    <Group GroupActiveRule="EnableGroup" GroupName="Common" GroupDesc="" AssetTags="">
+      <Collector CollectPath="Assets/GameAsset/Common" CollectGUID="49916b3117e5db94caf7b85ce6415770" CollectType="MainAssetCollector" AddressRule="AddressByFileName" PackRule="PackGroup" FilterRule="CollectAll" UserData="" AssetTags="" />
+    </Group>
+    <Group GroupActiveRule="EnableGroup" GroupName="Gamer" GroupDesc="" AssetTags="">
+      <Collector CollectPath="Assets/GameAsset/Gamer/Prefab" CollectGUID="d38029641503c594fb8892dc667ed7bd" CollectType="MainAssetCollector" AddressRule="AddressByFileName" PackRule="PackSeparately" FilterRule="CollectPrefab" UserData="" AssetTags="" />
+    </Group>
+    <Group GroupActiveRule="EnableGroup" GroupName="Map" GroupDesc="" AssetTags="">
+      <Collector CollectPath="Assets/GameAsset/Map/Mat" CollectGUID="57bb3e4aa80b40947985689d40ecad52" CollectType="MainAssetCollector" AddressRule="AddressByFileName" PackRule="PackDirectory" FilterRule="CollectAll" UserData="" AssetTags="" />
+      <Collector CollectPath="Assets/GameAsset/Map/Prefab" CollectGUID="7ae29b9577b69f04a9dc0bae1faadabd" CollectType="MainAssetCollector" AddressRule="AddressByFileName" PackRule="PackSeparately" FilterRule="CollectPrefab" UserData="" AssetTags="" />
+    </Group>
+    <Group GroupActiveRule="EnableGroup" GroupName="UI" GroupDesc="" AssetTags="">
+      <Collector CollectPath="Assets/GameAsset/UI/Prefabs" CollectGUID="5d4e46094da58554e9c2b6d2c2199ab2" CollectType="MainAssetCollector" AddressRule="AddressByFileName" PackRule="PackSeparately" FilterRule="CollectPrefab" UserData="" AssetTags="" />
+    </Group>
+  </Package>
+  <Package PackageName="RawFilePackage" PackageDesc="" AutoAddressable="False" LocationToLower="False" IncludeAssetGUID="False" IgnoreRuleName="RawFileIgnoreRule">
+    <Group GroupActiveRule="EnableGroup" GroupName="Config" GroupDesc="" AssetTags="">
+      <Collector CollectPath="Assets/GameAsset/Config" CollectGUID="186aa456d55d61b47877effa6be020a1" CollectType="MainAssetCollector" AddressRule="AddressByFileName" PackRule="PackSeparately" FilterRule="CollectAll" UserData="" AssetTags="" />
+    </Group>
+  </Package>
+</root>

@@ -1,6 +1,5 @@
 ﻿using IAEngine;
 using IAUI;
-using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 namespace IAFramework.UI

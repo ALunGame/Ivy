@@ -1,0 +1,51 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b05c83971e3dca94f9fa460d396385e5, type: 3}
+  m_Name: BuildinCatalog
+  m_EditorClassIdentifier: 
+  PackageName: DefaultPackage
+  PackageVersion: 2024-11-21-1162
+  Wrappers:
+  - BundleGUID: 0240ca8b8a2e11fea0d9d453a3a7e439
+    FileName: 0240ca8b8a2e11fea0d9d453a3a7e439.bundle
+  - BundleGUID: 05cfb55be108ec84531cf7ebfa885cd3
+    FileName: 05cfb55be108ec84531cf7ebfa885cd3.bundle
+  - BundleGUID: 186aeae47ef541b96b52d89df795fac4
+    FileName: 186aeae47ef541b96b52d89df795fac4.bundle
+  - BundleGUID: 199a48e655ae0e4377c40f57b9cd7b86
+    FileName: 199a48e655ae0e4377c40f57b9cd7b86.bundle
+  - BundleGUID: 27bb74e2355acdd1d973df0d912f3d32
+    FileName: 27bb74e2355acdd1d973df0d912f3d32.bundle
+  - BundleGUID: 2b734ef30a48566bb7323a7dcd3a3d88
+    FileName: 2b734ef30a48566bb7323a7dcd3a3d88.bundle
+  - BundleGUID: 35fac8cf4c9c7db9df4b80c2cc07945d
+    FileName: 35fac8cf4c9c7db9df4b80c2cc07945d.bundle
+  - BundleGUID: 38117e328b9be39a0ead901c481cba58
+    FileName: 38117e328b9be39a0ead901c481cba58.bundle
+  - BundleGUID: 46eeccb9ff0c042234e72fcf97340cde
+    FileName: 46eeccb9ff0c042234e72fcf97340cde.bundle
+  - BundleGUID: 57076d4c9108fdf6cff5267f2a90f243
+    FileName: 57076d4c9108fdf6cff5267f2a90f243.bundle
+  - BundleGUID: 592d02754fb8128ae72d58cd070391e1
+    FileName: 592d02754fb8128ae72d58cd070391e1.bundle
+  - BundleGUID: 7e39b1d29145a9a62d3ab4e0de99a71c
+    FileName: 7e39b1d29145a9a62d3ab4e0de99a71c.bundle
+  - BundleGUID: d636e1e9317052c82c2875f3ebb659be
+    FileName: d636e1e9317052c82c2875f3ebb659be.bundle
+  - BundleGUID: dd63cbd3a7af0fd407e6a34a94840e3e
+    FileName: dd63cbd3a7af0fd407e6a34a94840e3e.bundle
+  - BundleGUID: f0d127a273293e88572f8a5357bfd94d
+    FileName: f0d127a273293e88572f8a5357bfd94d.bundle
+  - BundleGUID: fb34bbd0f398375c6bacd38e39678cd9
+    FileName: fb34bbd0f398375c6bacd38e39678cd9.bundle
+  - BundleGUID: ff10374bf1d9bb6d02b313752ca977d0
+    FileName: ff10374bf1d9bb6d02b313752ca977d0.bundle

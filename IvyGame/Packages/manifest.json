@@ -5,6 +5,7 @@
     "com.ia.nodegraph": "file:../IA-Packages/com.ia.nodegraph",
     "com.ia.server": "file:../IA-Packages/com.ia.server",
     "com.ia.toolkit": "file:../IA-Packages/com.ia.toolkit",
+    "com.tuyoogame.yooasset": "file:../IA-Packages/com.third.yooasset",
     "com.unity.cinemachine": "2.9.7",
     "com.unity.collab-proxy": "2.2.0",
     "com.unity.ide.rider": "3.0.27",
@@ -12,7 +13,7 @@
     "com.unity.ide.vscode": "1.2.5",
     "com.unity.memoryprofiler": "1.1.0",
     "com.unity.render-pipelines.universal": "14.0.9",
-    "com.unity.scriptablebuildpipeline": "1.21.21",
+    "com.unity.scriptablebuildpipeline": "1.21.25",
     "com.unity.test-framework": "1.1.33",
     "com.unity.textmeshpro": "3.0.6",
     "com.unity.timeline": "1.7.6",
@@ -51,13 +52,5 @@
     "com.unity.modules.wind": "1.0.0",
     "com.unity.modules.xr": "1.0.0"
   },
-  "scopedRegistries": [
-    {
-      "name": "package.openupm.cn",
-      "url": "https://package.openupm.cn",
-      "scopes": [
-        "com.tuyoogame.yooasset"
-      ]
-    }
-  ]
+  "scopedRegistries": []
 }

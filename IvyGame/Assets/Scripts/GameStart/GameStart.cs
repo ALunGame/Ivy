@@ -34,9 +34,6 @@ namespace Game
             //游戏存档初始化
             GameContextLocate.Init();
 
-            //游戏环境初始化
-            GameEnv.Init();
-
             //UI初始化
             UICenter uICenter = GameObject.Find("Game/UICenter").GetComponent<UICenter>();
             uICenter.Init();

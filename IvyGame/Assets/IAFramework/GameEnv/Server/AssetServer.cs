@@ -7,18 +7,6 @@ namespace IAFramework.Server
 {
     public class AssetServer : BaseServer
     {
-        private ResourcePackage _package;
-        
-        public override void OnInit()
-        {
-            _package = YooAssets.GetPackage(GamePatch.DefaultPackageName);
-        }
-
-        public override void OnClear()
-        {
-            _package = null;
-        }
-
         #region 场景加载
 
         /// <summary>
@@ -26,11 +14,12 @@ namespace IAFramework.Server
         /// </summary>
         /// <param name="location">场景的定位地址</param>
         /// <param name="sceneMode">场景加载模式</param>
+        /// <param name="physicsMode">场景物理模式</param>
         /// <param name="suspendLoad">场景加载到90%自动挂起</param>
         /// <param name="priority">优先级</param>
-        public SceneOperationHandle LoadSceneAsync(string location, LoadSceneMode sceneMode = LoadSceneMode.Single, bool suspendLoad = false, int priority = 100)
+        public SceneHandle LoadSceneAsync(string location, LoadSceneMode sceneMode = LoadSceneMode.Single, LocalPhysicsMode physicsMode = LocalPhysicsMode.None, bool suspendLoad = false, uint priority = 100)
         {
-            return YooAssets.LoadSceneAsync(location, sceneMode, suspendLoad, priority);
+            return YooAssets.LoadSceneAsync(location, sceneMode, physicsMode, suspendLoad, priority);
         }
 
         #endregion
@@ -44,7 +33,7 @@ namespace IAFramework.Server
         /// <param name="location">资源的定位地址</param>
         public TObject LoadAssetSync<TObject>(string location) where TObject : UnityEngine.Object
         {
-            AssetOperationHandle handle = YooAssets.LoadAssetSync<TObject>(location);
+            AssetHandle handle = YooAssets.LoadAssetSync<TObject>(location);
             return handle.AssetObject as TObject;
         }
         
@@ -53,9 +42,9 @@ namespace IAFramework.Server
         /// </summary>
         /// <typeparam name="TObject">资源类型</typeparam>
         /// <param name="location">资源的定位地址</param>
-        public AssetOperationHandle LoadAssetAsync<TObject>(string location) where TObject : UnityEngine.Object
+        public AssetHandle LoadAssetAsync<TObject>(string location) where TObject : UnityEngine.Object
         {
-            AssetOperationHandle handle = _package.LoadAssetAsync<TObject>(location);
+            AssetHandle handle = YooAssets.LoadAssetAsync<TObject>(location);
             return handle;
         }
 
@@ -63,13 +52,38 @@ namespace IAFramework.Server
 
         #region 原生文件
 
+        private string rawFilePackageName;
+        private ResourcePackage rawFilePackage;
+        public ResourcePackage RawFilePackage 
+        {
+            get
+            {
+                if (rawFilePackage == null)
+                {
+                    rawFilePackage = YooAssets.GetPackage(rawFilePackageName);
+                }
+                return rawFilePackage;
+            }
+        }
+
+        /// <summary>
+        /// 设置原生资源Package包
+        /// </summary>
+        /// <param name="pPackageName"></param>
+        public void SetRawFilePackage(string pPackageName)
+        {
+            rawFilePackageName = pPackageName;
+            rawFilePackage = YooAssets.GetPackage(pPackageName);
+            Debug.LogError($"SetRawFilePackage::{rawFilePackage.PackageName}");
+        }
+
         /// <summary>
         /// 同步加载原生文件
         /// </summary>
         /// <param name="location">资源的定位地址</param>
-        public RawFileOperationHandle LoadRawFileSync(string location)
+        public RawFileHandle LoadRawFileSync(string location)
         {
-            RawFileOperationHandle handle = YooAssets.LoadRawFileSync(location);
+            RawFileHandle handle = RawFilePackage.LoadRawFileSync(location);
             return handle;
         }
         
@@ -77,21 +91,13 @@ namespace IAFramework.Server
         /// 异步加载原生文件
         /// </summary>
         /// <param name="location">资源的定位地址</param>
-        public RawFileOperationHandle LoadRawFileAsync(string location)
+        public RawFileHandle LoadRawFileAsync(string location)
         {
-            RawFileOperationHandle handle = _package.LoadRawFileAsync(location);
+            RawFileHandle handle = RawFilePackage.LoadRawFileAsync(location);
             return handle;
         }
 
         #endregion
-
-        /// <summary>
-        /// 释放资源
-        /// </summary>
-        public void UnloadAssets()
-        {
-            _package?.UnloadUnusedAssets();
-        }
 
         #region 通用扩展
 
@@ -138,7 +144,7 @@ namespace IAFramework.Server
         /// <returns></returns>
         public byte[] LoadBytes(string assetName)
         {
-            RawFileOperationHandle handle = LoadRawFileSync(assetName);
+            RawFileHandle handle = LoadRawFileSync(assetName);
             return handle.GetRawFileData();
         }
         
@@ -149,7 +155,7 @@ namespace IAFramework.Server
         /// <returns></returns>
         public string LoadString(string assetName)
         {
-            RawFileOperationHandle handle = LoadRawFileSync(assetName);
+            RawFileHandle handle = LoadRawFileSync(assetName);
             return handle.GetRawFileText();
         }
 

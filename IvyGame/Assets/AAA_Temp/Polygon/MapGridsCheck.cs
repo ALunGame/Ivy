@@ -51,7 +51,9 @@ public class MapGridsCheck : MonoBehaviour
 
     private void OnDrawGizmosSelected()
     {
-        IAToolkit.GizmosHelper.DrawBounds(new Vector3(CampRect.center.x, 0, CampRect.center.y), new Vector3(CampRect.size.x, 1, CampRect.size.y), Color.blue);
+#if UNITY_EDITOR
+        IAToolkit.GizmosHelper.DrawBounds(new Vector3(CampRect.center.x, 0, CampRect.center.y), new Vector3(CampRect.size.x, 1, CampRect.size.y), Color.blue); 
+#endif
     }
 
     private void CalcCampLines()

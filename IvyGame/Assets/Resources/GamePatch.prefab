@@ -530,8 +530,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe1f9fad63f1f6a4db18aac795f1bda2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  PlayMode: 0
+  PlayMode: 1
   PatchPanelTrans: {fileID: 6635775708951950985}
+  LoadPackages:
+  - PackageName: DefaultPackage
+    PackageBuildPipeline: 1
+  - PackageName: RawFilePackage
+    PackageBuildPipeline: 2
+  RawFilePackageName: RawFilePackage
 --- !u!1 &2683086430752529453
 GameObject:
   m_ObjectHideFlags: 0

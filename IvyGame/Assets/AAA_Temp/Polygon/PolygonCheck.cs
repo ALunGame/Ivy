@@ -33,11 +33,13 @@ internal class PolygonCheck : MonoBehaviour
             }
         }
 
+#if UNITY_EDITOR
         if (polygonCollider != null)
         {
 
             IAToolkit.GizmosHelper.DrawBounds(polygonCollider.bounds, Color.blue);
-        }
+        } 
+#endif
     }
 
     private bool CheckIsIn()

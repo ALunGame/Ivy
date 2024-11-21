@@ -44,11 +44,13 @@ namespace Game.Network.Server
                 //IAToolkit.GizmosHelper.DrawRect(pathRect, Color.black);
                 //Gizmos.DrawCube(pathRect.center, new Vector3(pathRect.size.x, 10, pathRect.size.y));
 
+#if UNITY_EDITOR
                 foreach (int camp in campRectDict.Keys)
                 {
                     RectInt rect = campRectDict[camp];
                     IAToolkit.GizmosHelper.DrawBounds(new Vector3(rect.center.x, 0, rect.center.y), new Vector3(rect.size.x, 1, rect.size.y), TempConfig.CampColorDict[camp]);
-                }
+                } 
+#endif
             };
         }
 

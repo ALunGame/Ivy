@@ -71,7 +71,7 @@ namespace IAToolkit
         {
             get
             {
-                return currState != null ? currState.GetType().ToString() : null;
+                return currState != null ? currState.GetType().FullName : null;
             }
         }
         

@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b05c83971e3dca94f9fa460d396385e5, type: 3}
+  m_Name: BuildinCatalog
+  m_EditorClassIdentifier: 
+  PackageName: RawFilePackage
+  PackageVersion: 2024-11-21-1163
+  Wrappers:
+  - BundleGUID: afeb17fb1712411c2f9bd0b5cdd88461
+    FileName: rawfilepackage_assets_gameasset_config_tbactorcfg.bundle
+  - BundleGUID: 5d46d781fb427c4114d7008f0f3da3ef
+    FileName: rawfilepackage_assets_gameasset_config_tbfightdrumsmusiccfg.bundle
+  - BundleGUID: b5948c1e903fc436a8a78ee35650caf4
+    FileName: rawfilepackage_assets_gameasset_config_tbgamelevelcfg.bundle
+  - BundleGUID: 41809c10e52d3bc1aa76fe9b2f3b8fce
+    FileName: rawfilepackage_assets_gameasset_config_tbmapcfg.bundle
+  - BundleGUID: 7aad09cd0603a0dbab109b0a24e8bb0c
+    FileName: rawfilepackage_assets_gameasset_config_tbmisccfg.bundle
+  - BundleGUID: 0825f7540c028f15ab0fb4537baf6791
+    FileName: rawfilepackage_assets_gameasset_config_tbuipanelcfg.bundle
