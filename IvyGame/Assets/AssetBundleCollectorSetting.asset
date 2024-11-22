@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: AssetBundleCollectorSetting
   m_EditorClassIdentifier: 
   ShowPackageView: 1
-  ShowEditorAlias: 0
+  ShowEditorAlias: 1
   UniqueBundleName: 1
   Packages:
   - PackageName: DefaultPackage
@@ -24,17 +24,17 @@ MonoBehaviour:
     AutoCollectShaders: 1
     IgnoreRuleName: NormalIgnoreRule
     Groups:
-    - GroupName: Common
+    - GroupName: Shader
       GroupDesc: 
       AssetTags: 
       ActiveRuleName: EnableGroup
       Collectors:
-      - CollectPath: Assets/GameAsset/Common
-        CollectorGUID: 49916b3117e5db94caf7b85ce6415770
-        CollectorType: 1
-        AddressRuleName: AddressDisable
-        PackRuleName: PackDirectory
-        FilterRuleName: CollectAll
+      - CollectPath: Assets/GameAsset/Common/Shaders
+        CollectorGUID: 6e42420321fe58648a7472acd215258e
+        CollectorType: 0
+        AddressRuleName: AddressByGroupAndFileName
+        PackRuleName: PackSeparately
+        FilterRuleName: CollectShader
         AssetTags: 
         UserData: 
     - GroupName: Gamer

@@ -13,19 +13,17 @@ MonoBehaviour:
   m_Name: BuildinCatalog
   m_EditorClassIdentifier: 
   PackageName: DefaultPackage
-  PackageVersion: 2024-11-21-1392
+  PackageVersion: 2024-11-22-1109
   Wrappers:
-  - BundleGUID: cd245d4ece7d24d9ecdbef0ecc6236ff
-    FileName: defaultpackage_assets_gameasset_common_materials_map.bundle
-  - BundleGUID: 821eaf1dd030e73e58f516575dd9c0ba
+  - BundleGUID: dc53b48fcf2dbfd10e5629fee5160a40
     FileName: defaultpackage_assets_gameasset_gamer_prefab_gamer.bundle
   - BundleGUID: 75c79fdfff96d47123845378e912ce82
     FileName: defaultpackage_assets_gameasset_gamer_prefab_gamerpath.bundle
   - BundleGUID: ee80c825eb14a6bf0cb16d1d1c78c5c0
     FileName: defaultpackage_assets_gameasset_gamer_prefab_player.bundle
-  - BundleGUID: 860310e64d977ab18a54018e2a3117f1
+  - BundleGUID: d8a6e064273469b33902c400324c4c03
     FileName: defaultpackage_assets_gameasset_map_mat.bundle
-  - BundleGUID: 47d714dee7d82e213750c43a6c572a86
+  - BundleGUID: 0ca63849fe9d6d38366bcda5f43bc594
     FileName: defaultpackage_assets_gameasset_map_prefab_gamemap_grids.bundle
   - BundleGUID: a4f53bff2800e5c97b186681cd503069
     FileName: defaultpackage_assets_gameasset_map_prefab_gamemap_single.bundle
@@ -41,11 +39,11 @@ MonoBehaviour:
     FileName: defaultpackage_assets_gameasset_ui_prefabs_room_roompanel.bundle
   - BundleGUID: 0b0264066ad106dac948a4f610644c9f
     FileName: defaultpackage_assets_gameasset_ui_prefabs_test.bundle
-  - BundleGUID: 13e844e6dc9a03f5b994feba035abae3
+  - BundleGUID: 201536d0b08a8df3f980769d328a3a7b
     FileName: defaultpackage_share_assets_aaa_temp.bundle
   - BundleGUID: 35707c9235ad3c807a3dac69d2099299
     FileName: defaultpackage_share_packages_com_unity_cinemachine_editor_editorresources.bundle
   - BundleGUID: a6a7079eee757f3b1e3b41e3c0184d0b
     FileName: defaultpackage_share_packages_com_unity_render-pipelines_universal_runtime_materials.bundle
-  - BundleGUID: 7f95e6169fd00ec599d320a812ab78b4
+  - BundleGUID: 666beca4493d1e8830dbe2382a8ab7b2
     FileName: defaultpackage_unityshaders.bundle

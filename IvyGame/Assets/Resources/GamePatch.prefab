@@ -193,7 +193,7 @@ Camera:
   m_TargetDisplay: 0
   m_TargetEye: 3
   m_HDR: 1
-  m_AllowMSAA: 0
+  m_AllowMSAA: 1
   m_AllowDynamicResolution: 0
   m_ForceIntoRT: 0
   m_OcclusionCulling: 0
@@ -530,7 +530,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe1f9fad63f1f6a4db18aac795f1bda2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  PlayMode: 1
+  PlayMode: 0
   PatchPanelTrans: {fileID: 6635775708951950985}
   LoadPackages:
   - PackageName: DefaultPackage

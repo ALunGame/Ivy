@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: BuildinCatalog
   m_EditorClassIdentifier: 
   PackageName: RawFilePackage
-  PackageVersion: 2024-11-21-1393
+  PackageVersion: 2024-11-22-1067
   Wrappers:
   - BundleGUID: afeb17fb1712411c2f9bd0b5cdd88461
     FileName: rawfilepackage_assets_gameasset_config_tbactorcfg.bundle

@@ -12,7 +12,7 @@ Shader "Custom/URP/Map Grid"
         Tags
         {
             "RenderType" = "Opaque"
-            "RenderPipeline" = "UniversalRenderPipeline"
+            "RenderPipeline" = "UniversalPipeline"
         }
 
         HLSLINCLUDE
