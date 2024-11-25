@@ -49,7 +49,7 @@ namespace Gameplay.GameMap.Actor
             pData.Camp.RegValueChangedEvent(OnCampChange);
         }
 
-        public void OnCampChange(int pCamp)
+        public void OnCampChange(int pCamp, int pOldValue)
         {
             Camp = pCamp;
             colorCom.ChangeColor(TempConfig.CampColorDict[pCamp]);

@@ -73,6 +73,7 @@ namespace IAEngine
             if (timer >= intervalTime)
             {
                 executedCnt++;
+                timer = 0;
                 action?.Invoke();
             }
 
@@ -98,6 +99,15 @@ namespace IAEngine
         public float GetCdTime()
         {
             return intervalTime - timer;
+        }
+
+        /// <summary>
+        /// 在CD中
+        /// </summary>
+        /// <returns></returns>
+        public bool IsInCd()
+        {
+            return GetCdTime() > 0;
         }
 
         public bool IsPaused()

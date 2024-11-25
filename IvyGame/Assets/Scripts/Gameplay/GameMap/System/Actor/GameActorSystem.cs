@@ -103,7 +103,7 @@ namespace Gameplay.GameMap.System
                     AddUpdateActor(actor);
                     break;
                 case ActorType.Enemy:
-                    actor = new Actor_EnemyGamer(pActorUid, pActorId, pActorType, actorGo);
+                    actor = new Actor_AIGamer(pActorUid, pActorId, pActorType, actorGo);
                     AddUpdateActor(actor);
                     break;
                 case ActorType.MapGrid:

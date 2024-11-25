@@ -8,6 +8,15 @@ namespace IAEngine
         private static Random random = new Random();
 
         /// <summary>
+        /// 随机一个布尔值
+        /// </summary>
+        /// <returns></returns>
+        public static bool Range()
+        {
+            return Range(0, 1) >= 1;
+        }
+
+        /// <summary>
         /// 随机整数
         /// </summary>
         /// <param name="pMin">最小数（包含）</param>
@@ -16,6 +25,20 @@ namespace IAEngine
         public static int Range(int pMin, int pMax)
         {
             return random.Next(pMin, pMax + 1);
+        }
+
+        /// <summary>
+        /// 随机浮点数
+        /// </summary>
+        /// <param name="pMin">最小数（包含）</param>
+        /// <param name="pMax">最大数（包含）</param>
+        /// <returns></returns>
+        public static float Range(float pMin, float pMax)
+        {
+            int tIntValue = (int)(pMax - pMin);
+            float tFloatValue = pMax - pMin - tIntValue;
+            float value = Range(0, 100) * 0.01f * tFloatValue;
+            return pMin + value;
         }
 
         /// <summary>

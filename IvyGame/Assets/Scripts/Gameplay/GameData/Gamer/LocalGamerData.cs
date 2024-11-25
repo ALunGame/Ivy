@@ -18,6 +18,8 @@ namespace Gameplay.GameData
 
         public LocalGamerData(GamerInfo pInfo) : base(pInfo)
         {
+            inputCommand = new GamerInputC2s();
+            inputCommand.gamerUid = GamerUid;
         }
 
         /// <summary>
@@ -25,10 +27,8 @@ namespace Gameplay.GameData
         /// </summary>
         /// <param name="pVelocity"></param>
         /// <param name="pRotation"></param>
-        public void SetMoveInput(Vector2 pVelocity, float pRotation)
+        public void SetMoveInput(Vector2 pVelocity)
         {
-            inputCommand = new GamerInputC2s();
-            inputCommand.gamerUid = GamerUid;
             inputCommand.commandType = PlayerInputCommand.None;
 
             if (pVelocity.x < -0.5f)
@@ -40,7 +40,7 @@ namespace Gameplay.GameData
             if (pVelocity.y > 0.5f)
                 inputCommand.commandType = PlayerInputCommand.Move_Down;
 
-            inputCommand.Rotation = pRotation;
+            inputCommand.Rotation = PlayerInputCommand.MoveDirRotateDict[inputCommand.commandType];
 
             NetClientLocate.Net.Send((ushort)RoomMsgDefine.GamerInputC2s, inputCommand);
 

@@ -49,6 +49,7 @@ Library: D:\GitProject\Mine\Ivy\IvyGame\Temp\BurstOutput\tempburstlibs\armeabi-v
 --assembly-defines=YooAsset;
 --generate-link-xml=Temp\burst.link.xml
 --temp-folder=D:\GitProject\Mine\Ivy\IvyGame\Temp\Burst
+--debug=Full
 --key-folder=E:/Program Files/Unity/Unity 2022.3.16f1/Editor/Data/PlaybackEngines/AndroidPlayer
 --decode-folder=D:\GitProject\Mine\Ivy\IvyGame\Library\Burst
 --output=D:\GitProject\Mine\Ivy\IvyGame\Temp\BurstOutput\tempburstlibs\armeabi-v7a\lib_burst_generated
@@ -105,6 +106,7 @@ Library: D:\GitProject\Mine\Ivy\IvyGame\Temp\BurstOutput\tempburstlibs\armeabi-v
 --assembly-defines=YooAsset;
 --generate-link-xml=Temp\burst.link.xml
 --temp-folder=D:\GitProject\Mine\Ivy\IvyGame\Temp\Burst
+--debug=Full
 --key-folder=E:/Program Files/Unity/Unity 2022.3.16f1/Editor/Data/PlaybackEngines/AndroidPlayer
 --decode-folder=D:\GitProject\Mine\Ivy\IvyGame\Library\Burst
 --output=D:\GitProject\Mine\Ivy\IvyGame\Temp\BurstOutput\tempburstlibs\armeabi-v7a\lib_burst_generated

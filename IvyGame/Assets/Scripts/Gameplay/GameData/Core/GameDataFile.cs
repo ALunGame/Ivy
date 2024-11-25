@@ -28,21 +28,22 @@ namespace Gameplay.GameData
             {
                 if (Equals(Value, value))
                     return;
+                T oldValue = _value;
                 _value = value;
-                OnValueChanged();
+                OnValueChanged(oldValue);
             }
         }
 
-        private Action<T> changeNotifys = null;
+        private Action<T, T> changeNotifys = null;
 
         public GameDataField(BaseGameData pGameData) : base(pGameData)
         {
         }
 
-        private void OnValueChanged()
+        private void OnValueChanged(T pOldValue)
         {
             if (changeNotifys != null)
-                changeNotifys.Invoke(Value);
+                changeNotifys.Invoke(Value, pOldValue);
         }
 
         public void SetValueWithoutNotify(T pValue)
@@ -52,13 +53,13 @@ namespace Gameplay.GameData
             Value = pValue;
         }
 
-        public void RegValueChangedEvent(Action<T> pOnValueChanged)
+        public void RegValueChangedEvent(Action<T, T> pOnValueChanged)
         {
             changeNotifys -= pOnValueChanged;
             changeNotifys += pOnValueChanged;
         }
 
-        public void RemoveValueChangedEvent(Action<T> pOnValueChanged)
+        public void RemoveValueChangedEvent(Action<T, T> pOnValueChanged)
         {
             changeNotifys -= pOnValueChanged;
         }

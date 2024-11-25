@@ -154,22 +154,22 @@ namespace Game.UI
         {
             BtnUtil.SetClick(transform, "Left/MoveBox/UpBtn", () =>
             {
-                SendMoveMsg(0, 1, 270);
+                SendMoveMsg(0, 1);
             });
 
             BtnUtil.SetClick(transform, "Left/MoveBox/DownBtn", () =>
             {
-                SendMoveMsg(0, -1, 90);
+                SendMoveMsg(0, -1);
             });
 
             BtnUtil.SetClick(transform, "Left/MoveBox/LeftBtn", () =>
             {
-                SendMoveMsg(-1, 0, 180);
+                SendMoveMsg(-1, 0);
             });
 
             BtnUtil.SetClick(transform, "Left/MoveBox/RightBtn", () =>
             {
-                SendMoveMsg(1, 0, 0);
+                SendMoveMsg(1, 0);
             });
 
             BtnUtil.SetClick(transform, "Right/SkillBox/DashBtn", () =>
@@ -244,19 +244,19 @@ namespace Game.UI
         {
             if (Input.GetKeyUp(KeyCode.A))
             {
-                SendMoveMsg(-1, 0, 180);
+                SendMoveMsg(-1, 0);
             }
             if (Input.GetKeyUp(KeyCode.D))
             {
-                SendMoveMsg(1, 0, 0);
+                SendMoveMsg(1, 0);
             }
             if (Input.GetKeyUp(KeyCode.W))
             {
-                SendMoveMsg(0, 1, 270);
+                SendMoveMsg(0, 1);
             }
             if (Input.GetKeyUp(KeyCode.S))
             {
-                SendMoveMsg(0, -1, 90);
+                SendMoveMsg(0, -1);
             }
             if (Input.GetKeyUp(KeyCode.Space))
             {
@@ -264,9 +264,9 @@ namespace Game.UI
             }
         }
 
-        private void SendMoveMsg(int x, int y, float rotate)
+        private void SendMoveMsg(int x, int y)
         {
-            gamerData.SetMoveInput(new Vector2(x, y), rotate);
+            gamerData.SetMoveInput(new Vector2(x, y));
         }
 
         private void SendDaskSkillMsg()

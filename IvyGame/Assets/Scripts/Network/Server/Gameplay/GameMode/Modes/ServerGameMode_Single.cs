@@ -1,4 +1,5 @@
 ﻿using IAEngine;
+using Proto;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -31,9 +32,25 @@ namespace Game.Network.Server
 
         public override void StartGame(int pGameLvelId)
         {
-            //设置阵营和位置
-            List<ServerGamerData> gamers = NetServerLocate.GameCtrl.GameData.Gamers;
             ServerMapData map = NetServerLocate.GameCtrl.GameData.Map;
+
+            List<ServerGamerData> gamers = NetServerLocate.GameCtrl.GameData.Gamers;
+
+            //创建AI玩家数据
+            if (gamers.Count < TempConfig.MaxGamerCnt)
+            {
+                int tAddCnt = TempConfig.MaxGamerCnt - gamers.Count;
+                for (int i = 0; tAddCnt > 0; i++)
+                {
+                    JoinGamerInfo joinInfo = new JoinGamerInfo();
+                    joinInfo.Id = 101;
+                    joinInfo.Name = $"Game_AI_{gamers.Count + 1}";
+                    joinInfo.fightMusicId = 1;
+                    NetServerLocate.GameCtrl.GameData.AddGamer(NetServerLocate.GameCtrl.RoomMaster.Peer, joinInfo);
+                }
+            }
+
+            //玩家出生
             for (int i = 0; i < gamers.Count; i++)
             {
                 ServerGamerData gamer = gamers[i];
@@ -47,6 +64,8 @@ namespace Game.Network.Server
                 }
                 map.AddGamerPathData(gamer);
             }
+
+
         }
 
         public override void OnGamerReborn(ServerGamerData pGamer)

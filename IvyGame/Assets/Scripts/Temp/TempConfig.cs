@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using IAEngine;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Game
@@ -42,11 +43,21 @@ namespace Game
         /// <summary>
         /// 阵营颜色
         /// </summary>
-        public static Dictionary<int, Color> CampColorDict = new Dictionary<int, Color>()
+        public static Dictionary<int, Color> CampColorDict = new Dictionary<int, Color>();
+
+        public static int MaxGamerCnt = 20;
+
+        static TempConfig()
         {
-            {0,Color.white },
-            {1,Color.red},
-            {2,Color.green},
-        };
+            CampColorDict.Add(0, Color.white);
+            for (int i = 1; i <= MaxGamerCnt; i++) 
+            {
+                float a = RandomHelper.Range(0.0f, 1.0f);
+                float g = RandomHelper.Range(0.0f, 1.0f);
+                float b = RandomHelper.Range(0.0f, 1.0f);
+
+                CampColorDict.Add(i, new Color(a, g, b, 1));
+            }
+        }
     }
 }

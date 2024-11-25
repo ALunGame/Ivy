@@ -32,6 +32,15 @@ namespace Gameplay.GameData
             }
         }
 
+        public Dictionary<int, List<GameMapGridData>> campGrids = new Dictionary<int, List<GameMapGridData>>();
+        public Dictionary<int, List<GameMapGridData>> CampGrids
+        {
+            get
+            {
+                return campGrids;
+            }
+        }
+
         public void OnEnterMap(int pMapId)
         {
             MapCfg mapCfg = IAConfig.Config.MapCfg[pMapId];
@@ -62,6 +71,24 @@ namespace Gameplay.GameData
                 for (int y = 0; y < MapSize.y; y++)
                 {
                     GameMapGridData gridData = new GameMapGridData(new Vector2Int(x, y));
+                    gridData.Camp.SetValueWithoutNotify(0);
+                    gridData.Camp.RegValueChangedEvent((camp, oldCamp) =>
+                    {
+                        //清空旧的
+                        if (campGrids.ContainsKey(oldCamp))
+                        {
+                            if (campGrids[oldCamp].Contains(gridData))
+                            {
+                                campGrids[oldCamp].Remove(gridData);
+                            }
+                        }
+                           
+                        //保存新的
+                        if (!campGrids.ContainsKey(camp))
+                            campGrids.Add(camp, new List<GameMapGridData>());
+                        campGrids[camp].Add(gridData);
+                    });
+
                     if (!mapGrid.ContainsKey(x))
                         mapGrid.Add(x, new Dictionary<int, GameMapGridData>());
                     mapGrid[x].Add(y, gridData);

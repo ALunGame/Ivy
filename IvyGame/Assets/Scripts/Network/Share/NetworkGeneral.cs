@@ -1,5 +1,6 @@
 ﻿using Proto;
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Game.Network
@@ -149,5 +150,13 @@ namespace Game.Network
         public const int Move_Down  = 2;
         public const int Move_Left  = 3;
         public const int Move_Right = 4;
+
+        public static Dictionary<int, int> MoveDirRotateDict = new Dictionary<int, int>()
+        {
+            {PlayerInputCommand.Move_Up, 270},
+            {PlayerInputCommand.Move_Down, 90},
+            {PlayerInputCommand.Move_Left, 180},
+            {PlayerInputCommand.Move_Right, 0},
+        };
     }
 }

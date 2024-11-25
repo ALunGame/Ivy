@@ -1,4 +1,5 @@
 ﻿using Game;
+using Game.Network;
 using Gameplay.GameData;
 using IAEngine;
 using IAFramework;
@@ -58,7 +59,12 @@ namespace Gameplay.GameMap.Actor
     {
         public const string PathPointCachePoolName = "Actor_GamerPathPoint";
 
-        protected T Data;
+        public T Data { get; protected set; }
+
+        private float preMoveTotalTime = NetworkLogicTimer.FixedDelta * 3;
+        private Vector2 currTargetPos;
+        private Vector3 currMoveTargetPos;
+        private float currMoveTime;
 
         protected Actor_Gamer(string pUid, int pId, ActorType pType, GameObject pActorGo) : base(pUid, pId, pType, pActorGo)
         {
@@ -68,6 +74,8 @@ namespace Gameplay.GameMap.Actor
 
         public override void UpdateLogic(float pTimeDelta, float pGameTime)
         {
+            SyncPosAndRotation();
+
             foreach (var item in PathPoint.Values)
             {
                 foreach (var pathCom in item.Values)
@@ -199,7 +207,7 @@ namespace Gameplay.GameMap.Actor
 
         #region 玩家状态改变
 
-        private void OnAliveStateChange(bool pIsAlive)
+        private void OnAliveStateChange(bool pIsAlive, bool pOldValue)
         {
             if (pIsAlive)
             {
@@ -219,6 +227,26 @@ namespace Gameplay.GameMap.Actor
         public virtual void OnReborn()
         {
             SetActive(true);
+        }
+
+        #endregion
+
+        #region 同步
+
+        private void SyncPosAndRotation()
+        {
+            if (!Data.Position.Equals(currTargetPos))
+            {
+                currMoveTime = 0;
+                currTargetPos = Data.Position;
+                currMoveTargetPos = new Vector3(currTargetPos.x, GetPos().y, currTargetPos.y);
+            }
+
+            Vector3 movePos = Vector3.Lerp(GetPos(), currMoveTargetPos, currMoveTime / preMoveTotalTime);
+            currMoveTime += NetworkLogicTimer.FixedDelta;
+
+            SetPos(movePos);
+            SetRotation(Quaternion.Euler(0, Data.Rotation, 0));
         }
 
         #endregion

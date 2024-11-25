@@ -34,6 +34,11 @@ namespace Game.Network.Server
 
         public ushort ServerTick { get; private set; }
 
+        /// <summary>
+        /// 房主
+        /// </summary>
+        public ServerGamerData RoomMaster { get; private set; }
+
         public ServerGameModeCtrl GameMode { get; private set; }
 
         public ServerGameDataCtrl GameData { get; private set; }
@@ -120,12 +125,12 @@ namespace Game.Network.Server
             ModeType = (GameModeType)pMsgData.gameMode;
 
             //添加房主
-            ServerGamerData roomMaster = GameData.AddGamer(pPeer, pMsgData.Gamer);
+            RoomMaster = GameData.AddGamer(pPeer, pMsgData.Gamer);
 
             //各个模块初始化
-            GameMode.OnCreateGame(ModeType, pPeer, roomMaster.GamerUid, pMsgData);
-            GameData.OnCreateGame(ModeType, pPeer, roomMaster.GamerUid, pMsgData);
-            GameMap.OnCreateGame(ModeType, pPeer, roomMaster.GamerUid, pMsgData);
+            GameMode.OnCreateGame(ModeType, pPeer, RoomMaster.GamerUid, pMsgData);
+            GameData.OnCreateGame(ModeType, pPeer, RoomMaster.GamerUid, pMsgData);
+            GameMap.OnCreateGame(ModeType, pPeer, RoomMaster.GamerUid, pMsgData);
 
             //发送创建房间成功
             CreateRoomS2c createMsg = new CreateRoomS2c();
@@ -137,8 +142,8 @@ namespace Game.Network.Server
             JoinRoomS2c joinMsg = new JoinRoomS2c();
             joinMsg.RetCode = 0;
             joinMsg.gameMode = (int)ModeType;
-            joinMsg.roomMastergamerUid = roomMaster.GamerUid;
-            joinMsg.selfgamerUid = roomMaster.GamerUid;
+            joinMsg.roomMastergamerUid = RoomMaster.GamerUid;
+            joinMsg.selfgamerUid = RoomMaster.GamerUid;
             NetServerLocate.Net.SendTo(pPeer, (ushort)RoomMsgDefine.JoinRoomS2c, joinMsg);
 
             //广播其他人有人加入
