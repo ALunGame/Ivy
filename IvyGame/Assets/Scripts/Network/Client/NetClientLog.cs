@@ -8,7 +8,7 @@ namespace Game.Network.Client
 
         public NetClientLog() 
         {
-            OpenLog = false;
+            OpenLog = true;
         }
     }
 }

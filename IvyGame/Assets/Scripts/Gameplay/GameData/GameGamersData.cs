@@ -60,14 +60,23 @@ namespace Gameplay.GameData
             RemoveGamer(info.Uid);
 
             GamerData gamer;
-            if (info.Uid == GameplayGlobal.Data.SelfGamerUid) 
+            if (info.Uid.Contains("AI"))
             {
-                gamer = new LocalGamerData(info);
+                gamer = new AIGamerData(info);
             }
             else
             {
-                gamer = new RemoteGamerData(info);
+                if (info.Uid == GameplayGlobal.Data.SelfGamerUid)
+                {
+                    gamer = new LocalGamerData(info);
+                }
+                else
+                {
+                    gamer = new RemoteGamerData(info);
+                }
             }
+
+            
             Gamers.Add(gamer);
         }
     }

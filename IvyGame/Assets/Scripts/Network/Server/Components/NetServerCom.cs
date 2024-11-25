@@ -9,6 +9,7 @@ namespace Game.Network.Server.Com
     public class NetServerCom : MonoBehaviour
     {
         private NetServer02 netServer;
+        private bool updateInThread = false;    
 
         private readonly object _onDrawGizmosLock = new object();
         public Action OnDrawGizmosFunc;
@@ -18,7 +19,8 @@ namespace Game.Network.Server.Com
         public void Init()
         {
             netServer = new NetServer02();
-            netServer.Init();
+            netServer.Init(updateInThread);
+
             NetServerLocate.Init(this);
         }
 
@@ -30,6 +32,14 @@ namespace Game.Network.Server.Com
         public void EndServer()
         {
             netServer.Stop();
+        }
+
+        private void Update()
+        {
+            if (!updateInThread && netServer.IsActive)
+            {
+                netServer?.Update();
+            }
         }
 
         private void OnDrawGizmosSelected()

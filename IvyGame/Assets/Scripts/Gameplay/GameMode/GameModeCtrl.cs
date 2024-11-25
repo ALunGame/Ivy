@@ -44,6 +44,11 @@ namespace Gameplay.GameMode
             Mode.StartGame(pGameLevelId);
         }
 
+        public override void OnUpdateLogic(float pDeltaTime, float pGameTime)
+        {
+            Mode.UpdateLogic(pDeltaTime, pGameTime);
+        }
+
         public override void OnEndGame()
         {
             Mode.EndGame();
@@ -53,5 +58,7 @@ namespace Gameplay.GameMode
         {
             Mode.ExitGame();
         }
+
+
     }
 }

@@ -22,6 +22,21 @@ namespace Game.Network.Server
 
         public override void EnterMap(int pMapId)
         {
+            List<ServerGamerData> gamers = NetServerLocate.GameCtrl.GameData.Gamers;
+            //创建AI玩家数据
+            if (gamers.Count < TempConfig.MaxGamerCnt)
+            {
+                int tAddCnt = TempConfig.MaxGamerCnt - gamers.Count;
+                for (int i = 0; i < tAddCnt; i++)
+                {
+                    JoinGamerInfo joinInfo = new JoinGamerInfo();
+                    joinInfo.Id = 101;
+                    joinInfo.Name = $"Game_AI_{gamers.Count + 1}";
+                    joinInfo.fightMusicId = 1;
+                    NetServerLocate.GameCtrl.GameData.AddGamer(NetServerLocate.GameCtrl.RoomMaster.Peer, joinInfo, "AI");
+                }
+            }
+
             for (int i = 0; i < NetServerLocate.GameCtrl.GameData.Gamers.Count; i++)
             {
                 int camp = i + 1;
@@ -35,21 +50,6 @@ namespace Game.Network.Server
             ServerMapData map = NetServerLocate.GameCtrl.GameData.Map;
 
             List<ServerGamerData> gamers = NetServerLocate.GameCtrl.GameData.Gamers;
-
-            //创建AI玩家数据
-            if (gamers.Count < TempConfig.MaxGamerCnt)
-            {
-                int tAddCnt = TempConfig.MaxGamerCnt - gamers.Count;
-                for (int i = 0; tAddCnt > 0; i++)
-                {
-                    JoinGamerInfo joinInfo = new JoinGamerInfo();
-                    joinInfo.Id = 101;
-                    joinInfo.Name = $"Game_AI_{gamers.Count + 1}";
-                    joinInfo.fightMusicId = 1;
-                    NetServerLocate.GameCtrl.GameData.AddGamer(NetServerLocate.GameCtrl.RoomMaster.Peer, joinInfo);
-                }
-            }
-
             //玩家出生
             for (int i = 0; i < gamers.Count; i++)
             {
@@ -64,8 +64,6 @@ namespace Game.Network.Server
                 }
                 map.AddGamerPathData(gamer);
             }
-
-
         }
 
         public override void OnGamerReborn(ServerGamerData pGamer)

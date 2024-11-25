@@ -19,10 +19,12 @@ namespace Game.Network.Server
 
         private NetDataWriter _cachedWriter = new NetDataWriter();
         private NetProtoPacket _cachedProtoPacket = new NetProtoPacket();
+        private bool updateInThread;
 
         public ushort Tick { get; private set; }
+        public bool IsActive { get => isActive; }
 
-        public void Init()
+        public void Init(bool pUpdateInThread)
         {
             packetProcessor = new NetPacketProcessor();
             packetProcessor.SubscribeReusable<DiscoveryPacket, IPEndPoint>(OnDiscoveryReceived);
@@ -33,6 +35,8 @@ namespace Game.Network.Server
                 AutoRecycle = true,
                 BroadcastReceiveEnabled = true,
             };
+
+            updateInThread = pUpdateInThread;
 
             Config.Preload();
         }
@@ -47,18 +51,21 @@ namespace Game.Network.Server
             netManager.Start(NetworkGeneral.ServerPort);
             logicTimer.Start();
 
-            TaskHelper.AddTask(() =>
+            if (updateInThread)
             {
-                while (isActive)
+                TaskHelper.AddTask(() =>
                 {
-                    Update();
-                }
-            }, () =>
-            {
-            });
+                    while (isActive)
+                    {
+                        Update();
+                    }
+                }, () =>
+                {
+                });
+            }
         }
 
-        private void Update()
+        public void Update()
         {
             netManager.PollEvents();
             logicTimer.Update();
@@ -136,6 +143,8 @@ namespace Game.Network.Server
         /// <param name="peer"></param>
         private void OnDiscoveryReceived(DiscoveryPacket packet, IPEndPoint remoteEndPoint)
         {
+            NetServerLocate.Log.Log("服务器发现客户端：" + packet.DiscoveryStr);
+
             _cachedWriter.Reset();
             _cachedWriter.Put((byte)PacketType.Discovery);
             packetProcessor.Write(_cachedWriter, new DiscoveryPacket { DiscoveryStr = "SDiscovery" });

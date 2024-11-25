@@ -80,9 +80,9 @@ namespace Game.Network.Server
 
         #region Gamer
 
-        public ServerGamerData AddGamer(NetPeer pPeer, JoinGamerInfo pGamerInfo)
+        public ServerGamerData AddGamer(NetPeer pPeer, JoinGamerInfo pGamerInfo, string pUidEx = "")
         {
-            string uid = $"Gamer_{++GenUid}";
+            string uid = $"Gamer_{++GenUid}_{pUidEx}";
             ServerGamerData gamerData = new ServerGamerData(pPeer, uid, pGamerInfo.Id, pGamerInfo.Name);
             gamerData.SetDrumsMusicId(pGamerInfo.fightMusicId);
             Gamers.Add(gamerData);

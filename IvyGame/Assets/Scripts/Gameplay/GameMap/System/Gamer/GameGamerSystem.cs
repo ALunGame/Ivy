@@ -33,13 +33,20 @@ namespace Gameplay.GameMap.System
             GameActorSystem gameActorSystem = GameplayCtrl.Instance.GameMap.GetSystem<GameActorSystem>();
             foreach (GamerData gamer in gamers)
             {
-                if (gamer.GamerUid == GameplayGlobal.Data.SelfGamerUid)
+                if (gamer.GamerUid.Contains("AI"))
                 {
-                    gameActorSystem.CreateActor(gamer.GamerUid, gamer.GamerId, ActorType.LocalPlayer);
+                    gameActorSystem.CreateActor(gamer.GamerUid, gamer.GamerId, ActorType.Enemy);
                 }
                 else
                 {
-                    gameActorSystem.CreateActor(gamer.GamerUid, gamer.GamerId, ActorType.RemotePlayer);
+                    if (gamer.GamerUid == GameplayGlobal.Data.SelfGamerUid)
+                    {
+                        gameActorSystem.CreateActor(gamer.GamerUid, gamer.GamerId, ActorType.LocalPlayer);
+                    }
+                    else
+                    {
+                        gameActorSystem.CreateActor(gamer.GamerUid, gamer.GamerId, ActorType.RemotePlayer);
+                    }
                 }
             }
         }
