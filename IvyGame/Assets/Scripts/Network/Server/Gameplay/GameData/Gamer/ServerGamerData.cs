@@ -321,9 +321,9 @@ namespace Game.Network.Server
             Vector2 velocity = Vector2.zero;
 
             if (pMsg.commandType == PlayerInputCommand.Move_Up)
-                velocity.y = -1f;
-            if (pMsg.commandType == PlayerInputCommand.Move_Down)
                 velocity.y = 1f;
+            if (pMsg.commandType == PlayerInputCommand.Move_Down)
+                velocity.y = -1f;
 
             if (pMsg.commandType == PlayerInputCommand.Move_Left)
                 velocity.x = -1f;

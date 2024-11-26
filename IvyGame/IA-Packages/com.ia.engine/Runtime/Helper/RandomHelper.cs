@@ -5,13 +5,21 @@ namespace IAEngine
 {
     public static class RandomHelper
     {
-        private static Random random = new Random();
+        private static readonly object lockObj = new object();
+
+        private static Random GetRandom(int pAddSeed = 0)
+        {
+            lock (lockObj)
+            {
+                return new Random(DateTime.Now.Millisecond + pAddSeed);
+            }
+        }
 
         /// <summary>
         /// 随机一个布尔值
         /// </summary>
         /// <returns></returns>
-        public static bool Range()
+        public static bool Range(int pAddSeed = 0)
         {
             return Range(0, 1) >= 1;
         }
@@ -22,9 +30,9 @@ namespace IAEngine
         /// <param name="pMin">最小数（包含）</param>
         /// <param name="pMax">最大数（包含）</param>
         /// <returns></returns>
-        public static int Range(int pMin, int pMax)
+        public static int Range(int pMin, int pMax, int pAddSeed = 0)
         {
-            return random.Next(pMin, pMax + 1);
+            return GetRandom().Next(pMin, pMax + 1);
         }
 
         /// <summary>
@@ -33,12 +41,9 @@ namespace IAEngine
         /// <param name="pMin">最小数（包含）</param>
         /// <param name="pMax">最大数（包含）</param>
         /// <returns></returns>
-        public static float Range(float pMin, float pMax)
+        public static float Range(float pMin, float pMax, int pAddSeed = 0)
         {
-            int tIntValue = (int)(pMax - pMin);
-            float tFloatValue = pMax - pMin - tIntValue;
-            float value = Range(0, 100) * 0.01f * tFloatValue;
-            return pMin + value;
+            return (float)(pMin + (GetRandom().NextDouble() * (pMax - pMin)));
         }
 
         /// <summary>

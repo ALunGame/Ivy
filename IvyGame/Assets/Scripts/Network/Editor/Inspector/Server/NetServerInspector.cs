@@ -1,16 +1,17 @@
-﻿using UnityEditor;
+﻿using Game.Network.Server.Com;
+using UnityEditor;
 using UnityEngine;
 
 namespace Game.Network.Server
 {
-    [CustomEditor(typeof(NetServer))]
+    [CustomEditor(typeof(NetServerCom))]
     internal class NetServerInspector : Editor
     {
-        private NetServer netServer;
+        private NetServerCom netServer;
 
         private void OnEnable()
         {
-            netServer = (NetServer)target;
+            netServer = (NetServerCom)target;
         }
 
         public override void OnInspectorGUI()
@@ -22,7 +23,7 @@ namespace Game.Network.Server
                 netServer.OpenLog(isOpen);
 
                 isOpen = EditorGUILayout.Toggle("开启警告日志", netServer.GetOpenLogWarnState());
-                netServer.OpenLogWarn(isOpen); 
+                netServer.OpenLogWarn(isOpen);
             }
         }
     }

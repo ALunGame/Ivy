@@ -148,6 +148,10 @@ namespace Gameplay.GameMap.Actor
             pathPointGo.name = pPos.ToString();
 
             MeshRenderColorCom meshRenderColorCom = pathPointGo.transform.Find("Display/Cube").GetComponent<MeshRenderColorCom>();
+            if (TempConfig.CampColorDict[Camp] == Color.white)
+            {
+                Debug.LogError($"Camp--->{Camp}");
+            }
             meshRenderColorCom.ChangeColor(TempConfig.CampColorDict[Camp]);
 
             if (!PathPoint.ContainsKey(pPos.x))

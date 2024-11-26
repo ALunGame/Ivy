@@ -29,17 +29,22 @@ namespace Gameplay.GameData
 
         public AIGamerData(GamerInfo pInfo) : base(pInfo)
         {
+            float timeCd = RandomHelper.Range(3.0f, 4.0f, GetHashCode());
             needUpdate = false;
-            updateCDTimer = new TimerModel($"AIGamer_{GamerUid}_UpdateCD", 3, () =>
+            updateCDTimer = new TimerModel($"AIGamer_{GamerUid}_UpdateCD", timeCd, () =>
             {
                 needUpdate = true;
             });
+            updateCDTimer.Start();
 
+            timeCd = RandomHelper.Range(6.0f, 7.0f, GetHashCode());
             moveToCamp = false;
-            moveToCampTimer = new TimerModel($"AIGamer_{GamerUid}_UpdateMoveToCamp", 5, () =>
+            moveToCampTimer = new TimerModel($"AIGamer_{GamerUid}_UpdateMoveToCamp", timeCd, () =>
             {
                 moveToCamp = true;
             });
+            moveToCampTimer.Start();
+
             moveDir = new GameDataField<Vector2Int>(this);
             moveDir.SetValueWithoutNotify(Vector2Int.zero);
             moveDir.RegValueChangedEvent((newValue, oldValue) =>
@@ -139,7 +144,7 @@ namespace Gameplay.GameData
         private bool CalcMoveDirToCamp(out Vector2Int outMoveDir)
         {
             List<GameMapGridData> grids = GameplayGlobal.Data.Map.CampGrids[Camp];
-            if (grids.IsLegal())
+            if (!grids.IsLegal())
             {
                 outMoveDir = Vector2Int.zero;
                 return false;
@@ -157,18 +162,23 @@ namespace Gameplay.GameData
             }
 
             //左右
-            if (MathF.Abs(xDis) >= MathF.Abs(yDis))
+            if (moveDir.Value.x == 0)
             {
                 int xDir = xDis > 0 ? 1 : -1;
                 outMoveDir = new Vector2Int(xDir, 0);
                 return true;
             }
-            else
+
+            //上下
+            if (moveDir.Value.y == 0)
             {
                 int yDir = yDis > 0 ? 1 : -1;
                 outMoveDir = new Vector2Int(0, yDir);
                 return true;
             }
+
+            outMoveDir = Vector2Int.zero;
+            return false;
         }
     }
 }

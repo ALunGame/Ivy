@@ -8,17 +8,17 @@ namespace Game.Network.Server.Com
     /// </summary>
     public class NetServerCom : MonoBehaviour
     {
-        private NetServer02 netServer;
+        private NetServer netServer;
         private bool updateInThread = false;    
 
         private readonly object _onDrawGizmosLock = new object();
         public Action OnDrawGizmosFunc;
 
-        public NetServer02 NetServer { get { return netServer; } }
+        public NetServer NetServer { get { return netServer; } }
 
         public void Init()
         {
-            netServer = new NetServer02();
+            netServer = new NetServer();
             netServer.Init(updateInThread);
 
             NetServerLocate.Init(this);

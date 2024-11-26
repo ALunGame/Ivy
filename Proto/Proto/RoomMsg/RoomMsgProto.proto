@@ -56,6 +56,7 @@ message StartGameS2c {
 message EnterMapS2c {
 	required int32 ret_code = 1;
 	required int32 mapId = 2;
+	repeated gamer_info gamers = 3;
 }
 
 //玩家输入

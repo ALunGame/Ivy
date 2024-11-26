@@ -27,19 +27,9 @@ namespace Gameplay.GameData
         /// </summary>
         /// <param name="pVelocity"></param>
         /// <param name="pRotation"></param>
-        public void SetMoveInput(Vector2 pVelocity)
+        public void SetMoveInput(int pMoveDir)
         {
-            inputCommand.commandType = PlayerInputCommand.None;
-
-            if (pVelocity.x < -0.5f)
-                inputCommand.commandType = PlayerInputCommand.Move_Left;
-            if (pVelocity.x > 0.5f)
-                inputCommand.commandType = PlayerInputCommand.Move_Right;
-            if (pVelocity.y < -0.5f)
-                inputCommand.commandType = PlayerInputCommand.Move_Up;
-            if (pVelocity.y > 0.5f)
-                inputCommand.commandType = PlayerInputCommand.Move_Down;
-
+            inputCommand.commandType = pMoveDir;
             inputCommand.Rotation = PlayerInputCommand.MoveDirRotateDict[inputCommand.commandType];
 
             NetClientLocate.Net.Send((ushort)RoomMsgDefine.GamerInputC2s, inputCommand);
@@ -52,10 +42,11 @@ namespace Gameplay.GameData
             lastInputMoveDir = inputMoveDir;
             inputMoveDir = Vector2.zero;
 
-            if (inputCommand.commandType == PlayerInputCommand.Move_Down)
-                inputMoveDir.y = -1f;
             if (inputCommand.commandType == PlayerInputCommand.Move_Up)
                 inputMoveDir.y = 1f;
+            if (inputCommand.commandType == PlayerInputCommand.Move_Down)
+                inputMoveDir.y = -1f;
+
             if (inputCommand.commandType == PlayerInputCommand.Move_Left)
                 inputMoveDir.x = -1f;
             if (inputCommand.commandType == PlayerInputCommand.Move_Right)

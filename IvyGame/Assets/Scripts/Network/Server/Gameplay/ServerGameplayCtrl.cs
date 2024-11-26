@@ -172,6 +172,11 @@ namespace Game.Network.Server
             //通知所有玩家进入地图
             EnterMapS2c enterMsg = new EnterMapS2c();
             enterMsg.mapId = CurrMapId;
+            List<ServerGamerData> gamers = NetServerLocate.GameCtrl.GameData.Gamers;
+            foreach (ServerGamerData gamer in gamers)
+            {
+                enterMsg.Gamers.Add(gamer.CollectGamerInfo());
+            }
             NetServerLocate.Net.Broadcast((ushort)RoomMsgDefine.EnterMapS2c, enterMsg);
         }
 

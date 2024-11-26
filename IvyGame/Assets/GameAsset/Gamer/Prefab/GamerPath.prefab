@@ -62,7 +62,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
+  - {fileID: 2100000, guid: ab8b176ef913eda478203976f17dc3c9, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -145,6 +145,7 @@ MonoBehaviour:
   displayTrans: {fileID: 6804213527234343514}
   animIndex: 0
   currScaleY: 0
+  ScaleRect: {x: 0, y: 0}
   AnimTime: 0.5
 --- !u!1 &7362784863074865254
 GameObject:

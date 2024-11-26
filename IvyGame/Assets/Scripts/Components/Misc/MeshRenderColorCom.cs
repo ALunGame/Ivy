@@ -7,23 +7,43 @@ namespace Gameplay
     /// </summary>
     internal class MeshRenderColorCom : MonoBehaviour
     { 
-        [SerializeField]
-        private Color meshColor = Color.white;
+        public Color meshColor = Color.white;
 
         private string colorKeyStr = "color";
 
         private MeshRenderer meshRenderer;
 
+
+        private MaterialPropertyBlock propertyBlock;
+
         private void Awake()
         {
-            meshRenderer = GetComponent<MeshRenderer>();    
-            meshRenderer.material.color = meshColor;
+            if (propertyBlock == null)
+                propertyBlock = new MaterialPropertyBlock();
+            meshRenderer = GetComponent<MeshRenderer>();
+            meshRenderer.GetPropertyBlock(propertyBlock);
+        }
+
+        private void OnEnable()
+        {
+            ChangeColor(meshColor);
+        }
+
+        private void Update()
+        {
+            ChangeColor(meshColor);
         }
 
         public void ChangeColor(Color pColor)
         {
+            if (pColor == Color.white)
+            {
+                Debug.LogError("aaaaaaaaaaaa");
+            }
+            Debug.LogError($"ChangeColor-->{gameObject.name}::{pColor}");
             meshColor = pColor;
-            meshRenderer.material.color = pColor;   
+            propertyBlock.SetColor("_BaseColor", pColor);
+            meshRenderer.SetPropertyBlock(propertyBlock);
         }
     }
 }

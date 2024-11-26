@@ -46,8 +46,8 @@ public class TestNetServer : MonoBehaviour
 
     public void StartServer()
     {
-        NetServer netServer = ServerObj.AddComponent<NetServer>();
-        netServer.StartServer();
+        //NetServer netServer = ServerObj.AddComponent<NetServer>();
+        //netServer.StartServer();
     }
 
     NetClient netClient;

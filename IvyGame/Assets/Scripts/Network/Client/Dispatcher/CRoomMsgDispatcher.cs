@@ -70,12 +70,18 @@ namespace Game.Network.CDispatcher
             }
 
             GameplayCtrl.Instance.StartGame(MsgData.gameCfgId);
-
-
         }
 
         private void OnEnterMapS2c(EnterMapS2c MsgData)
         {
+            if (MsgData.Gamers.IsLegal())
+            {
+                for (int i = 0; i < MsgData.Gamers.Count; i++)
+                {
+                    GameplayCtrl.Instance.GameData.Gamers.UpdateGamer(MsgData.Gamers[i]);
+                }
+            }
+
             GameplayCtrl.Instance.EnterMap(MsgData.mapId);
         }
 

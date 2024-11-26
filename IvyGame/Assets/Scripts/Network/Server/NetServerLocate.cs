@@ -12,7 +12,7 @@ namespace Game.Network.Server
         /// <summary>
         /// 网络服务
         /// </summary>
-        public static NetServer02 Net { get; private set;}
+        public static NetServer Net { get; private set;}
 
         /// <summary>
         /// 日志

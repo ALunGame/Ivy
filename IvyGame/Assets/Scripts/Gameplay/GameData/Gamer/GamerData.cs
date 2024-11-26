@@ -217,12 +217,14 @@ namespace Gameplay.GameData
             //同步
             Position = pMsg.Pos.ToVector2();
             Rotation = pMsg.Rotation;
+            GridPos.Value = GameplayGlobal.Data.Map.PosToGrid(Position);
         }
 
         public void ForceSetPos(NetVector2 pPos)
         {
             Position = pPos.ToVector2();
             LastPosition = Position;
+            GridPos.Value = GameplayGlobal.Data.Map.PosToGrid(Position);
         }
     }
 }

@@ -106,9 +106,6 @@ namespace Gameplay.GameMap.System
                     actor = new Actor_AIGamer(pActorUid, pActorId, pActorType, actorGo);
                     AddUpdateActor(actor);
                     break;
-                case ActorType.MapGrid:
-                    actor = new Actor_Grid(pActorUid, pActorId, pActorType, actorGo);
-                    break;
             }
 
             if (!ActorDict.ContainsKey(pActorType))

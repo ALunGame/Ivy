@@ -1,4 +1,5 @@
 ﻿using DG.Tweening;
+using Game.Network;
 using Game.Network.Client;
 using Gameplay;
 using Gameplay.GameData;
@@ -154,22 +155,22 @@ namespace Game.UI
         {
             BtnUtil.SetClick(transform, "Left/MoveBox/UpBtn", () =>
             {
-                SendMoveMsg(0, 1);
+                SendMoveMsg(PlayerInputCommand.Move_Up);
             });
 
             BtnUtil.SetClick(transform, "Left/MoveBox/DownBtn", () =>
             {
-                SendMoveMsg(0, -1);
+                SendMoveMsg(PlayerInputCommand.Move_Down);
             });
 
             BtnUtil.SetClick(transform, "Left/MoveBox/LeftBtn", () =>
             {
-                SendMoveMsg(-1, 0);
+                SendMoveMsg(PlayerInputCommand.Move_Left);
             });
 
             BtnUtil.SetClick(transform, "Left/MoveBox/RightBtn", () =>
             {
-                SendMoveMsg(1, 0);
+                SendMoveMsg(PlayerInputCommand.Move_Right);
             });
 
             BtnUtil.SetClick(transform, "Right/SkillBox/DashBtn", () =>
@@ -207,7 +208,7 @@ namespace Game.UI
             List<GamerData> gamers = GameplayGlobal.Data.Gamers.Gamers;
             gamers.Sort((x, y) =>
             {
-                if (x.KillCnt.Value > y.KillCnt.Value)
+                if (x.KillCnt.Value >= y.KillCnt.Value)
                     return 1;
                 else
                     return -1;
@@ -244,19 +245,19 @@ namespace Game.UI
         {
             if (Input.GetKeyUp(KeyCode.A))
             {
-                SendMoveMsg(-1, 0);
+                SendMoveMsg(PlayerInputCommand.Move_Left);
             }
             if (Input.GetKeyUp(KeyCode.D))
             {
-                SendMoveMsg(1, 0);
+                SendMoveMsg(PlayerInputCommand.Move_Right);
             }
             if (Input.GetKeyUp(KeyCode.W))
             {
-                SendMoveMsg(0, 1);
+                SendMoveMsg(PlayerInputCommand.Move_Up);
             }
             if (Input.GetKeyUp(KeyCode.S))
             {
-                SendMoveMsg(0, -1);
+                SendMoveMsg(PlayerInputCommand.Move_Down);
             }
             if (Input.GetKeyUp(KeyCode.Space))
             {
@@ -264,9 +265,9 @@ namespace Game.UI
             }
         }
 
-        private void SendMoveMsg(int x, int y)
+        private void SendMoveMsg(int pMoveDir)
         {
-            gamerData.SetMoveInput(new Vector2(x, y));
+            gamerData.SetMoveInput(pMoveDir);
         }
 
         private void SendDaskSkillMsg()
