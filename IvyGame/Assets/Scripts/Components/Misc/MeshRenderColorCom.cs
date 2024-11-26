@@ -26,7 +26,7 @@ namespace Gameplay
 
         private void OnEnable()
         {
-            ChangeColor(meshColor);
+            //ChangeColor(meshColor);
         }
 
         private void Update()
@@ -40,7 +40,7 @@ namespace Gameplay
             {
                 Debug.LogError("aaaaaaaaaaaa");
             }
-            Debug.LogError($"ChangeColor-->{gameObject.name}::{pColor}");
+            //Debug.LogError($"ChangeColor-->{gameObject.name}::{pColor}");
             meshColor = pColor;
             propertyBlock.SetColor("_BaseColor", pColor);
             meshRenderer.SetPropertyBlock(propertyBlock);
