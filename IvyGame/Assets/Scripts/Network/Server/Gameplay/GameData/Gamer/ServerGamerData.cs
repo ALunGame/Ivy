@@ -208,7 +208,6 @@ namespace Game.Network.Server
         public void Reborn()
         {
             IsAlive.Value = true;
-
         }
 
         #endregion

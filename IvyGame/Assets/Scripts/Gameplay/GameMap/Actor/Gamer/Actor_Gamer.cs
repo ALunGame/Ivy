@@ -103,6 +103,8 @@ namespace Gameplay.GameMap.Actor
 
             Data.IsAlive.RegValueChangedEvent(OnAliveStateChange);
 
+            Data.OnForceSetPos += SyncForceSetPos;
+
             OnRegDataChangeEvent();
         }
         protected virtual void OnRegDataChangeEvent() { }
@@ -114,6 +116,8 @@ namespace Gameplay.GameMap.Actor
             Data.OnClearPath -= OnPathClear;
 
             Data.IsAlive.RemoveValueChangedEvent(OnAliveStateChange);
+
+            Data.OnForceSetPos -= SyncForceSetPos;
 
             OnRemoveDataChangeEvent();
         }
@@ -236,6 +240,14 @@ namespace Gameplay.GameMap.Actor
         #endregion
 
         #region 同步
+
+        private void SyncForceSetPos(Vector2 pPos)
+        {
+            currMoveTime = 0;
+            currTargetPos = new Vector2(pPos.x, pPos.y);
+            currMoveTargetPos = new Vector3(currTargetPos.x, GetPos().y, currTargetPos.y);
+            SetPos(currTargetPos);
+        }
 
         private void SyncPosAndRotation()
         {

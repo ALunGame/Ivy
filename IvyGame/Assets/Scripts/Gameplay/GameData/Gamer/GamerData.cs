@@ -88,6 +88,11 @@ namespace Gameplay.GameData
         /// </summary>
         public float DrumsTime { get; protected set; }
 
+        /// <summary>
+        /// 当强制设置位置
+        /// </summary>
+        public Action<Vector2> OnForceSetPos;
+
         public GamerData(GamerInfo pInfo)
         {
             GamerUid = pInfo.Uid;
@@ -161,7 +166,7 @@ namespace Gameplay.GameData
         public void Reborn(GamerRebornS2c pInfo)
         {
             IsAlive.Value = true;
-            Position = pInfo.Pos.ToVector2();
+            ForceSetPos(pInfo.Pos);
         }
 
         #endregion
@@ -225,6 +230,8 @@ namespace Gameplay.GameData
             Position = pPos.ToVector2();
             LastPosition = Position;
             GridPos.Value = GameplayGlobal.Data.Map.PosToGrid(Position);
+
+            OnForceSetPos?.Invoke(Position);
         }
     }
 }

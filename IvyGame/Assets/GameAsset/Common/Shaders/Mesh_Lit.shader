@@ -16,7 +16,6 @@ Shader "Custom/URP/Mesh Lit"
             Tags { "LightMode" = "UniversalForward" }
 
             HLSLPROGRAM
-            #pragma multi_compile_instancing
             #pragma vertex vert
             #pragma fragment frag
 
@@ -84,7 +83,6 @@ Shader "Custom/URP/Mesh Lit"
 
             HLSLPROGRAM
 
-            #pragma multi_compile_instancing
             #pragma vertex vertShadow
             #pragma fragment fragShadow
 

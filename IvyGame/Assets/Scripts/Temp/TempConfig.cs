@@ -40,55 +40,35 @@ namespace Game
             { MoveClickType.Perfect, new MoveClickCfg(3, 2f) },
         };
 
-        public static Color New(int pR, int pG, int pB, int pA = 255)
-        {
-            if (pA == 255)
-            {
-                return new Color(pR / 255.0f, pG / 255.0f, pB / 255.0f);
-            }
-            else
-            {
-                return new Color(pR / 255.0f, pG / 255.0f, pB / 255.0f, pA / 255.0f);
-            }
-        }
-
         /// <summary>
         /// 阵营颜色
         /// </summary>
         public static Dictionary<int, Color> CampColorDict = new Dictionary<int, Color>()
         {
-            {0,  New(255, 255, 255) },
-            {1,  New(255, 182, 193) },
-            {2,  New(135, 206, 235) },
-            {3,  New(255, 255, 224) },
-            {4,  New(124, 252, 0) },
-            {5,  New(255, 105, 180) },
-            {6,  New(0, 191, 255) },
-            {7,  New(240, 230, 140) },
-            {8,  New(255, 20, 147) },
-            {9,  New(0, 255, 127) },
-            {10, New(255, 99, 71) },
-            {11, New(144, 238, 144) },
-            {12, New(255, 165, 0) },
-            {13, New(32, 178, 1703) },
-            {14, New(255, 69, 0) },
-            {15, New(173, 255, 47) },
-            {16, New(255, 215, 0) },
-            {17, New(100, 149, 237) },
-            {18, New(255, 218, 185) },
-            {19, New(255, 240, 245) },
-            {20, New(240, 255, 240) },
+            {0,  ColorEx.New(255, 255, 255) },
+            {1,  ColorEx.New(255, 182, 193) },
+            {2,  ColorEx.New(135, 206, 235) },
+            {3,  ColorEx.New(255, 255, 224) },
+            {4,  ColorEx.New(124, 252, 0) },
+            {5,  ColorEx.New(255, 105, 180) },
+            {6,  ColorEx.New(0, 191, 255) },
+            {7,  ColorEx.New(240, 230, 140) },
+            {8,  ColorEx.New(255, 20, 147) },
+            {9,  ColorEx.New(0, 255, 127) },
+            {10, ColorEx.New(255, 99, 71) },
+            {11, ColorEx.New(144, 238, 144) },
+            {12, ColorEx.New(255, 165, 0) },
+            {13, ColorEx.New(32, 178, 1703) },
+            {14, ColorEx.New(255, 69, 0) },
+            {15, ColorEx.New(173, 255, 47) },
+            {16, ColorEx.New(255, 215, 0) },
+            {17, ColorEx.New(100, 149, 237) },
+            {18, ColorEx.New(255, 218, 185) },
+            {19, ColorEx.New(255, 240, 245) },
+            {20, ColorEx.New(240, 255, 240) },
         };
 
-        //public static Dictionary<int, Color> CampColorDict = new Dictionary<int, Color>()
-        //{
-        //    {0, Color.white },
-        //    {1, Color.green },
-        //    {2, Color.blue },
-        //    {3, Color.red },
-        //};
-
-        public static int MaxGamerCnt = 2;
+        public static int MaxGamerCnt = 20;
 
         static TempConfig()
         {

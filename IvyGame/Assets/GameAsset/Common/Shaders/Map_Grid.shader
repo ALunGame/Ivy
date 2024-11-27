@@ -3,8 +3,8 @@ Shader "Custom/URP/Map Grid"
     Properties
     {
         [MainTexture] _BaseMap("Albedo", 2D) = "white" {}       //纹理
-        // _Gloss("Gloss", Range(8, 256)) = 16                     //高光反射
-        // _SpecularColor("Specular Color", Color) = (1,1,1,1)     //高光反射颜色
+        _Glossiness("Smoothness", Range(0, 1)) = 0.5            // 光滑度属性
+        _Metallic("Metallic", Range(0, 1)) = 0.0                // 金属度属性
     }
 
     SubShader
@@ -21,8 +21,8 @@ Shader "Custom/URP/Map Grid"
 
         CBUFFER_START(UnityPerMaterial)             //常量缓冲区，这样才会被合批处理
         float4 _BaseMap_ST;
-        // half _Gloss;
-        // half4 _SpecularColor;
+        half _Glossiness;
+        half _Metallic;
 
         struct InstanceParam
 		{			
@@ -63,8 +63,10 @@ Shader "Custom/URP/Map Grid"
             struct Varyings
             {
                 float4 positionCS : SV_POSITION;
-                float2 uv : TEXCOORD0;
-                float4 color: TEXCOORD1;
+                half3 normalWS : TEXCOORD0;
+                float2 uv : TEXCOORD1;
+                float3 positionWS : TEXCOORD2;
+                float4 color: TEXCOORD3;
             };
 
             Varyings Vertex(Attributes IN, uint instanceID : SV_InstanceID)
@@ -82,7 +84,8 @@ Shader "Custom/URP/Map Grid"
 
                 // 计算世界空间下的顶点坐标
                 float3 positionWS = mul(data, IN.positionOS).xyz;
-                // OUT.positionWS = positionWS;
+                OUT.positionWS = positionWS;
+                OUT.normalWS = TransformObjectToWorldNormal(normalize(mul(data, IN.normalOS)));
 
                 //设置颜色
                 OUT.color = color;
@@ -90,38 +93,30 @@ Shader "Custom/URP/Map Grid"
                 // 计算裁剪空间下的顶点坐标
                 OUT.positionCS = mul(unity_MatrixVP, float4(positionWS, 1.0));
                 OUT.uv = TRANSFORM_TEX(IN.texcoord, _BaseMap);
-
-                // float3 normalWS = TransformObjectToWorldNormal(normalize(mul(data, IN.normalOS)));
-                // Note: Uniform scaling only
-                // float3 normalWS = normalize(mul(data, float4(IN.normalOS, 0))).xyz;
-                // float fogFactor = ComputeFogFactor(OUT.positionCS.z);
-                // OUT.normalWSAndFogFactor = float4(normalWS, fogFactor);
-                // OUT.color = color;
-
+               
                 return OUT;
             }
 
             half4 Fragment(Varyings IN) : SV_Target
             {
-                half4 albedo = SAMPLE_TEXTURE2D(_BaseMap, sampler_BaseMap, IN.uv);
+                 // 获取主光源信息
+                Light mainLight = GetMainLight();
+                half3 lightDirWS = normalize(mainLight.direction.xyz);
+                half3 normalWS = normalize(IN.normalWS.xyz);
 
-                // // 获取主光源
-                // Light light = GetMainLight(TransformWorldToShadowCoord(IN.positionWS));
-                // half3 lighting = light.color * light.distanceAttenuation * light.shadowAttenuation;
+                // 计算漫反射
+                half diff = saturate(dot(normalWS, lightDirWS));
+                half3 diffuse = IN.color.rgb * mainLight.color * diff;
 
-                // // 计算光照
-                // float3 normalWS = IN.normalWSAndFogFactor.xyz;                
-                // half3 diffuse = saturate(dot(normalWS, light.direction)) * lighting;
-                // float3 v = normalize(_WorldSpaceCameraPos - IN.positionWS);
-                // float3 h = normalize(v + light.direction);
-                // half3 specular = pow(saturate(dot(normalWS, h)), _Gloss) * _SpecularColor.rgb * lighting;
-                // half3 ambient = SampleSH(normalWS);
-                
-                // // 计算雾效
-                // half4 color = half4(albedo.rgb * diffuse + specular + ambient, 1.0);
-                // float fogFactor = IN.normalWSAndFogFactor.w;
-                // color.rgb = MixFog(color.rgb, fogFactor);
-                return half4(albedo.rgb, 1.0) * IN.color;
+                // 计算高光反射
+                half3 viewDirWS = normalize(_WorldSpaceCameraPos.xyz - IN.positionWS);
+                half3 halfDirWS = normalize(lightDirWS + viewDirWS);
+                half spec = pow(saturate(dot(normalWS, halfDirWS)), _Glossiness * 256.0);
+                half3 specular = mainLight.color * spec * _Metallic;
+
+                // 计算最终颜色
+                half3 color = diffuse + specular;
+                return half4(color, IN.color.a);
             }
             ENDHLSL
         }

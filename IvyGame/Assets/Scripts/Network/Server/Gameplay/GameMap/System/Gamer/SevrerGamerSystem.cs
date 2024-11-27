@@ -79,6 +79,12 @@ namespace Game.Network.Server
             //4，处理击杀的玩家
             if (dieGamerUids.IsLegal())
             {
+                for (int i = 0; i < dieGamerUids.Count; i++)
+                {
+                    ServerMapGamerPathData tPath = map.GetGamerPathData(dieGamerUids[i]);
+                    tPath?.Clear();
+                }
+                
                 NetServerLocate.GameCtrl.GameMode.GamerDie(dieGamerUids, pGamer.GamerUid);
             }
         }
