@@ -54,10 +54,10 @@ MonoBehaviour:
   m_LookAt: {fileID: 0}
   m_Follow: {fileID: 0}
   m_Lens:
-    FieldOfView: 50
+    FieldOfView: 30
     OrthographicSize: 12
     NearClipPlane: 0.1
-    FarClipPlane: 1000
+    FarClipPlane: 80
     Dutch: 0
     ModeOverride: 0
     LensShift: {x: 0, y: 0}
@@ -130,7 +130,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Damping: {x: 0, y: 0.1, z: 0}
-  ShoulderOffset: {x: 0, y: -0.6, z: 4.42}
+  ShoulderOffset: {x: 0, y: 20, z: -25.4}
   VerticalArmLength: 0
   CameraSide: 1
   CameraDistance: 15

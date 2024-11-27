@@ -9,7 +9,7 @@ namespace Game.Network.Server
 
         public NetServerLog() 
         {
-            OpenLog = true;
+            OpenLog = false;
         }
 
         public override void Log(string log, params object[] args)
