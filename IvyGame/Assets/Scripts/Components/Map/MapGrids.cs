@@ -1,6 +1,5 @@
 using Game;
 using IAEngine;
-using System;
 using System.Collections.Generic;
 using UnityEngine;
 using InteropServices = System.Runtime.InteropServices;
@@ -9,15 +8,6 @@ namespace Gameplay
 {
     public class MapGrids : MonoBehaviour
     {
-        //网格动画配置
-        [Serializable]
-        public class GridAnimCfg
-        {
-            public float minScaleY;
-            public float maxScaleY;
-            public int weight;
-        }
-
         //实例化参数
         struct InstanceParam
         {
@@ -28,16 +18,17 @@ namespace Gameplay
         //逻辑数据
         class GridParam
         {
-            public int index;               //索引
-            public Vector3 position;        //位置
-            public int camp;                //阵营
-            public float currScaleY;        //当前的Y轴缩放
+            public int index;                       //索引
+            public Vector3 position;                //位置
+            public int camp;                        //阵营
+            public float scaleY;                    //当前的Y轴缩放
 
-            public bool inPassed;           //正在经过
-            public float passedScaleY;       //经过缩放
-
-            public int animCfgIndex;        //动画配置Index
-            public float animTime;          //动画时间
+            public int animGridIndex;               //当前网格缩放动画Index
+            public float animTime;                  //动画时间
+            public float refreshAnimTime;           //动画刷新时间
+            public Vector2 animScale;               //动画最大最小缩放
+            public bool isThroughing;               //正在被经过
+            public bool isLockByOtherGamer;         //被其他不是该阵营的玩家经过锁住
         }
 
         [Header("地图大小")]
@@ -50,8 +41,15 @@ namespace Gameplay
         public Material GridMaterial;
         [Header("格子大小")]
         public Vector3 GridSize;
-        [Header("格子动画配置")]
-        public List<GridAnimCfg> GridAnimCfgs = new List<GridAnimCfg>();
+        [Header("格子阵营缩放配置")]
+        public List<Vector2> GridCampScales = new List<Vector2>();
+
+        [Header("玩家经过阵营缩放配置")]
+        public List<float> GamerThroughCampScales = new List<float>();
+        [Header("玩家经过阵营缩放动画区域")]
+        public Vector2Int GamerThroughAnimArea = new Vector2Int(4, 4);
+        [Header("玩家经过阵营缩放动画时长")]
+        public float GamerThroughAnimTime = 0.2f;
 
         //格子数量
         private int instanceCount;
@@ -157,81 +155,6 @@ namespace Gameplay
             argsBuffer.SetData(args);
         }
 
-        public void ChangeGridsCamp(List<Vector2Int> pGridPosList, int pCamp, int pAnimCfgIndex = -1)
-        {
-            int resAnimCfgIndex = -1;
-            float resScaleY = 0.1f;
-            if (pCamp == 0) 
-            {
-                resAnimCfgIndex = -1;
-                resScaleY = 0.1f;
-            }
-            else
-            {
-                GridAnimCfg resCfg = null;
-                if (pAnimCfgIndex != -1)
-                {
-                    resCfg = GridAnimCfgs[pAnimCfgIndex];
-                }
-                else
-                {
-                    List<int> weightIndexs = new List<int>();
-                    for (int i = 0; i < GridAnimCfgs.Count; i++)
-                    {
-                        weightIndexs.Add(GridAnimCfgs[i].weight);
-                    }
-                    if (!RandomHelper.GetRandomValueByWeight(GridAnimCfgs, weightIndexs, out resAnimCfgIndex, out resCfg))
-                    {
-                        resAnimCfgIndex = UnityEngine.Random.Range(0, GridAnimCfgs.Count - 1);
-                        resCfg = GridAnimCfgs[resAnimCfgIndex];
-                    }
-                }
-
-                resScaleY = resCfg.minScaleY;
-            }
-
-                
-            for (int i = 0; i < pGridPosList.Count; i++)
-            {
-                ChangeGridCamp(pGridPosList[i], pCamp, resAnimCfgIndex, resScaleY);
-            }
-
-            //更新数据
-            allMatricesBuffer.SetData(shaderArgs);
-            GridMaterial.SetBuffer("_AllMatricesBuffer", allMatricesBuffer);
-        }
-
-        private void ChangeGridCamp(Vector2Int pGridPos, int pCamp, int pAnimCfgIndex, float pChangeScaleY)
-        {
-            if (!gridIndexMap.ContainsKey(pGridPos.x) || !gridIndexMap[pGridPos.x].ContainsKey(pGridPos.y))
-            {
-                return;
-            }
-
-            int index = gridIndexMap[pGridPos.x][pGridPos.y];
-            GridParam gridParam = gridDataDict[index];
-            gridParam.camp = pCamp;
-            gridParam.animTime = 0;
-            gridParam.animCfgIndex = pAnimCfgIndex;
-            gridParam.inPassed = false;
-
-            //阵营空
-            if (pCamp == 0)
-            {
-                animIndexList.Remove(index);
-
-                shaderArgs[index].instanceToObjectMatrix = Matrix4x4.TRS(gridParam.position, Quaternion.identity, new Vector3(GridSize.x, pChangeScaleY, GridSize.z));
-                shaderArgs[index].color = TempConfig.CampColorDict[0];
-            }
-            else
-            {
-                animIndexList.Add(index);
-
-                shaderArgs[index].instanceToObjectMatrix = Matrix4x4.TRS(gridParam.position, Quaternion.identity, new Vector3(GridSize.x, pChangeScaleY, GridSize.z));
-                shaderArgs[index].color = TempConfig.CampColorDict[pCamp];
-            }
-        }
-
         public void UpdateLogic(float pDeltaTime, float pGameTime)
         {
             if (allMatricesBuffer == null)
@@ -240,17 +163,10 @@ namespace Gameplay
             }
 
             //动画
-            PlayGridAnim(Time.deltaTime);
+            PlayGridAnim(pDeltaTime);
 
             //渲染
             Graphics.DrawMeshInstancedIndirect(GridMesh, 0, GridMaterial, renderBounds, argsBuffer);
-        }
-
-        //获得需要播放的缩放
-        public float GetPlayAnimScaleY(float pCurrScaleY, int pAnimIndex)
-        {
-            GridAnimCfg animCfg = GridAnimCfgs[pAnimIndex];
-            return animCfg.minScaleY == pCurrScaleY ? animCfg.maxScaleY : animCfg.minScaleY;
         }
 
         //播放格子缩放动画
@@ -260,14 +176,42 @@ namespace Gameplay
             foreach (int index in animIndexList)
             {
                 GridParam gridParam = gridDataDict[index];
-                gridParam.animTime += pTimeDelta;
-                if (gridParam.animTime >= GridAnimTime)
+                if (gridParam.isLockByOtherGamer)
                 {
-                    float newScale = GetPlayAnimScaleY(gridParam.currScaleY, gridParam.animCfgIndex);
-                    shaderArgs[index].instanceToObjectMatrix = Matrix4x4.TRS(gridParam.position, Quaternion.identity, new Vector3(GridSize.x, newScale, GridSize.z));
-                    gridParam.animTime = 0;
-                    gridParam.currScaleY = newScale;
-                    needRefresh = true;
+                    continue;
+                }
+                else if (gridParam.isThroughing)
+                {
+                    float newScale = gridParam.animScale.x;
+                    //播放完毕
+                    if (gridParam.scaleY == newScale)
+                    {
+                        continue;
+                    }
+                    //大于目标缩放才播放
+                    if (gridParam.scaleY > newScale)
+                    {
+                        gridParam.animTime += pTimeDelta;
+                        if (gridParam.animTime >= gridParam.refreshAnimTime)
+                        {
+                            shaderArgs[index].instanceToObjectMatrix = Matrix4x4.TRS(gridParam.position, Quaternion.identity, new Vector3(GridSize.x, newScale, GridSize.z));
+                            gridParam.animTime = 0;
+                            gridParam.scaleY = newScale;
+                            needRefresh = true;
+                        }
+                    }
+                }
+                else
+                {
+                    gridParam.animTime += pTimeDelta;
+                    if (gridParam.animTime >= gridParam.refreshAnimTime)
+                    {
+                        float newScale = gridParam.scaleY == gridParam.animScale.x ? gridParam.animScale.y : gridParam.animScale.x;
+                        shaderArgs[index].instanceToObjectMatrix = Matrix4x4.TRS(gridParam.position, Quaternion.identity, new Vector3(GridSize.x, newScale, GridSize.z));
+                        gridParam.animTime = 0;
+                        gridParam.scaleY = newScale;
+                        needRefresh = true;
+                    }
                 }
             }
 
@@ -279,63 +223,93 @@ namespace Gameplay
             }
         }
 
-        private Dictionary<string, List<int>> gamerPassedGridDict = new Dictionary<string, List<int>>();
-        private Vector2Int gamerPassSize = new Vector2Int(4, 4);
-        private List<float> gamerPassDisGridSize = new List<float>()
+        public void ChangeGridsCamp(List<Vector2Int> pGridPosList, int pCamp)
         {
-            0.5f,
-            1.0f,
-            1.5f,
-            2.0f,
-            3.0f,
-        };
-        public void OnGamerGridPosChange(string pGamerUid, Vector2Int pGridPos)
-        {
-            if (gamerPassedGridDict.ContainsKey(pGamerUid))
+            int scaleIndex = 0;
+            if (pCamp != 0)
+                scaleIndex = RandomHelper.Range(0, GridCampScales.Count - 1);    
+
+            for (int i = 0; i < pGridPosList.Count; i++)
             {
-                List<int> gridIndexList = gamerPassedGridDict[pGamerUid];
-                foreach (var index in gridIndexList)
-                {
-                    GridParam gridParam = gridDataDict[index];
-                    gridParam.inPassed = false;
-                }
-                gridIndexList.Clear();
+                ChangeGridCamp(pGridPosList[i], pCamp, scaleIndex);
             }
 
-            int currIndex = gridIndexMap[pGridPos.x][pGridPos.y];
-            GridParam currGridParam = gridDataDict[currIndex];
-            if (currGridParam.camp == 0)
+            //更新数据
+            allMatricesBuffer.SetData(shaderArgs);
+            GridMaterial.SetBuffer("_AllMatricesBuffer", allMatricesBuffer);
+        }
+
+        private void ChangeGridCamp(Vector2Int pGridPos, int pCamp, int pScaleIndex)
+        {
+            if (!gridIndexMap.ContainsKey(pGridPos.x) || !gridIndexMap[pGridPos.x].ContainsKey(pGridPos.y))
             {
                 return;
             }
 
+            int index = gridIndexMap[pGridPos.x][pGridPos.y];
+
+            //设置动画数据
+            SetBaseCampGridAnimCfg(pGridPos, pScaleIndex);
+
+            //阵营空
+            if (pCamp == 0)
+            {
+                animIndexList.Remove(index);
+            }
+            else
+            {
+                animIndexList.Add(index);
+            }
+
+            //更新缩放和颜色
+            shaderArgs[index].color = TempConfig.CampColorDict[pCamp];
+        }
+
+        /// <summary>
+        /// 当玩家穿过阵营区域时
+        /// </summary>
+        public void OnGamerThroughCampArea(int pCamp, Vector2Int pGridPos)
+        {
+            int tIndex = gridIndexMap[pGridPos.x][pGridPos.y];
+            GridParam tGridParam = gridDataDict[tIndex];
+            if (tGridParam.camp == 0)
+                return;
+
+            //自己阵营
+            if (tGridParam.camp == pCamp)
+            {
+                tGridParam.isLockByOtherGamer = false;
+            }
+            else
+            {
+                tGridParam.isLockByOtherGamer = true;
+                SetLockByOtherGamerAnimCfg(pGridPos);
+            }
+
+            //刷新经过动画
+            RefreshGamerThroughAreaAnim(pGridPos);
+        }
+
+        private void RefreshGamerThroughAreaAnim(Vector2Int pGridPos)
+        {
             bool needRefresh = false;
 
-            Vector2Int leftDownPos = pGridPos - (gamerPassSize / 2);
-            for (int x = leftDownPos.x; x <= leftDownPos.x + gamerPassSize.x; x++)
+            Vector2Int leftDownPos = pGridPos - (GamerThroughAnimArea / 2);
+            for (int x = leftDownPos.x; x <= leftDownPos.x + GamerThroughAnimArea.x; x++)
             {
-                for (int y = leftDownPos.y; y <= leftDownPos.y + gamerPassSize.y; y++)
+                for (int y = leftDownPos.y; y <= leftDownPos.y + GamerThroughAnimArea.y; y++)
                 {
                     if (gridIndexMap.ContainsKey(x) && gridIndexMap[x].ContainsKey(y))
                     {
                         int gridIndex = gridIndexMap[x][y];
                         GridParam gridParam = gridDataDict[gridIndex];
-                        if (gridParam.camp != 0)
+                        if (gridParam.camp != 0 && !gridParam.isThroughing && !gridParam.isLockByOtherGamer)
                         {
-                            gridParam.inPassed = true;
                             int xDis = Mathf.Abs(pGridPos.x - x);
                             int yDis = Mathf.Abs(pGridPos.y - y);
-                            int resDis = xDis > yDis ? xDis : yDis;
-                            float scaleY = gamerPassDisGridSize[resDis];
-                            gridParam.passedScaleY = scaleY;
-
+                            int resIndex = xDis > yDis ? xDis : yDis;
+                            SetThroughCampGridAnimCfg(pGridPos, resIndex);
                             needRefresh = true;
-                            //更新显示
-                            shaderArgs[gridIndex].instanceToObjectMatrix = Matrix4x4.TRS(gridParam.position, Quaternion.identity, new Vector3(GridSize.x, scaleY, GridSize.z));
-
-                            if (!gamerPassedGridDict.ContainsKey(pGamerUid))
-                                gamerPassedGridDict.Add(pGamerUid, new List<int>());
-                            gamerPassedGridDict[pGamerUid].Add(gridIndex);
                         }
                     }
                 }
@@ -347,6 +321,49 @@ namespace Gameplay
                 allMatricesBuffer.SetData(shaderArgs);
                 GridMaterial.SetBuffer("_AllMatricesBuffer", allMatricesBuffer);
             }
+        }
+
+        //设置基础阵营动画配置
+        private void SetBaseCampGridAnimCfg(Vector2Int pGridPos, int pAnimIndex)
+        {
+            int index = gridIndexMap[pGridPos.x][pGridPos.y];
+            GridParam gridParam = gridDataDict[index];
+            gridParam.animGridIndex = pAnimIndex;
+            gridParam.animTime = 0;
+            gridParam.refreshAnimTime = GridAnimTime;
+            gridParam.animScale = GridCampScales[pAnimIndex];
+            gridParam.scaleY = gridParam.animScale.x;
+            gridParam.isLockByOtherGamer = false;
+
+            //更新缩放
+            shaderArgs[index].instanceToObjectMatrix = Matrix4x4.TRS(gridParam.position, Quaternion.identity, new Vector3(GridSize.x, gridParam.animScale.x, GridSize.z));
+        }
+
+        //设置玩家穿过阵营动画配置
+        private void SetThroughCampGridAnimCfg(Vector2Int pGridPos, int pAnimIndex)
+        {
+            float targetScale = GamerThroughCampScales[pAnimIndex];
+
+            int index = gridIndexMap[pGridPos.x][pGridPos.y];
+            GridParam gridParam = gridDataDict[index];
+            gridParam.animTime = 0;
+            gridParam.refreshAnimTime = GamerThroughAnimTime;
+            gridParam.animScale = new Vector2(targetScale, targetScale);
+            gridParam.isThroughing = true;
+        }
+
+        //被其他不是该阵营的玩家经过锁住的动画配置
+        private void SetLockByOtherGamerAnimCfg(Vector2Int pGridPos)
+        {
+            int index = gridIndexMap[pGridPos.x][pGridPos.y];
+            GridParam gridParam = gridDataDict[index];
+            gridParam.animTime = 0;
+            gridParam.refreshAnimTime = 0;
+            gridParam.animScale = Vector2.zero;
+            gridParam.scaleY = gridParam.animScale.x;
+
+            //更新缩放
+            shaderArgs[index].instanceToObjectMatrix = Matrix4x4.TRS(gridParam.position, Quaternion.identity, new Vector3(GridSize.x, gridParam.animScale.x, GridSize.z));
         }
     } 
 }

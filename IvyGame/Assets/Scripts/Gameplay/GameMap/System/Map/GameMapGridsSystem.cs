@@ -33,7 +33,7 @@ namespace Gameplay.GameMap.System
                     Actor_InternalGamer gamer = allGamers[i];
                     gamer.GridPos.RegValueChangedEvent((gridPos) =>
                     {
-                        MapGrids?.OnGamerGridPosChange(gamer.Uid, gridPos);
+                        MapGrids?.OnGamerThroughCampArea(gamer.Camp, gridPos);
                     });
                 }
             }

@@ -278,6 +278,11 @@ PrefabInstance:
       propertyPath: PlayMode
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2713526272754790866, guid: 73c51c414f07ec54fa999940869420c4,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

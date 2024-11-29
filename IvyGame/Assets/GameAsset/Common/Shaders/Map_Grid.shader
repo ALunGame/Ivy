@@ -1,4 +1,4 @@
-Shader "Custom/URP/Map Grid"
+Shader "Custom/URP/MapGrid"
 {
     Properties
     {

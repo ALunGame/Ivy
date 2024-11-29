@@ -1,4 +1,4 @@
-Shader "Custom/URP/Mesh Lit"
+Shader "Custom/URP/MeshLit"
 {
     Properties
     {

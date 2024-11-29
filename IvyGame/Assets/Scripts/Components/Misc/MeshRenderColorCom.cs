@@ -6,14 +6,14 @@ namespace Gameplay
     /// 网格渲染颜色改变
     /// </summary>
     internal class MeshRenderColorCom : MonoBehaviour
-    { 
-        public Color meshColor = Color.white;
+    {
+        [Header("当前颜色")]
+        public Color CurrColor = Color.white;
 
-        private string colorKeyStr = "color";
+        [Header("修改的颜色属性名")]
+        public string ColorKeyStr = "_BaseColor";
 
         private MeshRenderer meshRenderer;
-
-
         private MaterialPropertyBlock propertyBlock;
 
         private void Awake()
@@ -31,19 +31,16 @@ namespace Gameplay
 
         private void Update()
         {
-            ChangeColor(meshColor);
+            ChangeColor(CurrColor);
         }
 
         public void ChangeColor(Color pColor)
         {
-            if (pColor == Color.white)
-            {
-                Debug.LogError("aaaaaaaaaaaa");
-            }
-            //Debug.LogError($"ChangeColor-->{gameObject.name}::{pColor}");
-            meshColor = pColor;
-            propertyBlock.SetColor("_BaseColor", pColor);
+            CurrColor = pColor;
+            propertyBlock.SetColor(ColorKeyStr, pColor);
             meshRenderer.SetPropertyBlock(propertyBlock);
+
+            //meshRenderer.material.SetColor("_BaseColor", pColor);
         }
     }
 }
