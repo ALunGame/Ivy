@@ -51,6 +51,7 @@ MonoBehaviour:
   GridSize: {x: 0.9, y: 0, z: 0.9}
   GridCampScales:
   - {x: 0, y: 0}
+  - {x: 0.2, y: 0.2}
   - {x: 0.5, y: 1}
   - {x: 1.5, y: 2}
   - {x: 2, y: 3}

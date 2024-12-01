@@ -10,6 +10,8 @@ namespace Gameplay.GameMap.Actor
 {
     public abstract class Actor_InternalGamer : ActorModel
     {
+        public GamerData GamerData { get; private set; }
+
         public float Speed { get; private set; }
 
         public int Camp { get; private set; }
@@ -44,6 +46,7 @@ namespace Gameplay.GameMap.Actor
 
         public void SetGamerData(GamerData pData)
         {
+            GamerData = pData;
             SetCamp(pData.Camp);
             OnSetGamerData(pData);
         }
@@ -198,7 +201,7 @@ namespace Gameplay.GameMap.Actor
             }
         }
 
-        protected virtual void OnPathClear()
+        protected virtual void OnPathClear(List<Vector2Int> pPoslist)
         {
             foreach (var item in PathPoint.Values)
             {

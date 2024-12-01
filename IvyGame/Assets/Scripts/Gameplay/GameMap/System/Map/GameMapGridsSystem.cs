@@ -1,4 +1,6 @@
-﻿using Game.Network.Client;
+﻿using Game.Network;
+using Game.Network.Client;
+using Gameplay.GameData;
 using Gameplay.GameMap.Actor;
 using IAEngine;
 using IAFramework;
@@ -6,6 +8,7 @@ using Proto;
 using ProtoBuf;
 using System.Collections.Generic;
 using UnityEngine;
+using static UnityEditor.PlayerSettings;
 
 namespace Gameplay.GameMap.System
 {
@@ -35,6 +38,15 @@ namespace Gameplay.GameMap.System
                     {
                         MapGrids?.OnGamerThroughCampArea(gamer.Camp, gridPos);
                     });
+
+                    gamer.GamerData.OnRemovePathPoint += (pos) =>
+                    {
+                        MapGrids?.OnGamerPathChange(new List<Vector2Int>() { pos }, 2);
+                    };
+                    gamer.GamerData.OnClearPath += (poslist) =>
+                    {
+                        MapGrids?.OnGamerPathChange(poslist, 3);
+                    };
                 }
             }
         }

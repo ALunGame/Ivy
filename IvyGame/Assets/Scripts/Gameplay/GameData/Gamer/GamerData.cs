@@ -3,6 +3,7 @@ using Proto;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Rendering.Universal;
 
 namespace Gameplay.GameData
 {
@@ -177,7 +178,7 @@ namespace Gameplay.GameData
 
         public Action<Vector2Int> OnAddPathPoint;
         public Action<Vector2Int> OnRemovePathPoint;
-        public Action OnClearPath;
+        public Action<List<Vector2Int>> OnClearPath;
 
         public void AppPathPoint(Vector2Int pPos)
         {
@@ -208,8 +209,16 @@ namespace Gameplay.GameData
 
         public void ClearPath()
         {
+            List<Vector2Int> pathlist = new List<Vector2Int>();
+            foreach (int x in PathDict.Keys)
+            {
+                foreach (var y in PathDict[x])
+                {
+                    pathlist.Add(new Vector2Int(x, y));
+                }
+            }
             PathDict.Clear();
-            OnClearPath?.Invoke();
+            OnClearPath?.Invoke(pathlist);
         } 
 
         #endregion

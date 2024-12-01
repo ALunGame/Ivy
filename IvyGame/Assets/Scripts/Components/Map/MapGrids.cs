@@ -1,4 +1,5 @@
 using Game;
+using Gameplay.GameData;
 using IAEngine;
 using System.Collections.Generic;
 using UnityEngine;
@@ -227,7 +228,7 @@ namespace Gameplay
         {
             int scaleIndex = 0;
             if (pCamp != 0)
-                scaleIndex = RandomHelper.Range(0, GridCampScales.Count - 1);    
+                scaleIndex = RandomHelper.Range(1, GridCampScales.Count - 1);    
 
             for (int i = 0; i < pGridPosList.Count; i++)
             {
@@ -247,6 +248,8 @@ namespace Gameplay
             }
 
             int index = gridIndexMap[pGridPos.x][pGridPos.y];
+            GridParam gridParam = gridDataDict[index];
+            gridParam.camp = pCamp;
 
             //设置动画数据
             SetBaseCampGridAnimCfg(pGridPos, pScaleIndex);
@@ -288,6 +291,28 @@ namespace Gameplay
 
             //刷新经过动画
             RefreshGamerThroughAreaAnim(pGridPos);
+        }
+
+        public void OnGamerPathChange(List<Vector2Int> pPosList, int pOperate)
+        {
+            //Add
+            if (pOperate == 1)
+            {
+                
+            }
+            //Remove Clear
+            else
+            {
+                foreach (var item in pPosList)
+                {
+                    int index = gridIndexMap[item.x][item.y];
+                    GridParam gridParam = gridDataDict[index];
+                    if (gridParam.isLockByOtherGamer)
+                    {
+                        SetBaseCampGridAnimCfg(item, gridParam.animGridIndex);
+                    }
+                }
+            }
         }
 
         private void RefreshGamerThroughAreaAnim(Vector2Int pGridPos)

@@ -68,7 +68,7 @@ namespace Game
             {20, ColorEx.New(240, 255, 240) },
         };
 
-        public static int MaxGamerCnt = 20;
+        public static int MaxGamerCnt = 2;
 
         static TempConfig()
         {
