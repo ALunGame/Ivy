@@ -12,7 +12,7 @@ Shader "Custom/URP/MapGrid"
         Tags
         {
             "RenderType" = "Opaque"
-            "RenderPipeline" = "UniversalPipeline"
+            "RenderPipeline" = "ToonRP"
         }
 
         HLSLINCLUDE
@@ -41,7 +41,7 @@ Shader "Custom/URP/MapGrid"
         {
             Tags
             {
-                "LightMode" = "UniversalForward"
+                "LightMode" = "ToonRPForward"
             }
 
             HLSLPROGRAM
@@ -121,68 +121,70 @@ Shader "Custom/URP/MapGrid"
             ENDHLSL
         }
 
-        Pass
-        {
-            Tags
-            {
-                "LightMode" = "ShadowCaster"
-            }
+    //     Pass
+    //     {
+    //         Tags
+    //         {
+    //             "LightMode" = "ShadowCaster"
+    //         }
         
-            HLSLPROGRAM
-            #pragma target 4.5
+    //         HLSLPROGRAM
+    //         #pragma target 4.5
         
-            #pragma vertex Vertex
-            #pragma fragment Fragment
+    //         #pragma vertex Vertex
+    //         #pragma fragment Fragment
         
-            struct Attributes
-            {
-                float4 positionOS : POSITION;
-                float3 normalOS : NORMAL;
-                float2 texcoord : TEXCOORD0;
-            };
+    //         struct Attributes
+    //         {
+    //             float4 positionOS : POSITION;
+    //             float3 normalOS : NORMAL;
+    //             float2 texcoord : TEXCOORD0;
+    //         };
         
-            struct Varyings
-            {
-                float2 uv : TEXCOORD0;
-                float4 positionCS : SV_POSITION;
-            };
+    //         struct Varyings
+    //         {
+    //             float2 uv : TEXCOORD0;
+    //             float4 positionCS : SV_POSITION;
+    //         };
         
-            float3 _LightDirection;
+    //         float3 _LightDirection;
         
-            Varyings Vertex(Attributes IN, uint instanceID : SV_InstanceID)
-            {
-                Varyings OUT;
+    //         Varyings Vertex(Attributes IN, uint instanceID : SV_InstanceID)
+    //         {
+    //             Varyings OUT;
         
-                #if SHADER_TARGET >= 45
-                float4x4 data = _AllMatricesBuffer[instanceID].instanceToObjectMatrix;
-				float4 color = _AllMatricesBuffer[instanceID].color;
-                #else
-                float4x4 data = 0;
-                float4 color = float4(1.0f, 1.0f, 1.0f, 1.0f);
-                #endif
+    //             #if SHADER_TARGET >= 45
+    //             float4x4 data = _AllMatricesBuffer[instanceID].instanceToObjectMatrix;
+				// float4 color = _AllMatricesBuffer[instanceID].color;
+    //             #else
+    //             float4x4 data = 0;
+    //             float4 color = float4(1.0f, 1.0f, 1.0f, 1.0f);
+    //             #endif
 
-                float3 positionWS = mul(data, IN.positionOS).xyz;
+    //             float3 positionWS = mul(data, IN.positionOS).xyz;
                 
-                // float3 normalWS = TransformObjectToWorldNormal(normalize(mul(data, IN.normalOS)));
-                float3 normalWS = normalize(mul(data, float4(IN.normalOS, 0))).xyz;
-                float4 positionCS = TransformWorldToHClip(ApplyShadowBias(positionWS, normalWS, _LightDirection));
+    //             float3 normalWS = TransformObjectToWorldNormal(normalize(mul(data, IN.normalOS)));
+    //             float3 normalWS = normalize(mul(data, float4(IN.normalOS, 0))).xyz;
+    //             float4 positionCS = TransformWorldToHClip(ApplyShadowBias(positionWS, normalWS, _LightDirection));
                 
-                #if UNITY_REVERSED_Z
-                positionCS.z = min(positionCS.z, positionCS.w * UNITY_NEAR_CLIP_VALUE);
-                #else
-                positionCS.z = max(positionCS.z, positionCS.w * UNITY_NEAR_CLIP_VALUE);
-                #endif
+    //             #if UNITY_REVERSED_Z
+    //             positionCS.z = min(positionCS.z, positionCS.w * UNITY_NEAR_CLIP_VALUE);
+    //             #else
+    //             positionCS.z = max(positionCS.z, positionCS.w * UNITY_NEAR_CLIP_VALUE);
+    //             #endif
         
-                OUT.positionCS = positionCS;
-                OUT.uv = TRANSFORM_TEX(IN.texcoord, _BaseMap);
-                return OUT;
-            }
+    //             OUT.positionCS = positionCS;
+    //             OUT.uv = TRANSFORM_TEX(IN.texcoord, _BaseMap);
+    //             return OUT;
+    //         }
         
-            half4 Fragment(Varyings IN) : SV_TARGET
-            {
-                return 0;
-            }
-            ENDHLSL
-        }
+    //         half4 Fragment(Varyings IN) : SV_TARGET
+    //         {
+    //             return 0;
+    //         }
+    //         ENDHLSL
+    //     }
     }
+
+    CustomEditor "DELTation.ToonRP.Editor.ShaderGUI.ToonRpDefaultShaderGui"
 }

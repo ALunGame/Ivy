@@ -6,7 +6,7 @@ using UnityEngine;
 
 public class MapGridsCheck : MonoBehaviour
 {
-    public MapGrids MapGrids;
+    public MapGridsGPU MapGrids;
     public RectInt CampRect;
     public LineRenderer Line;
 
