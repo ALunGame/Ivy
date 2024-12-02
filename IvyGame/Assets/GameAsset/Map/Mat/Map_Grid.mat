@@ -24,10 +24,12 @@ Material:
   m_Shader: {fileID: 4800000, guid: 6ec1afc7d53b4974ab764de8b09311f7, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
-  m_ValidKeywords: []
+  m_ValidKeywords:
+  - _FORCE_DISABLE_ENVIRONMENT_LIGHT
+  - _FORCE_DISABLE_FOG
   m_InvalidKeywords: []
-  m_LightmapFlags: 4
-  m_EnableInstancingVariants: 0
+  m_LightmapFlags: 0
+  m_EnableInstancingVariants: 1
   m_DoubleSidedGI: 0
   m_CustomRenderQueue: 2000
   stringTagMap:
@@ -118,8 +120,8 @@ Material:
     - _DstBlend: 0
     - _DstBlendAlpha: 0
     - _EnvironmentReflections: 1
-    - _ForceDisableEnvironmentLight: 0
-    - _ForceDisableFog: 0
+    - _ForceDisableEnvironmentLight: 1
+    - _ForceDisableFog: 1
     - _ForwardStencilComp: 0
     - _ForwardStencilPass: 0
     - _ForwardStencilReadMask: 255

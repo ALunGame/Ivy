@@ -409,6 +409,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: GamePatch
       objectReference: {fileID: 0}
+    - target: {fileID: 1865271704104678639, guid: 73c51c414f07ec54fa999940869420c4,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 2713526272754790866, guid: 73c51c414f07ec54fa999940869420c4,
         type: 3}
       propertyPath: PlayMode
@@ -590,7 +595,7 @@ Camera:
   m_TargetDisplay: 0
   m_TargetEye: 3
   m_HDR: 1
-  m_AllowMSAA: 1
+  m_AllowMSAA: 0
   m_AllowDynamicResolution: 0
   m_ForceIntoRT: 0
   m_OcclusionCulling: 1
@@ -604,8 +609,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 961739749}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: -1, z: 0}
+  m_LocalRotation: {x: -0.0013851277, y: -0.9701679, z: 0.24236725, w: -0.00553762}
+  m_LocalPosition: {x: -4.704748, y: 3.8122468, z: 60.32818}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -720,6 +725,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: UICenter
+      objectReference: {fileID: 0}
+    - target: {fileID: 4821253579352944251, guid: 711ff78ef6d78ab4880acbc22c71a488,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
