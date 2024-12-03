@@ -8,33 +8,59 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: MeshDefault
-  m_Shader: {fileID: 4800000, guid: 6ec1afc7d53b4974ab764de8b09311f7, type: 3}
+  m_Shader: {fileID: 4800000, guid: 849dc4ff793a3f943ad21a3b6ee26456, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
-  m_ValidKeywords: []
-  m_InvalidKeywords: []
+  m_ValidKeywords:
+  - _ADDITIONAL_LIGHTS_ENABLED
+  - _ENVIRONMENT_LIGHTING_ENABLED
+  - _FOG
+  m_InvalidKeywords:
+  - _ZWRITE_ON
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
-  m_CustomRenderQueue: 2000
-  stringTagMap:
-    RenderType: Opaque
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
   disabledShaderPasses: []
   m_LockedProperties: 
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
+    - _BaseMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _BumpMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _MainTexture:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _RampMap:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
+    - _AdditionalLights: 1
+    - _AdditionalLightsSpecular: 0
+    - _AlphaClip: 0
     - _AlphaClipThreshold: 0.5
     - _AlphaClipping: 0
+    - _AnisoSpecular: 0
+    - _Blend: 0
     - _BlendDst: 0
     - _BlendMode: 0
     - _BlendSrc: 1
+    - _Cull: 0
+    - _Cutoff: 0.5
+    - _DstBlend: 0
+    - _Emission: 0
+    - _EnvironmentLightingEnabled: 1
+    - _Fog: 1
     - _ForceDisableEnvironmentLight: 0
     - _ForceDisableFog: 0
     - _ForwardStencilComp: 0
@@ -42,6 +68,9 @@ Material:
     - _ForwardStencilReadMask: 255
     - _ForwardStencilRef: 0
     - _ForwardStencilWriteMask: 255
+    - _Fresnel: 0
+    - _FresnelSmoothness: 0.1
+    - _FresnelThickness: 0.45
     - _Glossiness: 0.273
     - _Metallic: 0.288
     - _OutlinesStencilLayer: 0
@@ -52,13 +81,35 @@ Material:
     - _OverrideRamp_SpecularSmoothness: 0.005
     - _OverrideRamp_SpecularThreshold: 0.995
     - _OverrideRamp_Threshold: 0
+    - _PureShadowColor: 0
     - _QueueOffset: 0
+    - _Ramp0: 0
+    - _Ramp1: 0.5
+    - _RampSmoothness: 0.005
+    - _RampTriple: 0
     - _ReceiveBlobShadows: 0
+    - _ReflectionBlend: 0.5
+    - _ReflectionProbes: 0
+    - _ReflectionSmoothness: 0.5
+    - _Reflections: 0
     - _RenderFace: 2
+    - _ShadowMask: 0
+    - _Specular: 0
+    - _SpecularExponent: 200
+    - _SpecularSmoothness: 0.025
+    - _SpecularThreshold: 0.8
+    - _SrcBlend: 1
+    - _Surface: 0
     - _SurfaceType: 0
+    - _UseRampMap: 0
+    - _VertexColor: 0
     - _ZWrite: 1
     m_Colors:
     - _BaseColor: {r: 1, g: 1, b: 1, a: 1}
+    - _EmissionColor: {r: 0, g: 0, b: 0, a: 0}
+    - _FresnelColor: {r: 1, g: 1, b: 1, a: 1}
     - _MainColor: {r: 1, g: 1, b: 1, a: 1}
     - _ShadowColor: {r: 0, g: 0, b: 0, a: 0.75}
+    - _ShadowTint: {r: 0, g: 0, b: 0, a: 1}
+    - _SpecularColor: {r: 1, g: 1, b: 1, a: 1}
   m_BuildTextureStacks: []

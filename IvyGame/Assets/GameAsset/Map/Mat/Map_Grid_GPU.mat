@@ -7,7 +7,7 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Map_BaseGrid_Mat
+  m_Name: Map_Grid_GPU
   m_Shader: {fileID: 4800000, guid: c5141646df8d59b4da622f191ee9fd38, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0

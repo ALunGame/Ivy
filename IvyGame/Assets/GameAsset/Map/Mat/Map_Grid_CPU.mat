@@ -20,28 +20,29 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Map_Grid
-  m_Shader: {fileID: 4800000, guid: 6ec1afc7d53b4974ab764de8b09311f7, type: 3}
+  m_Name: Map_Grid_CPU
+  m_Shader: {fileID: 4800000, guid: 78ba6c2256ec3954188411a3a2382dc8, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords:
+  - _FOG
+  - _TOON_RECEIVE_SHADOWS
+  m_InvalidKeywords:
   - _FORCE_DISABLE_ENVIRONMENT_LIGHT
   - _FORCE_DISABLE_FOG
-  m_InvalidKeywords: []
   m_LightmapFlags: 0
   m_EnableInstancingVariants: 1
   m_DoubleSidedGI: 0
-  m_CustomRenderQueue: 2000
-  stringTagMap:
-    RenderType: Opaque
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
   disabledShaderPasses: []
   m_LockedProperties: 
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
     - _BaseMap:
-        m_Texture: {fileID: 2800000, guid: f4a6e2a877682f64b9355c8d6f01875e, type: 3}
-        m_Scale: {x: 50, y: 50}
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _BumpMap:
         m_Texture: {fileID: 0}
@@ -120,6 +121,7 @@ Material:
     - _DstBlend: 0
     - _DstBlendAlpha: 0
     - _EnvironmentReflections: 1
+    - _Fog: 1
     - _ForceDisableEnvironmentLight: 1
     - _ForceDisableFog: 1
     - _ForwardStencilComp: 0
@@ -142,6 +144,8 @@ Material:
     - _OverrideRamp_Threshold: 0
     - _Parallax: 0.005
     - _QueueOffset: 0
+    - _Ramp0: 0
+    - _RampSmoothness: 0.005
     - _ReceiveBlobShadows: 0
     - _ReceiveShadows: 1
     - _RenderFace: 2
@@ -155,6 +159,8 @@ Material:
     - _SrcBlendAlpha: 1
     - _Surface: 0
     - _SurfaceType: 0
+    - _VertexColor: 0
+    - _VertexLit: 0
     - _WorkflowMode: 1
     - _ZWrite: 1
     m_Colors:
@@ -163,6 +169,7 @@ Material:
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _MainColor: {r: 1, g: 1, b: 1, a: 1}
     - _ShadowColor: {r: 0, g: 0, b: 0, a: 0.75}
+    - _ShadowTint: {r: 0, g: 0, b: 0, a: 1}
     - _SpecColor: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}
     - _Tiling: {r: 1, g: 1, b: 0, a: 0}
   m_BuildTextureStacks: []
