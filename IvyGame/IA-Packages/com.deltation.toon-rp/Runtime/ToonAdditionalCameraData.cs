@@ -22,7 +22,11 @@ namespace DELTation.ToonRP
 #if !(ENABLE_VR && ENABLE_XR_MODULE)
         [HideInInspector]
 #endif // !(ENABLE_VR && ENABLE_XR_MODULE)
-        public bool EnableXRRendering = true;
+        [HideInInspector]
+        public bool EnableXRRendering = false;
+
+        [Header("需不需要加入渲染流程")]
+        public bool NeedAddRenderData = false;
 
         public Camera Camera { get; private set; }
         public XRPass XrPass { get; internal set; } = XRSystem.emptyPass;

@@ -22,13 +22,13 @@ MonoBehaviour:
   - {fileID: 4800000, guid: 4aee5d6e842043a384557e2f0557f76c, type: 3}
   GlobalRampSettings:
     Threshold: 0
-    SpecularThreshold: 0.99
-    RimThreshold: 0.5
+    SpecularThreshold: 1
+    RimThreshold: 0.04
     Mode: 0
     Smoothness: 0.02
-    SpecularSmoothness: 0.005
-    RimSmoothness: 0.1
-    RampTexture: {fileID: 0}
+    SpecularSmoothness: 0.041
+    RimSmoothness: 1.24
+    RampTexture: {fileID: 2800000, guid: f370645f712c4cc44bb2c494fd556dc8, type: 3}
     AdditionalLights:
       DiffuseOffset: 0
       SpecularOffset: 0
@@ -46,7 +46,7 @@ MonoBehaviour:
     MaxRenderTextureWidth: 1200
     MaxRenderTextureHeight: 0
     RenderTextureFilterMode: 1
-    PrePass: -1
+    PrePass: 0
     OpaqueTexture: 0
     OpaqueLayerMask:
       serializedVersion: 2
@@ -66,15 +66,15 @@ MonoBehaviour:
   ShadowSettings:
     Mode: 1
     Threshold: 0.5
-    CrispAntiAliased: 0
+    CrispAntiAliased: 1
     Smoothness: 0.075
     MaxDistance: 15
     DistanceFade: 0.1
-    Pattern: {fileID: 0}
-    PatternScale: {x: 1, y: 0, z: 1}
+    Pattern: {fileID: 2800000, guid: d57bfb4480bc6ee42a4fc70e065fd18b, type: 3}
+    PatternScale: {x: 1, y: 1, z: 1}
     ShadowMaps:
       DepthBits: 16
-      Blur: 0
+      Blur: 1
       BlurEarlyBail: 1
       BlurEarlyBailThreshold: 0.01
       BlurScatter: 1
@@ -87,11 +87,11 @@ MonoBehaviour:
         Spread: 0.2
         RotatedPoissonSamplingTexture: {fileID: 11700000, guid: 4adf240cd9847b14085d5b3253f0d979,
           type: 2}
-      LightBleedingReduction: 0.4
+      LightBleedingReduction: 0.869
       PrecisionCompensation: 0
       Directional:
         Enabled: 1
-        AtlasSize: 1024
+        AtlasSize: 512
         CascadeCount: 4
         CascadeRatio1: 0.1
         CascadeRatio2: 0.25
@@ -110,10 +110,8 @@ MonoBehaviour:
       ShadowPositionOffset: {x: 0, y: 0}
       ReceiverPlaneY: 0
   Extensions:
-    Extensions:
-    - {fileID: 11400000, guid: 989755cc290412048974d142b0236a28, type: 2}
+    Extensions: []
   PostProcessing:
-    Enabled: 0
+    Enabled: 1
     Passes:
-    - {fileID: 11400000, guid: ef0a4d1c8b3b8794d872f29504987b8b, type: 2}
-    - {fileID: 11400000, guid: 8ade877a41ddf434c8009ac0c1f36dd7, type: 2}
+    - {fileID: 11400000, guid: 2be0e4fa8ad648e469245bc731e2b3aa, type: 2}

@@ -72,6 +72,10 @@ namespace DELTation.ToonRP
             foreach (Camera camera in cameras)
             {
                 ToonAdditionalCameraData additionalCameraData = GetOrAddAdditionalCameraData(camera);
+                if (!camera.Equals(Camera.main) && !additionalCameraData.NeedAddRenderData)
+                {
+                    continue;
+                }
 
                 // Prepare XR rendering
                 bool xrActive = false;

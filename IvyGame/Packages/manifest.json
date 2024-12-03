@@ -1,6 +1,7 @@
 {
   "dependencies": {
     "com.deltation.toon-rp": "file:../IA-Packages/com.deltation.toon-rp",
+    "com.deltation.toon-shader": "file:../IA-Packages/com.deltation.toon-shader",
     "com.ia.ecs": "file:../IA-Packages/com.ia.ecs",
     "com.ia.engine": "file:../IA-Packages/com.ia.engine",
     "com.ia.nodegraph": "file:../IA-Packages/com.ia.nodegraph",
