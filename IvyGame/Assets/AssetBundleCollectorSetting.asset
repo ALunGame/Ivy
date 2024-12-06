@@ -42,8 +42,8 @@ MonoBehaviour:
       AssetTags: 
       ActiveRuleName: EnableGroup
       Collectors:
-      - CollectPath: Assets/GameAsset/Gamer/Prefab
-        CollectorGUID: d38029641503c594fb8892dc667ed7bd
+      - CollectPath: Assets/GameAsset/Gamer
+        CollectorGUID: fd9370958bb95c344b342894e0a22a15
         CollectorType: 0
         AddressRuleName: AddressByFileName
         PackRuleName: PackSeparately

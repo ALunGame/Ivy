@@ -84,7 +84,7 @@ namespace Gameplay
                 if (pCamp != 0)
                 {
                     MeshRenderer meshRenderer = go.GetComponent<MeshRenderer>();
-                    meshRenderer.material.SetColor("_MainColor", TempConfig.CampColorDict[pCamp]);
+                    meshRenderer.material.SetColor("_BaseColor", TempConfig.CampColorDict[pCamp]);
                 }
             }
         }

@@ -45,28 +45,29 @@ namespace Game
         /// </summary>
         public static Dictionary<int, Color> CampColorDict = new Dictionary<int, Color>()
         {
-            {0,  ColorEx.New(255, 255, 255) },
-            {1,  ColorEx.New(255, 182, 193) },
-            {2,  ColorEx.New(135, 206, 235) },
-            {3,  ColorEx.New(255, 255, 224) },
-            {4,  ColorEx.New(124, 252, 0) },
-            {5,  ColorEx.New(255, 105, 180) },
-            {6,  ColorEx.New(0, 191, 255) },
-            {7,  ColorEx.New(240, 230, 140) },
-            {8,  ColorEx.New(255, 20, 147) },
-            {9,  ColorEx.New(0, 255, 127) },
-            {10, ColorEx.New(255, 99, 71) },
-            {11, ColorEx.New(144, 238, 144) },
-            {12, ColorEx.New(255, 165, 0) },
-            {13, ColorEx.New(32, 178, 1703) },
-            {14, ColorEx.New(255, 69, 0) },
-            {15, ColorEx.New(173, 255, 47) },
-            {16, ColorEx.New(255, 215, 0) },
-            {17, ColorEx.New(100, 149, 237) },
-            {18, ColorEx.New(255, 218, 185) },
-            {19, ColorEx.New(255, 240, 245) },
-            {20, ColorEx.New(240, 255, 240) },
+            {0,  ColorEx.New(255, 255, 255) },        
+            {1,  ColorEx.New(255, 128, 0) },      // 鲜橙色
+            {2,  ColorEx.New(255, 255, 0) },      // 柠檬黄
+            {3,  ColorEx.New(128, 255, 0) },      // 青柠绿
+            {4,  ColorEx.New(0, 191, 255) },      // 湖蓝色
+            {5,  ColorEx.New(0, 0, 255) },        // 深蓝色
+            {6,  ColorEx.New(128, 0, 255) },      // 紫罗兰色
+            {7,  ColorEx.New(255, 191, 204) },    // 粉红色
+            {8,  ColorEx.New(64, 255, 64) },      // 鲜绿色
+            {9,  ColorEx.New(255, 215, 0) },      // 金黄色
+            {10, ColorEx.New(173, 216, 230) },    // 浅蓝色
+            {11, ColorEx.New(255, 0, 128) },      // 玫红色
+            {12, ColorEx.New(191, 0, 255) },      // 亮紫色
+            {13, ColorEx.New(128, 255, 128) },    // 浅绿色
+            {14, ColorEx.New(77, 154, 255) },     // 电蓝色
+            {15, ColorEx.New(255, 153, 51) },     // 亮橙色
+            {16, ColorEx.New(128, 255, 128) },    // 荧光绿
+            {17, ColorEx.New(255, 255, 77) },     // 明黄色
+            {18, ColorEx.New(222, 48, 100) },     // 樱桃红
+            {19, ColorEx.New(191, 128, 255) },    // 浅紫色
+            {20, ColorEx.New(255, 120, 227) },    // 荧光粉色
         };
+
 
         public static int MaxGamerCnt = 2;
 
