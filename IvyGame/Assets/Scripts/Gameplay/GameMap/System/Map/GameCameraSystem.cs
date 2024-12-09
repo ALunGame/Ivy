@@ -15,6 +15,7 @@ namespace Gameplay.System
 
             vCamera = GameplayGlobal.Map.MapTrans.Find("VCCameras/FollowCamera").GetComponent<CinemachineVirtualCamera>();
             vCamera.Follow = localGamer.ActorDisplay.CameraFollowGo.transform;
+            vCamera.LookAt = localGamer.ActorDisplay.CameraFollowGo.transform;
         }
     }
 }
