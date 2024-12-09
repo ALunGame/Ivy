@@ -113,6 +113,19 @@ MonoBehaviour:
         FilterRuleName: CollectPrefab
         AssetTags: 
         UserData: 
+    - GroupName: Effect
+      GroupDesc: 
+      AssetTags: 
+      ActiveRuleName: EnableGroup
+      Collectors:
+      - CollectPath: Assets/GameAsset/Effect
+        CollectorGUID: 34d4a94801c06d74789b4464d0739e47
+        CollectorType: 0
+        AddressRuleName: AddressByFileName
+        PackRuleName: PackDirectory
+        FilterRuleName: CollectPrefab
+        AssetTags: 
+        UserData: 
   - PackageName: RawFilePackage
     PackageDesc: 
     EnableAddressable: 1
