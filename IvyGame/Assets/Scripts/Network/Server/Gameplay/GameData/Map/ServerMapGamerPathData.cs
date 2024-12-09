@@ -297,11 +297,29 @@ namespace Game.Network.Server
                 return false;
             }
 
-            //在边界
-            if (mapData.GetPointCamp(pPos.x, pPos.y) == Camp
-            || needCheckCapturePos[pPos.x][pPos.y] == 1)
+            //超过边界
+            if (!mapData.CheckPointIsLegal(pPos.x, pPos.y))
+            {
+                return false;
+            }
+
+            //是自己的阵营
+            if (mapData.GetPointCamp(pPos.x, pPos.y) == Camp)
             {
                 return true;
+            }
+
+            //已经闭合
+            if (needCheckCapturePos[pPos.x][pPos.y] == 1)
+            {
+                return true;
+            }
+
+            //当前值
+            int currValue = needCheckCapturePos[pPos.x][pPos.y];
+            if (currValue == -1)
+            {
+                return false;
             }
 
             int resCnt = 0;
@@ -374,33 +392,5 @@ namespace Game.Network.Server
 
         #endregion
 
-        #region Helper
-
-        private void TrySetRectX(ref RectInt pRect, int pPosX)
-        {
-            if (pPosX < pRect.min.x)
-            {
-                pRect.min = new Vector2Int(pPosX, pRect.min.y);
-            }
-            else if (pPosX > pRect.max.x)
-            {
-                pRect.max = new Vector2Int(pPosX, pRect.max.y);
-            }
-        }
-
-        private void TrySetRectY(ref RectInt pRect, int pPosY)
-        {
-            if (pPosY < pRect.min.y)
-            {
-                pRect.min = new Vector2Int(pRect.min.x, pPosY);
-            }
-            else if (pPosY > pRect.max.y)
-            {
-                pRect.max = new Vector2Int(pRect.max.x, pPosY);
-            }
-        }
-
-
-        #endregion
     }
 }

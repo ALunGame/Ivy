@@ -24,17 +24,25 @@ MonoBehaviour:
     AutoCollectShaders: 1
     IgnoreRuleName: NormalIgnoreRule
     Groups:
-    - GroupName: Shader
+    - GroupName: Common
       GroupDesc: 
       AssetTags: 
       ActiveRuleName: EnableGroup
       Collectors:
       - CollectPath: Assets/GameAsset/Common/Shaders
         CollectorGUID: 6e42420321fe58648a7472acd215258e
-        CollectorType: 0
-        AddressRuleName: AddressByGroupAndFileName
-        PackRuleName: PackSeparately
+        CollectorType: 1
+        AddressRuleName: AddressDisable
+        PackRuleName: PackDirectory
         FilterRuleName: CollectShader
+        AssetTags: 
+        UserData: 
+      - CollectPath: Assets/GameAsset/Common/Materials
+        CollectorGUID: 794cb457859c4ee49afbc54be7cbc3c5
+        CollectorType: 0
+        AddressRuleName: AddressByFileName
+        PackRuleName: PackSeparately
+        FilterRuleName: CollectAll
         AssetTags: 
         UserData: 
     - GroupName: Gamer
@@ -81,6 +89,27 @@ MonoBehaviour:
         CollectorType: 0
         AddressRuleName: AddressByFileName
         PackRuleName: PackSeparately
+        FilterRuleName: CollectPrefab
+        AssetTags: 
+        UserData: 
+    - GroupName: Effect
+      GroupDesc: 
+      AssetTags: 
+      ActiveRuleName: EnableGroup
+      Collectors:
+      - CollectPath: Assets/GameAsset/Effect
+        CollectorGUID: 34d4a94801c06d74789b4464d0739e47
+        CollectorType: 2
+        AddressRuleName: AddressDisable
+        PackRuleName: PackDirectory
+        FilterRuleName: CollectAllIgnoreOthers
+        AssetTags: 
+        UserData: .prefab
+      - CollectPath: Assets/GameAsset/Effect
+        CollectorGUID: 34d4a94801c06d74789b4464d0739e47
+        CollectorType: 0
+        AddressRuleName: AddressByFileName
+        PackRuleName: PackDirectory
         FilterRuleName: CollectPrefab
         AssetTags: 
         UserData: 
