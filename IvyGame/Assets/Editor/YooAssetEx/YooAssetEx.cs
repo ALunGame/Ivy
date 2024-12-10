@@ -1,16 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using YooAsset.Editor;
-
+﻿using System.IO;
 
 namespace YooAsset.Editor
 {
 
-    [DisplayName("收集除UserData中其他资源")]
+    [DisplayName("忽略指定类型资源")]
     public class CollectAllIgnoreOthers : IFilterRule
     {
         public bool IsCollectAsset(FilterRuleData data)

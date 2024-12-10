@@ -373,6 +373,19 @@ namespace Game.Network.Server
 
             bool success = resCnt == 4;
             needCheckCapturePos[pPos.x][pPos.y] = success ? 1 : -1;
+
+            //将已经检测的处理
+            foreach (int pX in closeCheckPos.Keys)
+            {
+                foreach (int pY in closeCheckPos[pX])
+                {
+                    if (needCheckCapturePos.ContainsKey(pX) || needCheckCapturePos[pX].ContainsKey(pY))
+                    {
+                        needCheckCapturePos[pPos.x][pPos.y] = success ? 1 : -1;
+                    }
+                }
+            }
+
             return success;
         }
 
