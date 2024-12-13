@@ -15,15 +15,24 @@ namespace IAFramework
         /// </summary>
         public static AssetServer Asset { get; private set; }
 
+        /// <summary>
+        /// 音乐
+        /// </summary>
+        public static AudioServer Audio { get; private set; }
+
         public static void Init()
         {
             Asset = new AssetServer();
             Asset.Init();
+
+            Audio = new AudioServer();
+            Audio.Init();
         }
         
         public static void Clear()
         {
             Asset.Clear();
+            Audio.Clear();
         }
     }
 }

@@ -1,12 +1,7 @@
 using Cysharp.Threading.Tasks;
-using GameContext;
-using IAEngine;
 using IAFramework.Patch;
 using IAFramework.UI;
 using IAUI;
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using YooAsset;
 
@@ -14,39 +9,12 @@ namespace IAFramework
 {
     internal class GamePatch : MonoBehaviour
     {
-        public const string DefaultPackageName = "DefaultPackage";
-
-        [Serializable]
-        public class PackageLoadData
-        {
-            public string PackageName;
-            public EDefaultBuildPipeline PackageBuildPipeline;
-        }
-
+        [Header("PathUI节点")]
         [SerializeField]
-        private EPlayMode PlayMode = EPlayMode.EditorSimulateMode;
+        private Transform pathTrans;
+        private PatchPanel patchPanel;
 
-        [SerializeField]
-        private Transform PatchPanelTrans;
-        private PatchPanel PatchPanel = new PatchPanel();
-
-        [Header("需要加载包")]
-        [SerializeField]
-        private List<PackageLoadData> LoadPackages = new List<PackageLoadData>();
-        //原生文件包名
-        [Header("原生文件包名")]
-        [SerializeField]
-        private string RawFilePackageName = "";
-
-        private void Awake()
-        {
-            Debug.Log($"资源系统运行模式：{PlayMode}");
-            Application.targetFrameRate = 60;
-            Application.runInBackground = true;
-            DontDestroyOnLoad(this.gameObject);
-        }
-
-        IEnumerator Start()
+        public async UniTask Init()
         {
             //初始化资源系统
             YooAssets.Initialize();
@@ -55,62 +23,37 @@ namespace IAFramework
             CreatePatchPanel();
 
             // 开始补丁更新流程
-            for (int i = 0; i < LoadPackages.Count; i++)
+            for (int i = 0; i < GameGlobal.Instance.FixedConfig.LoadPackages.Count; i++)
             {
-                PackageLoadData tData = LoadPackages[i];
-                PatchOperation operation = new PatchOperation(tData.PackageName, tData.PackageBuildPipeline.ToString(), PlayMode);
+                PackageLoadData tData = GameGlobal.Instance.FixedConfig.LoadPackages[i];
+                PatchOperation operation = new PatchOperation(tData.PackageName, tData.PackageBuildPipeline.ToString(), GameGlobal.Instance.AssetPlayMode);
                 YooAssets.StartOperation(operation);
-                yield return operation;
+                await operation;
             }
 
             // 设置默认的资源包
-            var gamePackage = YooAssets.GetPackage(DefaultPackageName);
+            var gamePackage = YooAssets.GetPackage(GameGlobal.DefaultPackageName);
             YooAssets.SetDefaultPackage(gamePackage);
 
             //业务层初始化
             Debug.Log("游戏初始化成功！！！！！！！！！！！");
-            GameEnv.Init();
-
-            //设置原生资源包
-            GameEnv.Asset.SetRawFilePackage(RawFilePackageName);
 
             //发送消息
             GamePatchData.Instance.SendProcessTips("游戏初始化成功 !");
             GamePatchData.Instance.SetGamePatchState(EGamePatchState.Success);
-
-            //StartGame().Forget();
         }
 
-
-        public async UniTaskVoid StartGame()
+        public void Clear()
         {
-            CachePool.Init();
-
-            //游戏存档初始化
-            GameContextLocate.Init();
-
-            //UI初始化
-            UICenter uICenter = GameObject.Find("Game/UICenter").GetComponent<UICenter>();
-            uICenter.Init();
-            await UniTask.Yield(PlayerLoopTiming.Update);
-
-            //显示起始UI
-            UILocate.UI.Show(UIPanelDef.MainGamePanel);
-            await UniTask.Yield(PlayerLoopTiming.Update);
-
-            GamePatchData.Instance.SetGamePatchState(EGamePatchState.GameStartSuccess);
-        }
-
-        private void OnApplicationQuit()
-        {
-            GameEnv.Clear();
+            
         }
         
         private void CreatePatchPanel()
         {
-            // 加载更新页面
-            UIPanelCreater.CreateUIPanelTrans(PatchPanel, PatchPanelTrans);
-            PatchPanel.Show();
+            patchPanel = new PatchPanel();  
+            //加载更新页面
+            UIPanelCreater.CreateUIPanelTrans(patchPanel, pathTrans);
+            patchPanel.Show();
         }
     }
 }

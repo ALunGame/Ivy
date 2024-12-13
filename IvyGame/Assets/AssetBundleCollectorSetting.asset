@@ -58,27 +58,35 @@ MonoBehaviour:
         FilterRuleName: CollectPrefab
         AssetTags: 
         UserData: 
+      - CollectPath: Assets/GameAsset/Gamer
+        CollectorGUID: fd9370958bb95c344b342894e0a22a15
+        CollectorType: 2
+        AddressRuleName: AddressDisable
+        PackRuleName: PackDirectory
+        FilterRuleName: CollectAllIgnoreOthers
+        AssetTags: 
+        UserData: .prefab
     - GroupName: Map
       GroupDesc: 
       AssetTags: 
       ActiveRuleName: EnableGroup
       Collectors:
-      - CollectPath: Assets/GameAsset/Map/Mat
-        CollectorGUID: 57bb3e4aa80b40947985689d40ecad52
-        CollectorType: 0
-        AddressRuleName: AddressDisable
-        PackRuleName: PackDirectory
-        FilterRuleName: CollectAll
-        AssetTags: 
-        UserData: 
-      - CollectPath: Assets/GameAsset/Map/Prefab
-        CollectorGUID: 7ae29b9577b69f04a9dc0bae1faadabd
+      - CollectPath: Assets/GameAsset/Map
+        CollectorGUID: b91d02726e76289408da07c50425b412
         CollectorType: 0
         AddressRuleName: AddressByFileName
-        PackRuleName: PackSeparately
+        PackRuleName: PackDirectory
         FilterRuleName: CollectPrefab
         AssetTags: 
         UserData: 
+      - CollectPath: Assets/GameAsset/Map
+        CollectorGUID: b91d02726e76289408da07c50425b412
+        CollectorType: 2
+        AddressRuleName: AddressDisable
+        PackRuleName: PackDirectory
+        FilterRuleName: CollectAllIgnoreOthers
+        AssetTags: 
+        UserData: .prefab
     - GroupName: UI
       GroupDesc: 
       AssetTags: 
@@ -131,6 +139,27 @@ MonoBehaviour:
         CollectorType: 0
         AddressRuleName: AddressByFileName
         PackRuleName: PackSeparately
+        FilterRuleName: CollectAll
+        AssetTags: 
+        UserData: 
+  - PackageName: AudioPackage
+    PackageDesc: 
+    EnableAddressable: 0
+    LocationToLower: 0
+    IncludeAssetGUID: 0
+    AutoCollectShaders: 1
+    IgnoreRuleName: NormalIgnoreRule
+    Groups:
+    - GroupName: Auido
+      GroupDesc: 
+      AssetTags: 
+      ActiveRuleName: EnableGroup
+      Collectors:
+      - CollectPath: Assets/GameAsset/Audio
+        CollectorGUID: 32efd3d69ca8afb458e34597fcf1b566
+        CollectorType: 0
+        AddressRuleName: AddressByFileName
+        PackRuleName: PackDirectory
         FilterRuleName: CollectAll
         AssetTags: 
         UserData: 

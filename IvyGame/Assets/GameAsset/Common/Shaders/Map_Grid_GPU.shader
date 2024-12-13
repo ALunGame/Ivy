@@ -1,4 +1,4 @@
-Shader "Custom/URP/MapBaseGrid"
+Shader "Game/URP/MapBaseGrid"
 {
     Properties
     {

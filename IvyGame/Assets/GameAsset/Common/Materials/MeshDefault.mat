@@ -11,11 +11,11 @@ Material:
   m_Shader: {fileID: 4800000, guid: 849dc4ff793a3f943ad21a3b6ee26456, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
-  m_ValidKeywords:
+  m_ValidKeywords: []
+  m_InvalidKeywords:
   - _ADDITIONAL_LIGHTS_ENABLED
   - _ENVIRONMENT_LIGHTING_ENABLED
   - _FOG
-  m_InvalidKeywords:
   - _ZWRITE_ON
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
@@ -35,7 +35,27 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _ColorRamp:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _EmissionMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _MainTex:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _MainTexture:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _OcclusionMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _OutlineZOffsetMaskTex:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
@@ -45,6 +65,7 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
+    - _AdditionalLightIgnoreCelShade: 0.9
     - _AdditionalLights: 1
     - _AdditionalLightsSpecular: 0
     - _AlphaClip: 0
@@ -55,10 +76,14 @@ Material:
     - _BlendDst: 0
     - _BlendMode: 0
     - _BlendSrc: 1
+    - _CelShadeMidPoint: -0.5
+    - _CelShadeSoftness: 0.05
     - _Cull: 0
     - _Cutoff: 0.5
+    - _DirectLightMultiplier: 1
     - _DstBlend: 0
     - _Emission: 0
+    - _EmissionMulByBaseColor: 0
     - _EnvironmentLightingEnabled: 1
     - _Fog: 1
     - _ForceDisableEnvironmentLight: 0
@@ -72,7 +97,17 @@ Material:
     - _FresnelSmoothness: 0.1
     - _FresnelThickness: 0.45
     - _Glossiness: 0.273
+    - _IndirectLightMultiplier: 1
+    - _IsFace: 0
+    - _MainLightIgnoreCelShade: 0
     - _Metallic: 0.288
+    - _OcclusionRemapEnd: 1
+    - _OcclusionRemapStart: 0
+    - _OcclusionStrength: 1
+    - _OutlineWidth: 0.01
+    - _OutlineZOffset: 0.0001
+    - _OutlineZOffsetMaskRemapEnd: 1
+    - _OutlineZOffsetMaskRemapStart: 0
     - _OutlinesStencilLayer: 0
     - _OverrideRamp: 0
     - _OverrideRamp_RimSmoothness: 0.1
@@ -88,6 +123,8 @@ Material:
     - _RampSmoothness: 0.005
     - _RampTriple: 0
     - _ReceiveBlobShadows: 0
+    - _ReceiveShadowMappingAmount: 0.65
+    - _ReceiveShadowMappingPosOffset: 0
     - _ReflectionBlend: 0.5
     - _ReflectionProbes: 0
     - _ReflectionSmoothness: 0.5
@@ -101,15 +138,25 @@ Material:
     - _SrcBlend: 1
     - _Surface: 0
     - _SurfaceType: 0
+    - _ToonShadeSteps: 4
+    - _UseAlphaClipping: 0
+    - _UseEmission: 0
+    - _UseOcclusion: 0
     - _UseRampMap: 0
     - _VertexColor: 0
     - _ZWrite: 1
     m_Colors:
     - _BaseColor: {r: 1, g: 1, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 0}
+    - _EmissionMapChannelMask: {r: 1, g: 1, b: 1, a: 0}
     - _FresnelColor: {r: 1, g: 1, b: 1, a: 1}
+    - _IndirectLightMinColor: {r: 0.09999997, g: 0.09999997, b: 0.09999997, a: 1}
     - _MainColor: {r: 1, g: 1, b: 1, a: 1}
+    - _OcclusionMapChannelMask: {r: 1, g: 0, b: 0, a: 0}
+    - _OutlineColor: {r: 0, g: 0, b: 0, a: 1}
     - _ShadowColor: {r: 0, g: 0, b: 0, a: 0.75}
+    - _ShadowMapColor: {r: 0.6627451, g: 0.6627451, b: 0.6627451, a: 1}
     - _ShadowTint: {r: 0, g: 0, b: 0, a: 1}
     - _SpecularColor: {r: 1, g: 1, b: 1, a: 1}
   m_BuildTextureStacks: []
+  m_AllowLocking: 1
