@@ -1,4 +1,5 @@
 using Game.Network.Client;
+using Game.UITest;
 using Gameplay;
 using IAUI;
 using Proto;
@@ -26,7 +27,11 @@ namespace Game.UI
         {
             BtnUtil.SetClick(transform, "Center/GameMode/Local", () =>
             {
-                OnClickGameMode(GameModeType.Local);
+                CheckAudioPanel_Model model = UILocate.UI.GetPanelModel<CheckAudioPanel_Model>(UIPanelDef.Test_CheckAudioPanel);
+                model.clipName = "";
+                model.clipBPM = 120;
+
+                UILocate.UI.Show(UIPanelDef.Test_CheckAudioPanel);
             });
 
             BtnUtil.SetClick(transform, "Center/GameMode/Single", () =>

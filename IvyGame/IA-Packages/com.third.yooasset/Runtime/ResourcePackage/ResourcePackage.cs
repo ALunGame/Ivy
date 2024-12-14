@@ -176,11 +176,23 @@ namespace YooAsset
                 }
 #endif
             }
+
+            // 检测文件系统参数
+            if (_playMode == EPlayMode.WebPlayMode)
+            {
+                var webPlayModeParams = parameters as WebPlayModeParameters;
+                var fileSystemClassName = webPlayModeParams.WebFileSystemParameters.FileSystemClass;
+                if (fileSystemClassName == typeof(DefaultCacheFileSystem).FullName
+                    || fileSystemClassName == typeof(DefaultBuildinFileSystem).FullName)
+                    throw new Exception($"{fileSystemClassName} not support {nameof(EPlayMode.WebPlayMode)}");
+            }
         }
         private void InitializeOperation_Completed(AsyncOperationBase op)
         {
             _initializeStatus = op.Status;
             _initializeError = op.Error;
+            if (_initializeStatus != EOperationStatus.Succeed)
+                YooLogger.Error(_initializeError);
         }
 
         /// <summary>
@@ -258,6 +270,15 @@ namespace YooAsset
         {
             DebugCheckInitialize();
             return _playModeImpl.ActiveManifest.PackageVersion;
+        }
+
+        /// <summary>
+        /// 获取本地包裹的备注信息
+        /// </summary>
+        public string GetPackageNote()
+        {
+            DebugCheckInitialize();
+            return _playModeImpl.ActiveManifest.PackageNote;
         }
 
         #region 资源回收

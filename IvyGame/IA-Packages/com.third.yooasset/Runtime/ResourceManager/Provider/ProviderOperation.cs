@@ -70,7 +70,6 @@ namespace YooAsset
         protected ESteps _steps = ESteps.None;
         protected LoadBundleFileOperation LoadBundleFileOp { private set; get; }
         protected LoadDependBundleFileOperation LoadDependBundleFileOp { private set; get; }
-        protected bool IsWaitForAsyncComplete { private set; get; } = false;
         private readonly List<HandleBase> _handles = new List<HandleBase>();
 
 
@@ -93,12 +92,11 @@ namespace YooAsset
 
         internal override void InternalWaitForAsyncComplete()
         {
-            IsWaitForAsyncComplete = true;
-
             while (true)
             {
                 if (LoadDependBundleFileOp != null)
                     LoadDependBundleFileOp.WaitForAsyncComplete();
+
                 if (LoadBundleFileOp != null)
                     LoadBundleFileOp.WaitForAsyncComplete();
 

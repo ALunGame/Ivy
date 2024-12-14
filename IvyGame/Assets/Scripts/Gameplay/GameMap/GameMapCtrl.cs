@@ -57,7 +57,10 @@ namespace Gameplay.GameMap
 
         public override void OnInit()
         {
-            MapRootTrans = GameObject.Find("Game").transform;
+            GameObject mapRootGo = GameObject.Find("Game");
+            if (mapRootGo == null)
+                mapRootGo = new GameObject("Game");
+            MapRootTrans = mapRootGo.transform;
 
             foreach (BaseGameMapSystem system in systems)
                 system.Init(this);

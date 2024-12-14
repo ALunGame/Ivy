@@ -43,6 +43,11 @@ namespace IAUI
         /// </summary>
         FightPanel,
 
+        /// <summary>
+        /// 测试音频节拍界面
+        /// </summary>
+        Test_CheckAudioPanel,
+
     }
 
 }

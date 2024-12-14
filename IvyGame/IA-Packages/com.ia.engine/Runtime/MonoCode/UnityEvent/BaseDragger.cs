@@ -28,6 +28,7 @@ namespace IAEngine
         {
             if (eventUsed)
                 return;
+
             onDrag?.Invoke(eventData);
         }
 

@@ -13,9 +13,9 @@ MonoBehaviour:
   m_Name: BuildinCatalog
   m_EditorClassIdentifier: 
   PackageName: RawFilePackage
-  PackageVersion: 2024-11-25-689
+  PackageVersion: 2024-12-12-701
   Wrappers:
-  - BundleGUID: afeb17fb1712411c2f9bd0b5cdd88461
+  - BundleGUID: f14a4ec12f693840d327d128d265570f
     FileName: rawfilepackage_assets_gameasset_config_tbactorcfg.bundle
   - BundleGUID: 5d46d781fb427c4114d7008f0f3da3ef
     FileName: rawfilepackage_assets_gameasset_config_tbfightdrumsmusiccfg.bundle
