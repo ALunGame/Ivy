@@ -67,9 +67,6 @@ namespace Proto
         [global::ProtoBuf.ProtoMember(7, IsRequired = true)]
         public float moveSpeed { get; set; }
 
-        [global::ProtoBuf.ProtoMember(8, IsRequired = true)]
-        public int fightMusicId { get; set; }
-
     }
 
 }

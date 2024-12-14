@@ -4,10 +4,10 @@ using System;
 namespace Gameplay
 {
     
-    public class TbFightDrumsMusicCfg : Dictionary<int, FightDrumsMusicCfg>
+    public class TbFightDrumsMusicCfg : Dictionary<string, FightDrumsMusicCfg>
     {
         
-        public void AddConfig(int key1, FightDrumsMusicCfg config)
+        public void AddConfig(string key1, FightDrumsMusicCfg config)
         {
             
             if (!this.ContainsKey(key1))
@@ -21,7 +21,7 @@ namespace Gameplay
             foreach (var item in configs)
             {
                 FightDrumsMusicCfg config = item;
-                AddConfig(config.id, config);
+                AddConfig(config.name, config);
             }
         }
 

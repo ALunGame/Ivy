@@ -99,6 +99,8 @@ namespace IAUI
     {
         private T _PartPanel;
 
+        public T PartPanel { get => _PartPanel; set => _PartPanel = value; }
+
         public UIPartialPanelGlue(string prefabName, string prefabBindPath, bool followParent = true) : base(prefabName, prefabBindPath, followParent)
         {
             InitFollowParent();
@@ -113,22 +115,25 @@ namespace IAUI
         {
             if (_FollowParent)
             {
-                _PartPanel = new T();
+                if (_PartPanel == null)
+                {
+                    _PartPanel = new T();
+                }
             }
         }
 
-        public override void OnAwake(InternalUIPanel panel)
+        public override void OnAfterAwake(InternalUIPanel panel)
         {
-            base.OnAwake(panel);
+            base.OnAfterAwake(panel);
             if (_FollowParent)
             {
-                UIPanelCreater.CreateUIPanelTrans(_PartPanel,GetPartialPanelTrans());
+                UIPanelCreater.CreateUIPanelTrans(_PartPanel, GetPartialPanelTrans());
             }
         }
 
-        public override void OnBeforeShow(InternalUIPanel panel)
+        public override void OnAfterShow(InternalUIPanel panel)
         {
-            base.OnBeforeShow(panel);
+            base.OnAfterShow(panel);
             if (_FollowParent)
             {
                 _PartPanel.Show();

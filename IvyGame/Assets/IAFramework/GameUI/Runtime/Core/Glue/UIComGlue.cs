@@ -12,9 +12,9 @@ namespace IAUI
             _ComPath = comPath; 
         }
 
-        public override void OnAwake(InternalUIPanel panel)
+        public override void OnBeforeAwake(InternalUIPanel panel)
         {
-            base.OnAwake(panel);
+            base.OnBeforeAwake(panel);
             RefreshBind();
         }
 
@@ -72,9 +72,9 @@ namespace IAUI
             } 
         }
 
-        public override void OnAwake(InternalUIPanel panel)
+        public override void OnBeforeAwake(InternalUIPanel panel)
         {
-            base.OnAwake(panel);
+            base.OnBeforeAwake(panel);
             _Com = _ComTrans.GetComponent<T>();
         }
 

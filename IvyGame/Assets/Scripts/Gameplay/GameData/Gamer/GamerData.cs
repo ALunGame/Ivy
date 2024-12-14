@@ -80,16 +80,6 @@ namespace Gameplay.GameData
         public GameDataField<int> DieCnt { get; protected set; }
 
         /// <summary>
-        /// 鼓点音乐Id
-        /// </summary>
-        public int DrumsMusicId { get; protected set; }
-
-        /// <summary>
-        /// 鼓点间隔时间
-        /// </summary>
-        public float DrumsTime { get; protected set; }
-
-        /// <summary>
         /// 当强制设置位置
         /// </summary>
         public Action<Vector2> OnForceSetPos;
@@ -105,8 +95,6 @@ namespace Gameplay.GameData
 
             Rotation = pInfo.Rotation;
             MoveSpeed = pInfo.moveSpeed;
-
-            SetDrumsMusicId(pInfo.fightMusicId);
 
             GridPos = new GameDataField<Vector2Int>(this);
             GridPos.SetValueWithoutNotify(GameplayGlobal.Data.Map.PosToGrid(Position));
@@ -130,14 +118,6 @@ namespace Gameplay.GameData
         }
 
         #region Set
-
-        public void SetDrumsMusicId(int pMusicId)
-        {
-            FightDrumsMusicCfg cfg = IAConfig.Config.FightDrumsMusicCfg[pMusicId];
-            DrumsMusicId = pMusicId;
-            DrumsTime = cfg.drumsTime;
-        }
-
 
         #endregion
 

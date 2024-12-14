@@ -104,13 +104,14 @@ namespace IAFramework
 
         private async UniTaskVoid StartGame()
         {
+            //游戏环境初始化
             GameEnv.Init();
 
             //游戏流程初始化
             await gamePatch.Init();
 
             //设置音乐资源包
-            GameEnv.Asset.SetRawFilePackage(FixedConfig.AudioPackageName);
+            GameEnv.Asset.SetAudioPackage(FixedConfig.AudioPackageName);
 
             //设置原生资源包
             GameEnv.Asset.SetRawFilePackage(FixedConfig.RawFilePackageName);

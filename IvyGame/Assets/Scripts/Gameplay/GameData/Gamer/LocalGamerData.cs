@@ -27,10 +27,11 @@ namespace Gameplay.GameData
         /// </summary>
         /// <param name="pVelocity"></param>
         /// <param name="pRotation"></param>
-        public void SetMoveInput(int pMoveDir)
+        public void SetMoveInput(int pMoveDir, int pClickType)
         {
             inputCommand.commandType = pMoveDir;
             inputCommand.Rotation = PlayerInputCommand.MoveDirRotateDict[inputCommand.commandType];
+            inputCommand.clickType = pClickType;
 
             NetClientLocate.Net.Send((ushort)RoomMsgDefine.GamerInputC2s, inputCommand);
 

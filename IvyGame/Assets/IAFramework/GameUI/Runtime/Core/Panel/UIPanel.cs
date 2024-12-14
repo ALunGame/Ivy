@@ -30,9 +30,13 @@
             base.Awake();
             for (int i = 0; i < Glues.Count; i++)
             {
-                Glues[i].OnAwake(this);
+                Glues[i].OnBeforeAwake(this);
             }
             OnAwake();
+            for (int i = 0; i < Glues.Count; i++)
+            {
+                Glues[i].OnAfterAwake(this);
+            }
         }
 
         /// <summary>
@@ -60,22 +64,22 @@
         {
             base.Hide();
             BindModel.ClearEvent();
+            OnHide();
             for (int i = 0; i < Glues.Count; i++)
             {
                 Glues[i].OnHide(this);
             }
-            OnHide();
         }
 
         public sealed override void Destroy()
         {
             base.Destroy();
             BindModel.ClearEvent();
+            OnDestroy();
             for (int i = 0; i < Glues.Count; i++)
             {
                 Glues[i].OnDestroy(this);
             }
-            OnDestroy();
         }
 
         /// <summary>

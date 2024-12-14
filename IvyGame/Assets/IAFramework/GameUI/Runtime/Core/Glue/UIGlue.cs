@@ -17,9 +17,13 @@ namespace IAUI
             
         }
 
-        public virtual void OnAwake(InternalUIPanel panel)
+        public virtual void OnBeforeAwake(InternalUIPanel panel)
         {
             this._Panel = panel;
+        }
+
+        public virtual void OnAfterAwake(InternalUIPanel panel)
+        {
         }
 
         public virtual void OnBeforeShow(InternalUIPanel panel)

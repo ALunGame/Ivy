@@ -32,10 +32,9 @@ namespace IAConfig.Excel.Export
             foreach (var propDict in propValuelist)
             {
                 FightDrumsMusicCfg cnf = new FightDrumsMusicCfg();
-				cnf.id = (int)GetProp(pProps,"id").Parse(propDict["id"][0]);
 				cnf.name = (string)GetProp(pProps,"name").Parse(propDict["name"][0]);
 				cnf.res = (string)GetProp(pProps,"res").Parse(propDict["res"][0]);
-				cnf.drumsTime = (float)GetProp(pProps,"drumsTime").Parse(propDict["drumsTime"][0]);
+				cnf.bpm = (float)GetProp(pProps,"bpm").Parse(propDict["bpm"][0]);
 
                 cnfs.Add(cnf);
             }
@@ -309,6 +308,8 @@ namespace IAConfig.Excel.Export
         }
     }
 }
+
+
 
 
 

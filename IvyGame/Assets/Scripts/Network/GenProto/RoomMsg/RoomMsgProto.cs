@@ -184,6 +184,9 @@ namespace Proto
         [global::ProtoBuf.ProtoMember(3, Name = @"rotation", IsRequired = true)]
         public float Rotation { get; set; }
 
+        [global::ProtoBuf.ProtoMember(4, IsRequired = true)]
+        public int clickType { get; set; }
+
     }
 
     [global::ProtoBuf.ProtoContract()]

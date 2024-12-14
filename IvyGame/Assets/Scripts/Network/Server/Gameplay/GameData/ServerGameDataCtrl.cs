@@ -84,7 +84,6 @@ namespace Game.Network.Server
         {
             string uid = $"Gamer_{++GenUid}_{pUidEx}";
             ServerGamerData gamerData = new ServerGamerData(pPeer, uid, pGamerInfo.Id, pGamerInfo.Name);
-            gamerData.SetDrumsMusicId(pGamerInfo.fightMusicId);
             Gamers.Add(gamerData);
             return gamerData;
         }

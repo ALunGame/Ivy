@@ -18,9 +18,8 @@ namespace Game.UITest
     public class CheckAudioPanel : UIPanel<CheckAudioPanel_Model>
     {
 
-        private UIComGlue<AudioSource> audioSource = new UIComGlue<AudioSource>("");
-        private UIComGlue<Slider> audioSlider = new UIComGlue<Slider>("");
-        private UIComGlue<RectTransform> clickTipTrans = new UIComGlue<RectTransform>("");
+        private UIComGlue<Slider> audioSlider = new UIComGlue<Slider>("BeatProcess/Slider");
+        private UIComGlue<RectTransform> clickTipTrans = new UIComGlue<RectTransform>("BeatProcess/Beats/ClickTip");
         private UIUpdateGlue updateGlue = new UIUpdateGlue();
 
         private double playStartTime;
@@ -36,8 +35,8 @@ namespace Game.UITest
 
         public override void OnAwake()
         {
-            BtnUtil.SetClick(transform, "", OnClick);
-            BtnUtil.SetClick(transform, "", OnClickPlayBtn);
+            BtnUtil.SetClick(transform, "InputClick", OnClick);
+            BtnUtil.SetClick(transform, "Btns/Start", OnClickPlayBtn);
 
             updateGlue.SetFunc(Update);
         }

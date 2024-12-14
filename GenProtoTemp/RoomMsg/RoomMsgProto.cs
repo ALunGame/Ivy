@@ -163,6 +163,9 @@ namespace Proto
         [global::ProtoBuf.ProtoMember(2, IsRequired = true)]
         public int mapId { get; set; }
 
+        [global::ProtoBuf.ProtoMember(3, Name = @"gamers")]
+        public global::System.Collections.Generic.List<GamerInfo> Gamers { get; } = new global::System.Collections.Generic.List<GamerInfo>();
+
     }
 
     [global::ProtoBuf.ProtoContract()]

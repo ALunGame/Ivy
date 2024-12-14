@@ -23,5 +23,4 @@ message gamer_info {
 	required net_vector2 pos = 5;
 	required float rotation = 6;
 	required float moveSpeed = 7;
-	required int32 fightMusicId = 8;
 }

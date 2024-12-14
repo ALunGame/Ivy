@@ -144,7 +144,7 @@ MonoBehaviour:
         UserData: 
   - PackageName: AudioPackage
     PackageDesc: 
-    EnableAddressable: 0
+    EnableAddressable: 1
     LocationToLower: 0
     IncludeAssetGUID: 0
     AutoCollectShaders: 1
@@ -159,7 +159,7 @@ MonoBehaviour:
         CollectorGUID: 32efd3d69ca8afb458e34597fcf1b566
         CollectorType: 0
         AddressRuleName: AddressByFileName
-        PackRuleName: PackDirectory
+        PackRuleName: PackSeparately
         FilterRuleName: CollectAll
         AssetTags: 
         UserData: 

@@ -45,9 +45,9 @@ namespace IAUI
             this.needHideRecycle = needHideRecycle;
         }
 
-        public override void OnAwake(InternalUIPanel panel)
+        public override void OnBeforeAwake(InternalUIPanel panel)
         {
-            base.OnAwake(panel);
+            base.OnBeforeAwake(panel);
             if (string.IsNullOrEmpty(cacheRootPath))
             {
                 cacheRoot = panel.transform;

@@ -64,6 +64,7 @@ message GamerInputC2s {
 	required string gamerUid = 1;
 	required int32 commandType = 2;			//命令类型
 	required float rotation = 3;			//当前旋转
+	required int32 clickType = 4;			//当前输入类型
 }
 
 //玩家输入返回

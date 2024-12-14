@@ -1,4 +1,5 @@
 ﻿using Cysharp.Threading.Tasks;
+using DG.Tweening;
 using IAEngine;
 using System;
 using System.Collections.Generic;
@@ -11,16 +12,8 @@ namespace IAFramework
     {
         public const string AudioPlayPoolName = "AudioPlayPool";
 
-        [Header("背景音乐播放器")]
-        [SerializeField]
-        private AudioSource BGAudioSource;
+        private AudioSource BGMAudioSource;
 
-        [Header("效果播放器预制体")]
-        [SerializeField]
-        private string EffectAudioPlayPrefabName;
-
-        [Header("对象池预设播放器数量")]
-        [SerializeField]
         private int EffectAudioDefaultQuantity = 20;
 
         private Transform audioPlayRoot;
@@ -115,7 +108,7 @@ namespace IAFramework
         /// </summary>
         private void UpdateBGAudioPlay()
         {
-            BGAudioSource.volume = bgVolume * globalVolume;
+            BGMAudioSource.volume = bgVolume * globalVolume;
         }
 
         /// <summary>
@@ -164,7 +157,7 @@ namespace IAFramework
         /// </summary>
         private void UpdateMute()
         {
-            BGAudioSource.mute = isMute;
+            BGMAudioSource.mute = isMute;
             UpdateEffectAudioPlay();
         }
 
@@ -175,11 +168,11 @@ namespace IAFramework
         {
             if (isPause)
             {
-                BGAudioSource.Pause();
+                BGMAudioSource.Pause();
             }
             else
             {
-                BGAudioSource.UnPause();
+                BGMAudioSource.UnPause();
             }
 
         } 
@@ -191,6 +184,12 @@ namespace IAFramework
             audioPlayList = new List<AudioSource>(EffectAudioDefaultQuantity);
             audioPlayRoot = new GameObject("AudioPlayRoot").transform;
             audioPlayRoot.SetParent(transform);
+
+            GameObject bgmGo = new GameObject("BGM");
+            bgmGo.transform.SetParent(transform);
+            AudioSource bgmAudio = bgmGo.AddComponent<AudioSource>();
+            bgmAudio.spatialBlend = -1;
+            BGMAudioSource = bgmAudio;
         }
 
         #region 背景音乐
@@ -235,11 +234,11 @@ namespace IAFramework
                     currTime += Time.deltaTime;
 
                 float ratio = Mathf.Lerp(1, 0, currTime / pFadeOutTime);
-                BGAudioSource.volume = bgVolume * globalVolume * ratio;
+                BGMAudioSource.volume = bgVolume * globalVolume * ratio;
             }
 
-            BGAudioSource.clip = pClip;
-            BGAudioSource.Play();
+            BGMAudioSource.clip = pClip;
+            BGMAudioSource.Play();
             currTime = 0;
 
             // 提高音量，也就是淡入
@@ -251,7 +250,7 @@ namespace IAFramework
                     currTime += Time.deltaTime;
 
                 float ratio = Mathf.InverseLerp(0, 1, currTime / pFadeInTime);
-                BGAudioSource.volume = bgVolume * globalVolume * ratio;
+                BGMAudioSource.volume = bgVolume * globalVolume * ratio;
             }
         }
 
@@ -309,8 +308,8 @@ namespace IAFramework
             if (bgWithClipsTaskCancleToken != null)
                 bgWithClipsTaskCancleToken.Cancel();
 
-            BGAudioSource.Stop();
-            BGAudioSource.clip = null;
+            BGMAudioSource.Stop();
+            BGMAudioSource.clip = null;
         }
 
         /// <summary>
@@ -343,7 +342,9 @@ namespace IAFramework
             {
                 CachePool.CreateGameObjectPool(AudioPlayPoolName, () =>
                 {
-                    return GameEnv.Asset.CreateGo(EffectAudioPlayPrefabName);
+                    GameObject audioGo = new GameObject("audioGo");
+                    AudioSource source = audioGo.AddComponent<AudioSource>();
+                    return audioGo;
                 });
             }
 

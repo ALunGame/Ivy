@@ -15,9 +15,9 @@ namespace IAUI
             _ComPath = pComPath; 
         }
 
-        public override void OnAwake(InternalUIPanel panel)
+        public override void OnBeforeAwake(InternalUIPanel panel)
         {
-            base.OnAwake(panel);
+            base.OnBeforeAwake(panel);
             RefreshBind();
         }
 

@@ -24,29 +24,17 @@ namespace Game.UI
         private UIComGlue<RectTransform> gameInfoTrans = new UIComGlue<RectTransform>("Top/GameInfo");
         private UIComGlue<RectTransform> moveBoxTrans = new UIComGlue<RectTransform>("Left/MoveBox");
         private UIComGlue<RectTransform> skillBoxTrans = new UIComGlue<RectTransform>("Right/SkillBox");
-        private UIComGlue<RectTransform> drumsBoxTrans = new UIComGlue<RectTransform>("Center/DrumsBox");
 
         private UIComGlue<Text> killInfo = new UIComGlue<Text>("Top/GameInfo/KillInfo/Num");
         private UIComGlue<Text> gameTimeInfo = new UIComGlue<Text>("Top/GameInfo/GameTime/Num");
-        private UIComGlue<Text> clickTypeTipTrans = new UIComGlue<Text>("Center/DrumsBox/ClickTypeTip");
 
-        private UICacheGlue drumsPointCache = new UICacheGlue("Prefabs/DrumsPoint", "Center/DrumsBox/Points", true, false);
         private UICacheGlue gamerInfoCache = new UICacheGlue("Prefabs/GamerInfo", "Top/GamerList", true);
 
         private UIUpdateGlue updateGlue = new UIUpdateGlue();
 
-        private UINetworkMsgGlue OnGamerDieS2c;
-        private UINetworkMsgGlue OnGamerInputS2c;
+        private UINetworkMsgGlue onGamerDieS2c;
 
-        private float drumTime = 0.3f;
-        private float drumCnt = 4;
-        private float drumOffset = 70;
-        private float drumSpeed = 0;
-        private List<GameObject> drumsGoList = new List<GameObject>();
-
-        private Tween drumsCenterTween;
-
-        private Tween clickTypeTween;
+        private UIPartialPanelGlue<FightBeatView> fightBeatView = new UIPartialPanelGlue<FightBeatView>("Center/FightBeatView");
 
         private TimerModel dashTimer;
         private bool isDashInCd;
@@ -67,88 +55,23 @@ namespace Game.UI
 
             updateGlue.SetFunc(Update);
 
-            InitDrums();
             InitBtnClick();
 
-            OnGamerDieS2c = new UINetworkMsgGlue(this, (ushort)RoomMsgDefine.GamerDieS2c, (msgBody) =>
+            PlayFightAudio();
+
+            onGamerDieS2c = new UINetworkMsgGlue(this, (ushort)RoomMsgDefine.GamerDieS2c, (msgBody) =>
             {
                 RefreshGamerInfos();
-            });
-
-            OnGamerInputS2c = new UINetworkMsgGlue(this, (ushort)RoomMsgDefine.GamerInputS2c, (msgBody) =>
-            {
-                clickTypeTween?.Kill();
-
-                clickTypeTipTrans.Com.gameObject.SetActive(true);
-
-                GamerInputS2c msg = (GamerInputS2c)msgBody;
-                MoveClickType clickType = (MoveClickType)msg.moveClickType;
-
-                Vector3 doScaleValue = Vector3.one;
-                string clickTypeStr = "";
-                switch (clickType)
-                {
-                    case MoveClickType.Miss:
-                        doScaleValue *= 0.8f;
-                        clickTypeStr = "MISS";
-                        break;
-                    case MoveClickType.Normal:
-                        doScaleValue *= 1f;
-                        clickTypeStr = "普通";
-                        break;
-                    case MoveClickType.Good:
-                        doScaleValue *= 1.3f;
-                        clickTypeStr = "优秀";
-                        break;
-                    case MoveClickType.Perfect:
-                        doScaleValue *= 1.6f;
-                        clickTypeStr = "完美";
-                        break;
-                }
-                clickTypeTipTrans.Com.text = clickTypeStr;
-
-                clickTypeTipTrans.Com.gameObject.SetActive(true);
-
-                RectTransform rectTrans = clickTypeTipTrans.Com.GetComponent<RectTransform>();
-                rectTrans.localScale = new Vector3(0.5f, 0.5f, 0.5f);
-                clickTypeTween = rectTrans.DOScale(doScaleValue, 0.2f).SetEase(Ease.OutElastic).OnComplete(() =>
-                {
-                    clickTypeTipTrans.Com.gameObject.SetActive(false);
-                });
             });
         }
 
         public override void OnShow()
         {
-            //CreateDrums();
             RefreshGamerInfos();
         }
 
         public override void OnHide()
         {
-            drumsCenterTween?.Kill();
-        }
-
-        private void InitDrums()
-        {
-            drumTime = gamerData.DrumsTime;
-            drumSpeed = drumOffset * drumCnt / (drumTime * drumCnt);
-
-            //创建节奏点
-            for (int i = 0; i < drumCnt * 2; i++)
-            {
-                int tmpValue = i < drumCnt ? -1 : 1;
-
-                GameObject tGo = drumsPointCache.Take();
-                tGo.name = i.ToString();
-                tGo.transform.localPosition = new Vector3((i % drumCnt) * drumOffset * tmpValue, 0, 0);
-
-                drumsGoList.Add(tGo);
-            }
-
-            //中间节奏提示
-            Transform drumsTipTrans = drumsBoxTrans.Com.transform.Find("DrumsTip");
-            drumsCenterTween = drumsTipTrans.DOScaleY(1.5f, drumTime).SetLoops(-1, LoopType.Restart).SetEase(Ease.Linear);
         }
 
         private void InitBtnClick()
@@ -183,7 +106,6 @@ namespace Game.UI
         {
             Refresh();
             HandleInputMove();
-            UpdateDrumsPoints(pDeltaTime);
         }
 
         private void Refresh()
@@ -267,7 +189,8 @@ namespace Game.UI
 
         private void SendMoveMsg(int pMoveDir)
         {
-            gamerData.SetMoveInput(pMoveDir);
+            MoveClickType clickType = fightBeatView.PartPanel.OnClickMove();
+            gamerData.SetMoveInput(pMoveDir, (int)clickType);
         }
 
         private void SendDaskSkillMsg()
@@ -288,22 +211,12 @@ namespace Game.UI
 
         #endregion
 
-        #region 鼓点
+        #region 战斗音乐
 
-        private void UpdateDrumsPoints(float pDeltaTime)
+        public void PlayFightAudio()
         {
-            for (int i = 0; i < 8; i++)
-            {
-                int tmpValue = i < 4 ? 1 : -1;
-                float xDelta = tmpValue * drumSpeed * pDeltaTime;
-                GameObject drumsGo = drumsGoList[i];
-                drumsGo.transform.localPosition += new Vector3(xDelta, 0, 0);
-
-                if (Mathf.Abs(drumsGo.transform.localPosition.x) <= 6f)
-                {
-                    drumsGo.transform.localPosition = new Vector3(4 * drumOffset * tmpValue * -1, 0, 0);
-                }
-            }
+            FightBeatView_Model model = fightBeatView.GetPanelModel<FightBeatView_Model>();
+            model.bgmName = "turkey120";
         }
 
         #endregion

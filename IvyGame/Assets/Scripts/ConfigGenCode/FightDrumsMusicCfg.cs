@@ -12,11 +12,6 @@ namespace Gameplay
     {
         
         /// <summary>
-        /// 音乐Id
-        /// </summary>
-        public int id;
-
-        /// <summary>
         /// 音乐名
         /// </summary>
         public string name;
@@ -27,9 +22,9 @@ namespace Gameplay
         public string res;
 
         /// <summary>
-        /// 鼓点间隔时间
+        /// 每分钟节拍数
         /// </summary>
-        public float drumsTime;
+        public float bpm;
 
     }
 

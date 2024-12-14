@@ -28,7 +28,7 @@ namespace Game.UI
             BtnUtil.SetClick(transform, "Center/GameMode/Local", () =>
             {
                 CheckAudioPanel_Model model = UILocate.UI.GetPanelModel<CheckAudioPanel_Model>(UIPanelDef.Test_CheckAudioPanel);
-                model.clipName = "";
+                model.clipName = "turkey120";
                 model.clipBPM = 120;
 
                 UILocate.UI.Show(UIPanelDef.Test_CheckAudioPanel);
