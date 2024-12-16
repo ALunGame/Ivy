@@ -44,6 +44,11 @@ namespace IAUI
         FightPanel,
 
         /// <summary>
+        /// 游戏设置界面
+        /// </summary>
+        GameSettingPanel,
+
+        /// <summary>
         /// 测试音频节拍界面
         /// </summary>
         Test_CheckAudioPanel,

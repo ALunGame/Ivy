@@ -5,7 +5,8 @@ namespace Game.Network.Server
     internal class NetServerLog : LogServer
     {
         private static readonly object DebugLogLock = new object();
-        public override string LogTag => "<color=#FBBC00>Server</color>";
+        //public override string LogTag => "<color=#FBBC00>Server</color>";
+        public override string LogTag => "Server";
 
         public NetServerLog() 
         {

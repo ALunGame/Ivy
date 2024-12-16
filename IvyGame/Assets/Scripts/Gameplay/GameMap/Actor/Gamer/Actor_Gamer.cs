@@ -1,4 +1,6 @@
-﻿using Game;
+﻿using DG.Tweening;
+using Game;
+using Game.Helper;
 using Game.Network;
 using Gameplay.GameData;
 using IAEngine;
@@ -64,6 +66,11 @@ namespace Gameplay.GameMap.Actor
 
         public T Data { get; protected set; }
 
+        private Transform Wheel_FL;
+        private Tween Wheel_FLRotateTween;
+        private Transform Wheel_FR;
+        private Tween Wheel_FRRotateTween;
+
         private float preMoveTotalTime = NetworkLogicTimer.FixedDelta * 3;
         private Vector2 currTargetPos;
         private Vector3 currMoveTargetPos;
@@ -71,6 +78,8 @@ namespace Gameplay.GameMap.Actor
 
         protected Actor_Gamer(string pUid, int pId, ActorType pType, GameObject pActorGo) : base(pUid, pId, pType, pActorGo)
         {
+            Wheel_FL = ActorDisplay.DisplayGo.transform.Find("Mesh/Wheel_FL");
+            Wheel_FR = ActorDisplay.DisplayGo.transform.Find("Mesh/Wheel_FR");
         }
 
         #region 生命周期
@@ -92,6 +101,9 @@ namespace Gameplay.GameMap.Actor
         {
             RemoveDataChangeEvent();
             OnClear();
+
+            Wheel_FLRotateTween?.Kill();
+            Wheel_FRRotateTween?.Kill();
         }
 
         #endregion
@@ -266,9 +278,46 @@ namespace Gameplay.GameMap.Actor
 
             SetPos(movePos);
             SetRotation(Quaternion.Euler(0, Data.Rotation, 0));
+            RefreshWheelRotate();
         }
 
         #endregion
+
+        private void RefreshWheelRotate()
+        {
+            if (Data.LastRotation == Data.Rotation)
+                return;
+
+            Wheel_FLRotateTween?.Kill();
+            Wheel_FRRotateTween?.Kill();
+
+            int targetRotate = 0;
+            if (Data.Rotation == PlayerInputCommand.MoveDirRotateDict[PlayerInputCommand.Move_Up]
+                || Data.Rotation == PlayerInputCommand.MoveDirRotateDict[PlayerInputCommand.Move_Left])
+            {
+                targetRotate = -45;
+            }
+            else
+            {
+                targetRotate = 45;
+            }
+
+            Wheel_FL.transform.localRotation = Quaternion.Euler(0, 0, 0);
+            Wheel_FLRotateTween = Wheel_FL.transform.DOLocalRotate(new Vector3(0, targetRotate, 0), .5f)
+                .SetEase(Ease.Linear)
+                .OnComplete(() =>
+                {
+                    Wheel_FL.transform.localRotation = Quaternion.Euler(0, 0, 0);
+                });
+
+            Wheel_FR.transform.localRotation = Quaternion.Euler(0, 0, 0);
+            Wheel_FRRotateTween = Wheel_FR.transform.DOLocalRotate(new Vector3(0, targetRotate, 0), .5f)
+                .SetEase(Ease.Linear)
+                .OnComplete(() =>
+                {
+                    Wheel_FR.transform.localRotation = Quaternion.Euler(0, 0, 0);
+                });
+        }
 
         protected sealed override void OnSetGamerData(GamerData pData)
         {

@@ -8,7 +8,7 @@ namespace Game.UI
 
     }
 
-    internal class GameEndPanel : UIPanel<FightPanel_Model>
+    internal class GameEndPanel : UIPanel<GameEndPanel_Model>
     {
         public override void OnAwake()
         {

@@ -54,6 +54,11 @@ namespace Game.UI
                 OnClickConnectMode(false);
             });
 
+            BtnUtil.SetClick(transform, "Center/SettingBtn", () =>
+            {
+                UILocate.UI.Show(UIPanelDef.GameSettingPanel);
+            });
+
             chooseConnectRoot.Com.gameObject.SetActive(false);
         }
 

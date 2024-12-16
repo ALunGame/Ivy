@@ -2,9 +2,11 @@ using Cysharp.Threading.Tasks;
 using Game.Helper;
 using GameContext;
 using IAEngine;
+using IAServer;
 using IAUI;
 using System;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 using YooAsset;
 
@@ -87,6 +89,8 @@ namespace IAFramework
 
         protected override void OnInit()
         {
+            LogUtility.Init();
+
             Debug.Log($"资源系统运行模式：{AssetPlayMode}");
             Application.targetFrameRate = 60;
             Application.runInBackground = true;

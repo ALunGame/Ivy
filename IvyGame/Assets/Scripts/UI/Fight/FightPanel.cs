@@ -1,5 +1,4 @@
-﻿using DG.Tweening;
-using Game.Network;
+﻿using Game.Network;
 using Game.Network.Client;
 using Gameplay;
 using Gameplay.GameData;
@@ -7,7 +6,6 @@ using IAConfig;
 using IAEngine;
 using IAUI;
 using Proto;
-using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
