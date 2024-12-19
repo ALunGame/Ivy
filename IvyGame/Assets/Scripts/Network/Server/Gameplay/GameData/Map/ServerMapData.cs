@@ -281,7 +281,7 @@ namespace Game.Network.Server
         /// <param name="camp"></param>
         public void SetRectCamp(RectInt pRect, int pCamp)
         {
-            NetServerLocate.Log.Log($"改变区域阵营>>{pRect}->{pCamp}");
+            Logger.Server?.Log($"改变区域阵营>>{pRect}->{pCamp}");
 
             //消息
             ChangeGridCampS2c msg = new ChangeGridCampS2c();

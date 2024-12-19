@@ -21,18 +21,18 @@ namespace IAUI
             RectTransform panelRootTrans = UILocate.UICenter.GetUILayerTrans(panelCnf.layer, panelCnf.canvas);
             if (panelRootTrans == null)
             {
-                UILocate.Log.LogError("创建界面节点失败,没有找到层级节点>>>", panelCnf.layer, panelCnf.canvas);
+                Logger.UI?.LogError("创建界面节点失败,没有找到层级节点>>>", panelCnf.layer, panelCnf.canvas);
                 return;
             }
             if (string.IsNullOrEmpty(panelCnf.prefab))
             {
-                UILocate.Log.LogError("创建界面节点失败,没有声明预制体>>>",panelCnf.prefab);
+                Logger.UI?.LogError("创建界面节点失败,没有声明预制体>>>",panelCnf.prefab);
                 return;
             }
             GameObject goAsset = IAFramework.GameEnv.Asset.LoadPrefab(panelCnf.prefab);
             if (goAsset == null)
             {
-                UILocate.Log.LogError("创建界面节点失败,没有找到预制体>>>", panelCnf.prefab);
+                Logger.UI?.LogError("创建界面节点失败,没有找到预制体>>>", panelCnf.prefab);
                 return;
             }
             GameObject panGo = GameObject.Instantiate(goAsset);
@@ -54,7 +54,7 @@ namespace IAUI
         {
             if (panelTrans == null)
             {
-                UILocate.Log.LogError("创建界面节点失败,没有节点>>>");
+                Logger.UI?.LogError("创建界面节点失败,没有节点>>>");
                 return;
             }
             //设置节点

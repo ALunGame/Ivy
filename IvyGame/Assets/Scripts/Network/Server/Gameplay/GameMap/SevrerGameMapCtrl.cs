@@ -59,7 +59,7 @@ namespace Game.Network.Server
         {
             if (!Config.MapCfg.ContainsKey(pMapId))
             {
-                NetServerLocate.Log.LogError($"进入地图出错，没有该配置{pMapId}");
+                Logger.Server?.LogError($"进入地图出错，没有该配置{pMapId}");
                 return;
             }
 

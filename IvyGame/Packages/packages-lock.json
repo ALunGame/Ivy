@@ -1,14 +1,16 @@
 {
   "dependencies": {
-    "com.ia.ecs": {
-      "version": "file:../IA-Packages/com.ia.ecs",
+    "com.cysharp.zstring": {
+      "version": "file:../IA-Packages/com.third.zstring",
       "depth": 0,
       "source": "local",
-      "dependencies": {
-        "com.ia.engine": "1.0.0",
-        "com.ia.toolkit": "1.0.0",
-        "com.ia.nodegraph": "1.0.0"
-      }
+      "dependencies": {}
+    },
+    "com.gm.classifiedconsolewindow": {
+      "version": "file:../IA-Packages/com.third.classified-console",
+      "depth": 0,
+      "source": "local",
+      "dependencies": {}
     },
     "com.ia.engine": {
       "version": "file:../IA-Packages/com.ia.engine",

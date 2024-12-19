@@ -173,7 +173,7 @@ namespace IAUI
 
             if (!panelTypeDict.ContainsKey(panelId))
             {
-                UILocate.Log.LogError("界面没有绑定>>>", panelId);
+                Logger.UI?.LogError("界面没有绑定>>>", panelId);
                 return null;
             }
 

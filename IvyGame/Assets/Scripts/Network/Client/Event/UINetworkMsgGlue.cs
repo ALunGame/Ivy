@@ -26,7 +26,8 @@ namespace Game.Network.Client
         {
             base.OnAfterShow(panel);
             NetworkEvent.RegisterEvent(panel.GetType().Name, msgId, msgFunc);
-            Debug.LogError($"OnAfterShow-->{panel.GetType().Name}::{msgId}");
+
+            Logger.UI.LogError($"OnAfterShow-->{panel.GetType().Name}::{msgId}");
         }
 
         public override void OnHide(InternalUIPanel panel)

@@ -72,7 +72,7 @@ namespace Gameplay.GameMode
 
         private void SendDiscovery()
         {
-            NetClientLocate.Log.Log("寻找服务器...", NetworkGeneral.ServerPort);
+            Logger.Client?.Log("寻找服务器...", NetworkGeneral.ServerPort);
             Client.Discovery(NetworkGeneral.ServerPort);
         }
 
@@ -88,7 +88,7 @@ namespace Gameplay.GameMode
                 createRoomMsg.Gamer.Name = "alun";
                 createRoomMsg.Gamer.fightMusicId = 1;
 
-                NetClientLocate.Log.LogWarning("发送创建房间>>>>", createRoomMsg.gameMode);
+                Logger.Client?.LogWarning("发送创建房间>>>>", createRoomMsg.gameMode);
                 NetClientLocate.Net.Send((ushort)RoomMsgDefine.CreateRoomC2s, createRoomMsg);
             }
             //发送加入房间
@@ -100,7 +100,7 @@ namespace Gameplay.GameMode
                 data.Gamer.Name = "zzz";
                 data.Gamer.Id = 101;
                 data.Gamer.fightMusicId = 1;
-                NetClientLocate.Log.LogWarning("发送加入>>>>", "zzz");
+                Logger.Client?.LogWarning("发送加入>>>>", "zzz");
                 NetClientLocate.Net.Send((ushort)RoomMsgDefine.JoinRoomC2s, data);
             }
         }

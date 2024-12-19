@@ -74,22 +74,30 @@ namespace Game.Network.Client
 
         public void OpenLog(bool pOpen)
         {
-            NetClientLocate.Log.OpenLog = pOpen;
+            if (Logger.Client == null)
+                return;
+            Logger.Client.OpenLog = pOpen;
         }
 
         public bool GetOpenLogState()
         {
-            return NetClientLocate.Log.OpenLog;
+            if (Logger.Client == null)
+                return false;
+            return Logger.Client.OpenLog;
         }
 
         public void OpenLogWarn(bool pOpen)
         {
-            NetClientLocate.Log.OpenWarn = pOpen;
+            if (Logger.Client == null)
+                return;
+            Logger.Client.OpenLogWarning = pOpen;
         }
 
         public bool GetOpenLogWarnState()
         {
-            return NetClientLocate.Log.OpenWarn;
+            if (Logger.Client == null)
+                return false;
+            return Logger.Client.OpenLogWarning;
         }
 
 
@@ -102,7 +110,7 @@ namespace Game.Network.Client
         {
             if (netManager == null)
             {
-                NetClientLocate.Log.Log("Discovery000...", NetworkGeneral.ServerPort);
+                Logger.Client?.Log("Discovery000...", NetworkGeneral.ServerPort);
                 return;
             }
             _cachedWriter.Reset();
@@ -123,7 +131,7 @@ namespace Game.Network.Client
         /// <param name="peer"></param>
         private void OnDiscoveryReceived(DiscoveryPacket packet, IPEndPoint remoteEndPoint)
         {
-            NetClientLocate.Log.Log("发现服务器》》》", remoteEndPoint, packet.DiscoveryStr);
+            Logger.Client?.Log("发现服务器》》》", remoteEndPoint, packet.DiscoveryStr);
             onDiscoveryServer?.Invoke(remoteEndPoint);
         }
 
@@ -145,7 +153,7 @@ namespace Game.Network.Client
             _cachedProtoPacket.PutProtoTypeName(msgData.GetType().FullName);
             _cachedProtoPacket.PutMsgData(ProtoBufTool.Encode(msgData));
 
-            NetClientLocate.Log.Log($"<color=#008EFF>Send:{msgId}->{msgData.GetType().FullName}</color>");
+            Logger.Client?.Log($"<color=#008EFF>Send:{msgId}->{msgData.GetType().FullName}</color>");
 
             netServer.Send(WriteSerializable(PacketType.Proto, _cachedProtoPacket), deliveryMethod);
         }

@@ -31,7 +31,7 @@ namespace Game.Network.SDispatcher
         {
             if (!IAConfig.Config.GameLevelCfg.ContainsKey(MsgData.gameCfgId))
             {
-                NetServerLocate.Log.LogError("开始游戏失败，没有对应的关卡:" + MsgData.gameCfgId);
+                Logger.Server?.LogError("开始游戏失败，没有对应的关卡:" + MsgData.gameCfgId);
                 return;
             }
 

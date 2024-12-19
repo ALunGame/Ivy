@@ -26,7 +26,7 @@ namespace Game.Network.Server
             }
             else
             {
-                NetServerLocate.Log.LogError("OnCreateGame失败！！该游戏模式尚未支持", ModeType);
+                Logger.Server?.LogError("OnCreateGame失败！！该游戏模式尚未支持", ModeType);
                 return;
             }
 

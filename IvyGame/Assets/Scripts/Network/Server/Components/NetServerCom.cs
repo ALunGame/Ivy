@@ -1,5 +1,6 @@
 ﻿using System;
 using UnityEngine;
+using static UnityEngine.Rendering.DebugUI;
 
 namespace Game.Network.Server.Com
 {
@@ -59,24 +60,31 @@ namespace Game.Network.Server.Com
 
         public void OpenLog(bool pOpen)
         {
-            NetServerLocate.Log.OpenLog = pOpen;
+            if (Logger.Server == null)
+                return;
+            Logger.Server.OpenLog = pOpen;
         }
 
         public bool GetOpenLogState()
         {
-            return NetServerLocate.Log.OpenLog;
+            if (Logger.Server == null)
+                return false;
+            return Logger.Server.OpenLog;
         }
 
         public void OpenLogWarn(bool pOpen)
         {
-            NetServerLocate.Log.OpenWarn = pOpen;
+            if (Logger.Server == null)
+                return;
+            Logger.Server.OpenLogWarning = pOpen;
         }
 
         public bool GetOpenLogWarnState()
         {
-            return NetServerLocate.Log.OpenWarn;
+            if (Logger.Server == null)
+                return false;
+            return Logger.Server.OpenLogWarning;
         }
-
 
         #endregion
     }

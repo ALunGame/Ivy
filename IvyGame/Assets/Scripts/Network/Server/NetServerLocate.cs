@@ -15,11 +15,6 @@ namespace Game.Network.Server
         public static NetServer Net { get; private set;}
 
         /// <summary>
-        /// 日志
-        /// </summary>
-        public static NetServerLog Log { get; private set; }
-
-        /// <summary>
         /// 逻辑层中心
         /// </summary>
         public static ServerTokenCenter TokenCenter { get; private set; }
@@ -33,7 +28,6 @@ namespace Game.Network.Server
         {
             NetCom = netServerCom;
             Net = netServerCom.NetServer;
-            Log = new NetServerLog();
             TokenCenter = new ServerTokenCenter();
 
             GameCtrl = new ServerGameplayCtrl();
@@ -43,7 +37,6 @@ namespace Game.Network.Server
         public static void Clear()
         {
             Net = null;
-            Log = null;
             TokenCenter = null;
 
             GameCtrl?.Clear();

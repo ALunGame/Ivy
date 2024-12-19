@@ -24,7 +24,7 @@ namespace Game.Network.SDispatcher
         {
             if (msgDict.ContainsKey(msgId))
             {
-                NetServerLocate.Log.LogError($"注册派发器失败，重复消息号:{msgId}");
+                Logger.Server?.LogError($"注册派发器失败，重复消息号:{msgId}");
                 return;
             }
 

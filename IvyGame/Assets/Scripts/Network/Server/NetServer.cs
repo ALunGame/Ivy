@@ -108,7 +108,7 @@ namespace Game.Network.Server
             _cachedProtoPacket.PutProtoTypeName(msgData.GetType().FullName);
             _cachedProtoPacket.PutMsgData(ProtoBufTool.Encode(msgData));
 
-            NetServerLocate.Log.Log($"<color=#FFBF00>Broadcast:{msgId}->{msgData.GetType().FullName}</color>");
+            Logger.Server?.Log($"<color=#FFBF00>Broadcast:{msgId}->{msgData.GetType().FullName}</color>");
             netManager.SendToAll(WriteSerializable(PacketType.Proto, _cachedProtoPacket), deliveryMethod, exPeer);
         }
 
@@ -121,7 +121,7 @@ namespace Game.Network.Server
             _cachedProtoPacket.PutProtoTypeName(msgData.GetType().FullName);
             _cachedProtoPacket.PutMsgData(ProtoBufTool.Encode(msgData));
 
-            NetServerLocate.Log.Log($"<color=#FFBF00>SendTo:{msgId}->{msgData.GetType().FullName}</color>");
+            Logger.Server?.Log($"<color=#FFBF00>SendTo:{msgId}->{msgData.GetType().FullName}</color>");
             peer.Send(WriteSerializable(PacketType.Proto, _cachedProtoPacket), deliveryMethod);
         }
 
@@ -144,7 +144,7 @@ namespace Game.Network.Server
         /// <param name="peer"></param>
         private void OnDiscoveryReceived(DiscoveryPacket packet, IPEndPoint remoteEndPoint)
         {
-            NetServerLocate.Log.Log("服务器发现客户端：" + packet.DiscoveryStr);
+            Logger.Server?.Log("服务器发现客户端：" + packet.DiscoveryStr);
 
             _cachedWriter.Reset();
             _cachedWriter.Put((byte)PacketType.Discovery);
@@ -173,7 +173,7 @@ namespace Game.Network.Server
                     NetServerLocate.TokenCenter.OnReceiveMsg(peer, reader);
                     break;
                 default:
-                    NetServerLocate.Log.Log("Unhandled packet: " + pt);
+                    Logger.Server?.Log("Unhandled packet: " + pt);
                     break;
             }
         }
@@ -196,11 +196,11 @@ namespace Game.Network.Server
                 switch (pt)
                 {
                     case PacketType.Discovery:
-                        NetServerLocate.Log.Log("客户端寻找服务器消息》》》", remoteEndPoint);
+                        Logger.Server?.Log("客户端寻找服务器消息》》》", remoteEndPoint);
                         packetProcessor.ReadAllPackets(reader, remoteEndPoint);
                         break;
                     default:
-                        NetServerLocate.Log.Log("Unhandled packet: " + pt);
+                        Logger.Server?.Log("Unhandled packet: " + pt);
                         break;
                 }
             }
@@ -238,7 +238,7 @@ namespace Game.Network.Server
         /// <exception cref="NotImplementedException"></exception>
         public void OnPeerConnected(NetPeer peer)
         {
-            NetServerLocate.Log.Log("[S] Player connected: ", peer.EndPoint);
+            Logger.Server?.Log("[S] Player connected: ", peer.EndPoint);
             NetServerLocate.TokenCenter.TokenEnter(peer);
         }
 
@@ -250,7 +250,7 @@ namespace Game.Network.Server
         /// <exception cref="NotImplementedException"></exception>
         public void OnPeerDisconnected(NetPeer peer, DisconnectInfo disconnectInfo)
         {
-            NetServerLocate.Log.Log("[S] Player disconnected: ", peer.EndPoint, disconnectInfo.Reason);
+            Logger.Server?.Log("[S] Player disconnected: ", peer.EndPoint, disconnectInfo.Reason);
             NetServerLocate.TokenCenter.TokenLeave(peer);
         }
 
@@ -261,7 +261,7 @@ namespace Game.Network.Server
         /// <param name="socketError"></param>
         public void OnNetworkError(IPEndPoint endPoint, SocketError socketError)
         {
-            NetServerLocate.Log.LogError("[S] NetworkError: ", endPoint, socketError);
+            Logger.Server?.LogError("[S] NetworkError: ", endPoint, socketError);
         } 
 
         #endregion

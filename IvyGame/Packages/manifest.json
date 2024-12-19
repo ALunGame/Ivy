@@ -1,6 +1,7 @@
 {
   "dependencies": {
-    "com.ia.ecs": "file:../IA-Packages/com.ia.ecs",
+    "com.cysharp.zstring": "file:../IA-Packages/com.third.zstring",
+    "com.gm.classifiedconsolewindow": "file:../IA-Packages/com.third.classified-console",
     "com.ia.engine": "file:../IA-Packages/com.ia.engine",
     "com.ia.nodegraph": "file:../IA-Packages/com.ia.nodegraph",
     "com.ia.server": "file:../IA-Packages/com.ia.server",

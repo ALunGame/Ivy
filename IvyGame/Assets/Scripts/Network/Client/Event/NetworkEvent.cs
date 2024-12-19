@@ -25,7 +25,7 @@ namespace Game.Network.Client
             {
                 if (item.useName == pUseName)
                 {
-                    NetClientLocate.Log.LogError($"注册网络事件失败，重复的使用者{pUseName}->{pMsgId}");
+                    Logger.Client?.LogError($"注册网络事件失败，重复的使用者{pUseName}->{pMsgId}");
                     return;
                 }
             }

@@ -34,7 +34,7 @@ namespace Game.Network.Server
             string protoTypeName = cachedCommand.ProtoTypeName;
             byte[] msgData = cachedCommand.MsgData;
 
-            NetServerLocate.Log.LogWarning($"<color=#E0C881>Rec:{msgId}->{protoTypeName}</color>");
+            Logger.Server?.LogWarning($"<color=#E0C881>Rec:{msgId}->{protoTypeName}</color>");
 
             dispatcherMapping.OnReceiveMsg(peer, msgId,ProtoBufTool.Decode(protoTypeName,msgData));
         }

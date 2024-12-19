@@ -56,7 +56,7 @@ namespace IAUI
             cacheRoot = panel.transform.Find(cacheRootPath);
             if (cacheRoot == null)
             {
-                UILocate.Log.LogError("缓存对象绑定失败，没有缓存存放路径！！", cacheRootPath);
+                Logger.UI?.LogError("缓存对象绑定失败，没有缓存存放路径！！", cacheRootPath);
             }
         }
 
@@ -110,7 +110,7 @@ namespace IAUI
             {
                 if (_Panel.transform == null)
                 {
-                    UILocate.Log.LogError("缓存对象绑定失败，界面被销毁！！");
+                    Logger.UI?.LogError("缓存对象绑定失败，界面被销毁！！");
                     return null;
                 }
                 else
@@ -119,13 +119,13 @@ namespace IAUI
                     {
                         cacheItem = _Panel.transform.Find(cacheItemName).gameObject;
                         if (cacheItem == null)
-                            UILocate.Log.LogError("缓存对象绑定失败，界面中没有缓存对象！！", cacheItemName, _Panel.transform.name);
+                            Logger.UI?.LogError("缓存对象绑定失败，界面中没有缓存对象！！", cacheItemName, _Panel.transform.name);
                     }
                     else
                     {
                         cacheItem = IAFramework.GameEnv.Asset.LoadPrefab(cacheItemName);
                         if (cacheItem == null)
-                            UILocate.Log.LogError("缓存对象绑定失败，没有缓存对象！！", cacheItemName);
+                            Logger.UI?.LogError("缓存对象绑定失败，没有缓存对象！！", cacheItemName);
                     }
                 }
             }

@@ -27,7 +27,7 @@ namespace IAUI
         {
             if (_Panel == null || _Panel.transform == null)
             {
-                UILocate.Log.LogError("组件绑定失败，界面被销毁！！");
+                Logger.UI?.LogError("组件绑定失败，界面被销毁！！");
                 return;
             }
             if (string.IsNullOrEmpty(_ComPath))
@@ -38,7 +38,7 @@ namespace IAUI
             Transform trans = _Panel.transform.Find(_ComPath);
             if (trans == null)
             {
-                UILocate.Log.LogError("组件绑定失败，路径非法！！", _ComPath);
+                Logger.UI?.LogError("组件绑定失败，路径非法！！", _ComPath);
                 return;
             }
             _ComTrans = trans;

@@ -6,11 +6,8 @@
 
         public static UIServer UI { get; private set; }
 
-        public static UILogServer Log { get; private set; }
-
         static UILocate()
         {
-            Log = new UILogServer();
         }
 
         public static void Init()
@@ -28,7 +25,6 @@
         {
             UICenter = null;
             UI = null;
-            Log = null;
         }
     }
 }

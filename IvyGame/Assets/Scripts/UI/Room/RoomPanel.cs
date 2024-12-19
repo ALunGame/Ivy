@@ -41,7 +41,7 @@ namespace Game.UI
                 }
 
                 GameModeType modeType = GameplayCtrl.Instance.GameModeType;
-                NetClientLocate.Log.LogWarning("发送开始游戏》》》》》", modeType);
+                Logger.Client?.LogWarning("发送开始游戏》》》》》", modeType);
 
                 StartGameC2s msg = new StartGameC2s();
                 msg.gameCfgId = 1;
