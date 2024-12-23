@@ -18,9 +18,9 @@ namespace IAToolkit
                     mSandboxDir = Application.persistentDataPath;
 #if UNITY_EDITOR || UNITY_STANDALONE_WIN
                     mSandboxDir = Path.Combine(Path.GetDirectoryName(Application.dataPath), "Sandbox").Replace("\\", "/");
-#endif
                     if (!Directory.Exists(mSandboxDir))
                         Directory.CreateDirectory(mSandboxDir);
+#endif
                 }
                 return mSandboxDir;
             }

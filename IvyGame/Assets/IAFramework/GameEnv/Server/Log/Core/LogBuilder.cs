@@ -4,6 +4,7 @@ namespace IAFramework.Log
 {
     public static class LogBuilder
     {
+        private static string FormatStr = "[{0}]";
         private static Utf8ValueStringBuilder logBuilder = ZString.CreateUtf8StringBuilder();
         private static Utf8ValueStringBuilder strackLogBuilder = ZString.CreateUtf8StringBuilder();
 
@@ -29,34 +30,34 @@ namespace IAFramework.Log
         public static Utf8ValueStringBuilder BuildLogMsgWithStrack(string pMsg)
         {
             strackLogBuilder.Clear();
-            strackLogBuilder.AppendLine(pMsg);
+            strackLogBuilder.AppendFormat(FormatStr,pMsg);
+            strackLogBuilder.AppendLine();
 
             var stack = new System.Diagnostics.StackTrace(1, false);
 
-            for (int i = 0; i < stack.FrameCount; i++)
+            if (stack.FrameCount <= 3)
             {
-                var stackFrame = stack.GetFrame(i);
-
-                //非用户代码,系统方法及后面的都是系统调用，不获取用户代码调用结束
-                if (System.Diagnostics.StackFrame.OFFSET_UNKNOWN == stackFrame.GetILOffset()) 
-                    break;
-                var methd = stackFrame.GetMethod();
-
-                strackLogBuilder.Append(methd.DeclaringType.FullName);
-                strackLogBuilder.Append(".");
-                strackLogBuilder.Append(methd.Name);
-
-                //最后
-                if (i > stack.FrameCount)
+                return strackLogBuilder;
+            }
+            else
+            {
+                for (int i = 3; i < stack.FrameCount; i++)
                 {
-                    break;
-                }
-                else
-                {
+                    var stackFrame = stack.GetFrame(i);
+
+                    //非用户代码,系统方法及后面的都是系统调用，不获取用户代码调用结束
+                    if (System.Diagnostics.StackFrame.OFFSET_UNKNOWN == stackFrame.GetILOffset())
+                        break;
+                    var methd = stackFrame.GetMethod();
+
+                    strackLogBuilder.Append(methd.DeclaringType.FullName);
+                    strackLogBuilder.Append(".");
+                    strackLogBuilder.Append(methd.Name);
+
                     strackLogBuilder.AppendLine();
                 }
+                return strackLogBuilder;
             }
-            return strackLogBuilder;
         }
     }
 }

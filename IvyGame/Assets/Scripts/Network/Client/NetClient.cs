@@ -74,32 +74,25 @@ namespace Game.Network.Client
 
         public void OpenLog(bool pOpen)
         {
-            if (Logger.Client == null)
-                return;
-            Logger.Client.OpenLog = pOpen;
+            Logger.Client?.SetOpenLog(pOpen);
         }
 
         public bool GetOpenLogState()
         {
-            if (Logger.Client == null)
-                return false;
-            return Logger.Client.OpenLog;
+            bool? isOpen = Logger.Client?.GetOpenLog();
+            return isOpen != null && (bool)isOpen;
         }
 
         public void OpenLogWarn(bool pOpen)
         {
-            if (Logger.Client == null)
-                return;
-            Logger.Client.OpenLogWarning = pOpen;
+            Logger.Client?.SetOpenLogWarning(pOpen);
         }
 
         public bool GetOpenLogWarnState()
         {
-            if (Logger.Client == null)
-                return false;
-            return Logger.Client.OpenLogWarning;
+            bool? isOpen = Logger.Client?.GetOpenLogWarning();
+            return isOpen != null && (bool)isOpen;
         }
-
 
         #endregion
 

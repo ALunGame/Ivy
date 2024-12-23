@@ -19,7 +19,7 @@ namespace ClassifiedConsole.Runtime
                 logWriter.logFileName = CDebugSubSystemEnumConfig.GetSubSystemName(subSystem);
             }
             else
-            {
+          {
                 var systemId = CDebugSubSystemEnumConfig.subSystemNullName;
                 logWriter.logFileName = CDebugSubSystemEnumConfig.GetSubSystemName(systemId);
             }

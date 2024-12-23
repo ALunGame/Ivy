@@ -6,12 +6,6 @@
       "source": "local",
       "dependencies": {}
     },
-    "com.gm.classifiedconsolewindow": {
-      "version": "file:../IA-Packages/com.third.classified-console",
-      "depth": 0,
-      "source": "local",
-      "dependencies": {}
-    },
     "com.ia.engine": {
       "version": "file:../IA-Packages/com.ia.engine",
       "depth": 0,
@@ -258,6 +252,12 @@
         "com.unity.render-pipelines.core": "17.0.3",
         "com.unity.searcher": "4.9.2"
       }
+    },
+    "com.unity.sharp-zip-lib": {
+      "version": "file:../IA-Packages/com.unity.sharp-zip-lib",
+      "depth": 0,
+      "source": "local",
+      "dependencies": {}
     },
     "com.unity.splines": {
       "version": "2.6.1",

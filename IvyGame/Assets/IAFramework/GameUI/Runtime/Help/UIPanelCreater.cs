@@ -26,7 +26,7 @@ namespace IAUI
             }
             if (string.IsNullOrEmpty(panelCnf.prefab))
             {
-                Logger.UI?.LogError("创建界面节点失败,没有声明预制体>>>",panelCnf.prefab);
+                Logger.UI?.LogError("创建界面节点失败,没有声明预制体>>>", panelCnf.prefab);
                 return;
             }
             GameObject goAsset = IAFramework.GameEnv.Asset.LoadPrefab(panelCnf.prefab);

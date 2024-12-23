@@ -1,6 +1,5 @@
 ﻿using DG.Tweening;
 using Game;
-using Game.Helper;
 using Game.Network;
 using Gameplay.GameData;
 using IAEngine;
@@ -71,6 +70,9 @@ namespace Gameplay.GameMap.Actor
         private Transform Wheel_FR;
         private Tween Wheel_FRRotateTween;
 
+        public Transform Wheel_RL;
+        public Transform Wheel_RR;
+
         private float preMoveTotalTime = NetworkLogicTimer.FixedDelta * 3;
         private Vector2 currTargetPos;
         private Vector3 currMoveTargetPos;
@@ -80,6 +82,8 @@ namespace Gameplay.GameMap.Actor
         {
             Wheel_FL = ActorDisplay.DisplayGo.transform.Find("Mesh/Wheel_FL");
             Wheel_FR = ActorDisplay.DisplayGo.transform.Find("Mesh/Wheel_FR");
+            Wheel_RL = ActorDisplay.DisplayGo.transform.Find("Mesh/Wheel_RL");
+            Wheel_RR = ActorDisplay.DisplayGo.transform.Find("Mesh/Wheel_RR");
         }
 
         #region 生命周期

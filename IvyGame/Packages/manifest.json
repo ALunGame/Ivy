@@ -1,7 +1,6 @@
 {
   "dependencies": {
     "com.cysharp.zstring": "file:../IA-Packages/com.third.zstring",
-    "com.gm.classifiedconsolewindow": "file:../IA-Packages/com.third.classified-console",
     "com.ia.engine": "file:../IA-Packages/com.ia.engine",
     "com.ia.nodegraph": "file:../IA-Packages/com.ia.nodegraph",
     "com.ia.server": "file:../IA-Packages/com.ia.server",
@@ -17,6 +16,7 @@
     "com.unity.multiplayer.center": "1.0.0",
     "com.unity.render-pipelines.universal": "17.0.3",
     "com.unity.scriptablebuildpipeline": "2.1.5",
+    "com.unity.sharp-zip-lib": "file:../IA-Packages/com.unity.sharp-zip-lib",
     "com.unity.test-framework": "1.4.5",
     "com.unity.timeline": "1.8.7",
     "com.unity.ugui": "2.0.0",

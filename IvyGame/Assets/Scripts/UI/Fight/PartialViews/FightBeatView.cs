@@ -5,6 +5,7 @@ using IAFramework;
 using IAUI;
 using Proto;
 using ProtoBuf;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -39,7 +40,7 @@ namespace Game.UI
         private float beatGoOffset = 70;
         private float beatGoSpeed = 0;
         private List<GameObject> beatGoList = new List<GameObject>();
-        private Tween beatClickTipTween;
+        private Tween inputAnimTween;
 
         public override void OnAwake()
         {
@@ -58,6 +59,11 @@ namespace Game.UI
         {
             UpdateBeatInfo();
             UpdateDrumsPoints(pDeltaTime);
+        }
+
+        public override void OnHide()
+        {
+            inputAnimTween?.Kill();
         }
 
         private void ResetAudioInfo()
@@ -96,7 +102,7 @@ namespace Game.UI
 
             //中间节奏提示
             Transform drumsTipTrans = transform.Find("BeatClickTip");
-            beatClickTipTween = drumsTipTrans.DOScaleY(1.5f, perBeatTime).SetLoops(-1, LoopType.Restart).SetEase(Ease.Linear);
+            drumsTipTrans.DOScaleY(1.5f, perBeatTime).SetLoops(-1, LoopType.Restart).SetEase(Ease.Linear);
         }
 
         private void UpdateBeatInfo()
@@ -129,7 +135,8 @@ namespace Game.UI
 
         public MoveClickType OnClickMove()
         {
-            float clickPos = nextBeatPos - currAudioPos;
+            float clickAudioPos = (float)(AudioSettings.dspTime - playStartTime);
+            float clickPos = Math.Abs(nextBeatPos - clickAudioPos);
             float rangeValue = clickPos / perBeatTime;
 
             MoveClickType clickType;
@@ -164,7 +171,7 @@ namespace Game.UI
 
         private void OnRecGamerInputS2c(IExtensible pMsg)
         {
-            beatClickTipTween?.Kill();
+            inputAnimTween?.Kill();
 
             clickTypeTipTrans.Com.gameObject.SetActive(true);
 
@@ -198,7 +205,7 @@ namespace Game.UI
 
             RectTransform rectTrans = clickTypeTipTrans.Com.GetComponent<RectTransform>();
             rectTrans.localScale = new Vector3(0.5f, 0.5f, 0.5f);
-            beatClickTipTween = rectTrans.DOScale(doScaleValue, 0.2f).SetEase(Ease.OutElastic).OnComplete(() =>
+            inputAnimTween = rectTrans.DOScale(doScaleValue, 0.2f).SetEase(Ease.OutElastic).OnComplete(() =>
             {
                 clickTypeTipTrans.Com.gameObject.SetActive(false);
             });

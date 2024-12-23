@@ -79,7 +79,7 @@ namespace Game.Network.Server
             }
             else
             {
-                Logger.Server?.LogError("玩家复活失败，没有空余位置",pGamer.GamerUid);
+                Logger.Server?.LogError("玩家复活失败，没有空余位置", pGamer.GamerUid);
             }
         }
     }

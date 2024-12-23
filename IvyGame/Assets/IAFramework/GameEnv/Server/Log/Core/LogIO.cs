@@ -14,7 +14,7 @@ namespace IAFramework.Log
     {
         struct LogInfo
         {
-            const string LogFormatStr = "[{0}][{1}][{2}][{3}][{4}]";
+            const string LogFormatStr = "[{0}][{1}][{2}][{3}]{4}";
 
             public int index;
             public LogModule module;
@@ -64,7 +64,7 @@ namespace IAFramework.Log
             this.writeFileStream?.Close();
         }
 
-        public void WriterLog(LogModule pLogModule, LogLevel pLogLevel, params object[] pMsgs)
+        public void WriterLog(LogModule pLogModule, LogLevel pLogLevel, string pMsg)
         {
             logSystem.AddLogIndex();
 
@@ -73,14 +73,14 @@ namespace IAFramework.Log
             logInfo.module = pLogModule;
             logInfo.level = pLogLevel;
             logInfo.time = DateTime.Now;
-            logInfo.msg = LogBuilder.BuildLogMsg(ZString.Concat(pMsgs));
+            logInfo.msg = LogBuilder.BuildLogMsg(pMsg);
 
             writeLogQueue.Enqueue(logInfo);
 
             WriteLogInfo_Task();
         }
 
-        public void WriterLogWithStrack(LogModule pLogModule, LogLevel pLogLevel, params object[] pMsgs)
+        public void WriterLogWithStrack(LogModule pLogModule, LogLevel pLogLevel, string pMsg)
         {
             logSystem.AddLogIndex();
 
@@ -89,7 +89,7 @@ namespace IAFramework.Log
             logInfo.module = pLogModule;
             logInfo.level = pLogLevel;
             logInfo.time = DateTime.Now;
-            logInfo.msg = LogBuilder.BuildLogMsgWithStrack(ZString.Concat(pMsgs));
+            logInfo.msg = LogBuilder.BuildLogMsgWithStrack(pMsg);
 
             writeLogQueue.Enqueue(logInfo);
 

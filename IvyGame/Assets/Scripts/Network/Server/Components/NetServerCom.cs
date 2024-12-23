@@ -60,30 +60,24 @@ namespace Game.Network.Server.Com
 
         public void OpenLog(bool pOpen)
         {
-            if (Logger.Server == null)
-                return;
-            Logger.Server.OpenLog = pOpen;
+            Logger.Client?.SetOpenLog(pOpen);
         }
 
         public bool GetOpenLogState()
         {
-            if (Logger.Server == null)
-                return false;
-            return Logger.Server.OpenLog;
+            bool? isOpen = Logger.Client?.GetOpenLog();
+            return isOpen != null && (bool)isOpen;
         }
 
         public void OpenLogWarn(bool pOpen)
         {
-            if (Logger.Server == null)
-                return;
-            Logger.Server.OpenLogWarning = pOpen;
+            Logger.Client?.SetOpenLogWarning(pOpen);
         }
 
         public bool GetOpenLogWarnState()
         {
-            if (Logger.Server == null)
-                return false;
-            return Logger.Server.OpenLogWarning;
+            bool? isOpen = Logger.Client?.GetOpenLogWarning();
+            return isOpen != null && (bool)isOpen;
         }
 
         #endregion

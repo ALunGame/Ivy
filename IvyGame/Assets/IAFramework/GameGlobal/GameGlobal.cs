@@ -97,6 +97,11 @@ namespace IAFramework
             StartGame().Forget();
         }
 
+        private void Update()
+        {
+            RemoteMsgHelper.UpdateRequests();
+        }
+
         private void OnDestroy()
         {
             DestroyGame();
