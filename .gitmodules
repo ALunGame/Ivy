@@ -1,0 +1,3 @@
+[submodule "IvyGame/IA-Packages"]
+	path = IvyGame/IA-Packages
+	url = git@github.com:ALunGame/IA-Packages.git
