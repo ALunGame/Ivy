@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:yousandi.cn,2023:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b05c83971e3dca94f9fa460d396385e5, type: 3}
+  m_Name: BuildinCatalog
+  m_EditorClassIdentifier: 
+  PackageName: AudioPackage
+  PackageVersion: 2024-12-25-999
+  Wrappers:
+  - BundleGUID: 049ce6c340111fe1f4a804039317edc7
+    FileName: audiopackage_assets_gameasset_audio_bgm_bg_fight_049ce6c340111fe1f4a804039317edc7.bundle
+  - BundleGUID: f906a3adb9748ffdc6f2fb47ba442a88
+    FileName: audiopackage_assets_gameasset_audio_bgm_bg_game_f906a3adb9748ffdc6f2fb47ba442a88.bundle

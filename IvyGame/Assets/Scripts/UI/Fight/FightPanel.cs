@@ -61,6 +61,16 @@ namespace Game.UI
             {
                 RefreshGamerInfos();
             });
+
+#if UNITY_STANDALONE_WIN
+            transform.Find("Left/MoveBox").gameObject.SetActive(false);
+            transform.Find("Right/SkillBox").gameObject.SetActive(false);
+            transform.Find("Left/PCTip").gameObject.SetActive(true);
+#elif UNITY_ANDROID || UNITY_IOS
+            transform.Find("Left/MoveBox").gameObject.SetActive(true);
+            transform.Find("Right/SkillBox").gameObject.SetActive(true);
+            transform.Find("Left/PCTip").gameObject.SetActive(false);
+#endif
         }
 
         public override void OnShow()
@@ -214,7 +224,7 @@ namespace Game.UI
         public void PlayFightAudio()
         {
             FightBeatView_Model model = fightBeatView.GetPanelModel<FightBeatView_Model>();
-            model.bgmName = "turkey120";
+            model.bgmName = "fight125";
         }
 
         #endregion

@@ -127,7 +127,7 @@ namespace Game.UI
 
         private void Refresh_PlayerInfo(GameObject playerGo, GamerData gamerData)
         {
-
+            TextUtil.SetText(playerGo.transform, "Name", gamerData.Name);
         }
     }
 }

@@ -1,6 +1,7 @@
 using Game.Network.Client;
 using Game.UITest;
 using Gameplay;
+using IAFramework;
 using IAUI;
 using Proto;
 using UnityEngine;
@@ -25,6 +26,8 @@ namespace Game.UI
 
         public override void OnAwake()
         {
+            GameEnv.Audio.PlayBGM("Bg_Game");
+
             BtnUtil.SetClick(transform, "Center/GameMode/Local", () =>
             {
                 CheckAudioPanel_Model model = UILocate.UI.GetPanelModel<CheckAudioPanel_Model>(UIPanelDef.Test_CheckAudioPanel);
@@ -54,7 +57,7 @@ namespace Game.UI
                 OnClickConnectMode(false);
             });
 
-            BtnUtil.SetClick(transform, "Center/SettingBtn", () =>
+            BtnUtil.SetClick(transform, "Top/Bg/SettingBtn", () =>
             {
                 UILocate.UI.Show(UIPanelDef.GameSettingPanel);
             });
@@ -76,11 +79,11 @@ namespace Game.UI
             }
             else if (modeType == GameModeType.Single)
             {
-                chooseConnectRoot.Com.anchoredPosition = new Vector2(480, singelBtn.Com.anchoredPosition.y);
+                chooseConnectRoot.Com.anchoredPosition = new Vector2(-319, singelBtn.Com.anchoredPosition.y);
             }
             else if (modeType == GameModeType.Team)
             {
-                chooseConnectRoot.Com.anchoredPosition = new Vector2(480, teamBtn.Com.anchoredPosition.y);
+                chooseConnectRoot.Com.anchoredPosition = new Vector2(-319, teamBtn.Com.anchoredPosition.y);
             }
         }
 

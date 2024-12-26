@@ -80,7 +80,7 @@ namespace Game.UI
 
         private void PlayBGM()
         {
-            GameEnv.Audio.PlayBGM(BindModel.bgmName);
+            GameEnv.Audio.PlayBGM(Config.FightDrumsMusicCfg[BindModel.bgmName].res);
             playStartTime = AudioSettings.dspTime;
         }
 

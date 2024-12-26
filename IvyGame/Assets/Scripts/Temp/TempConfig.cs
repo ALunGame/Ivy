@@ -69,7 +69,7 @@ namespace Game
         };
 
 
-        public static int MaxGamerCnt = 1;
+        public static int MaxGamerCnt = 15;
 
         static TempConfig()
         {

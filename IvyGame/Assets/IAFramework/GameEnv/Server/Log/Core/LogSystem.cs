@@ -49,6 +49,9 @@ namespace IAFramework.Log
                 return LogModulePathDict[pLogModule];
             }
 
+            if (!Directory.Exists(LogRootPath))
+                Directory.CreateDirectory(LogRootPath);
+
             string logDir = Path.Combine(LogRootPath, pDirName);
             if (!Directory.Exists(logDir))
                 Directory.CreateDirectory(logDir);
@@ -63,6 +66,10 @@ namespace IAFramework.Log
 
         public static void CheckDelLog()
         {
+            if (!Directory.Exists(LogRootPath))
+            {
+                return;
+            }
             string[] dirs = Directory.GetDirectories(LogRootPath);
             if (dirs == null || dirs.Length < SaveLogCnt)
             {

@@ -189,6 +189,7 @@ namespace IAFramework
             bgmGo.transform.SetParent(transform);
             AudioSource bgmAudio = bgmGo.AddComponent<AudioSource>();
             bgmAudio.spatialBlend = -1;
+            bgmAudio.loop = true;
             BGMAudioSource = bgmAudio;
         }
 
@@ -228,7 +229,7 @@ namespace IAFramework
             // 降低音量，也就是淡出
             while (currTime < pFadeOutTime)
             {
-                await UniTask.WaitForEndOfFrame(doFadeTaskCancleToken.Token);
+                await UniTask.Yield(PlayerLoopTiming.LastPostLateUpdate);
 
                 if (!isPause) 
                     currTime += Time.deltaTime;
@@ -244,7 +245,7 @@ namespace IAFramework
             // 提高音量，也就是淡入
             while (currTime < pFadeInTime)
             {
-                await UniTask.WaitForEndOfFrame(doFadeTaskCancleToken.Token);
+                await UniTask.Yield(PlayerLoopTiming.LastPostLateUpdate);
 
                 if (!isPause) 
                     currTime += Time.deltaTime;
@@ -286,7 +287,7 @@ namespace IAFramework
                 // 时间只要还好，一直检测
                 while (time > 0)
                 {
-                    await UniTask.WaitForEndOfFrame(bgWithClipsTaskCancleToken.Token);
+                    await UniTask.Yield(PlayerLoopTiming.LastPostLateUpdate);
                     if (!isPause) 
                         time -= Time.deltaTime;
                 }

@@ -85,7 +85,7 @@ namespace Gameplay.GameMode
                 createRoomMsg.gameMode = (int)GameModeType.Single;
                 createRoomMsg.Gamer = new JoinGamerInfo();
                 createRoomMsg.Gamer.Id = 101;
-                createRoomMsg.Gamer.Name = "alun";
+                createRoomMsg.Gamer.Name = "aaa";
                 createRoomMsg.Gamer.fightMusicId = 1;
 
                 Logger.Client?.LogWarning("发送创建房间>>>>", createRoomMsg.gameMode);
@@ -97,7 +97,7 @@ namespace Gameplay.GameMode
                 //发送加入
                 JoinRoomC2s data = new JoinRoomC2s();
                 data.Gamer = new JoinGamerInfo();
-                data.Gamer.Name = "zzz";
+                data.Gamer.Name = "bbb";
                 data.Gamer.Id = 101;
                 data.Gamer.fightMusicId = 1;
                 Logger.Client?.LogWarning("发送加入>>>>", "zzz");

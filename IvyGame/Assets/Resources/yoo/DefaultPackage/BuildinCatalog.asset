@@ -1,5 +1,5 @@
 %YAML 1.1
-%TAG !u! tag:unity3d.com,2011:
+%TAG !u! tag:yousandi.cn,2023:
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -13,57 +13,63 @@ MonoBehaviour:
   m_Name: BuildinCatalog
   m_EditorClassIdentifier: 
   PackageName: DefaultPackage
-  PackageVersion: 2024-12-12-700
+  PackageVersion: 2024-12-25-998
   Wrappers:
-  - BundleGUID: 4f260d548211231818451b91abf51280
-    FileName: defaultpackage_assets_gameasset_common_materials_meshdefault.bundle
-  - BundleGUID: 5e623ff57e6013e0f1899c0a6e1132eb
-    FileName: defaultpackage_assets_gameasset_effect_gamer_die_mat.bundle
-  - BundleGUID: aea28b0f5507292908f3119bf76ba222
-    FileName: defaultpackage_assets_gameasset_effect_gamer_die_prefab.bundle
-  - BundleGUID: f8901ed36bcfa01a42fc77d4dab2b528
-    FileName: defaultpackage_assets_gameasset_effect_gamer_wheel_mat.bundle
-  - BundleGUID: 3a7381719d36dee8d33102d75a5d52fe
-    FileName: defaultpackage_assets_gameasset_effect_gamer_wheel_prefab.bundle
-  - BundleGUID: c0f78fc3a0dba87d651b6f057351bec5
-    FileName: defaultpackage_assets_gameasset_effect_gamer_wheel_tex.bundle
-  - BundleGUID: ccae1dc0224294e8369f63d058f4c1d2
-    FileName: defaultpackage_assets_gameasset_gamer_gamer_car_mesh.bundle
-  - BundleGUID: 7c03935728a6002820e8a26f76d205de
-    FileName: defaultpackage_assets_gameasset_gamer_gamer_car_prefab_gamer_car.bundle
-  - BundleGUID: f67a91e846958917f3d4e01e29b17928
-    FileName: defaultpackage_assets_gameasset_gamer_path_prefab_gamerpath.bundle
-  - BundleGUID: 6439efb7588a8855da1e4d62af0b118f
-    FileName: defaultpackage_assets_gameasset_map_buildings_building_stadium_mesh.bundle
-  - BundleGUID: a913c1fc0bade68ad0d05c8b3c593726
-    FileName: defaultpackage_assets_gameasset_map_buildings_building_stadium_prefab.bundle
-  - BundleGUID: ba7b1bb719ab74476910090951342ca1
-    FileName: defaultpackage_assets_gameasset_map_maps_common_materials.bundle
-  - BundleGUID: 41c41dfe072d89ed2462e095ac5f7737
-    FileName: defaultpackage_assets_gameasset_map_maps_common_prefabs.bundle
-  - BundleGUID: d0e038eb5d9d712e8a2897f3ed7fd356
-    FileName: defaultpackage_assets_gameasset_map_maps_common_prefabs_grid.bundle
-  - BundleGUID: 219ab2459059046c31586169b3796144
-    FileName: defaultpackage_assets_gameasset_map_maps_common_textures.bundle
-  - BundleGUID: 77ec78dbd5c64c52dbe757a6e9975fd6
-    FileName: defaultpackage_assets_gameasset_map_maps_single.bundle
-  - BundleGUID: f4e73de192dafa032cedea3090f93713
-    FileName: defaultpackage_assets_gameasset_ui_prefabs_fight_fightpanel.bundle
-  - BundleGUID: d6253c9e7e3a5cdfa8711c3a897c2cc0
-    FileName: defaultpackage_assets_gameasset_ui_prefabs_gameend_gameendpanel.bundle
-  - BundleGUID: 8536c8284f8de9251469b1133abc3f01
-    FileName: defaultpackage_assets_gameasset_ui_prefabs_levelloading_levelloadingpanel.bundle
-  - BundleGUID: a4c7877973cc303c9c386ec3bbb0399f
-    FileName: defaultpackage_assets_gameasset_ui_prefabs_maingame_maingamepanel.bundle
-  - BundleGUID: 2844dc699f01d350708f2db868aee4cc
-    FileName: defaultpackage_assets_gameasset_ui_prefabs_room_roompanel.bundle
-  - BundleGUID: 987d78058385addabf6eec17303dafab
-    FileName: defaultpackage_assets_gameasset_ui_prefabs_test.bundle
-  - BundleGUID: dc318be49963c5f095afeba62f31961e
-    FileName: defaultpackage_share_assets_aaa_temp.bundle
-  - BundleGUID: b322de68602761fec87d80d7c0626824
-    FileName: defaultpackage_share_assets_art_temp_simplepoly_city_-_low_poly_assets_models.bundle
-  - BundleGUID: 14856d6541685874232d469930466f83
-    FileName: defaultpackage_share_packages_com_unity_render-pipelines_universal_runtime_materials.bundle
-  - BundleGUID: f048178a33ffaa79fe92360a86cfa6e7
-    FileName: defaultpackage_unityshaders.bundle
+  - BundleGUID: 6a77c60ce4614fbbc1cdf7ee725c37c0
+    FileName: defaultpackage_assets_gameasset_common_materials_meshdefault_6a77c60ce4614fbbc1cdf7ee725c37c0.bundle
+  - BundleGUID: 46c415257458e4b627e6e74fbd7c6682
+    FileName: defaultpackage_assets_gameasset_effect_gamer_die_mat_46c415257458e4b627e6e74fbd7c6682.bundle
+  - BundleGUID: 73e0d0403cc2a5c8611e62baed06c06c
+    FileName: defaultpackage_assets_gameasset_effect_gamer_die_prefab_73e0d0403cc2a5c8611e62baed06c06c.bundle
+  - BundleGUID: ed7ea7c4b21bab5c258adfa71fba77d9
+    FileName: defaultpackage_assets_gameasset_effect_gamer_wheel_mat_ed7ea7c4b21bab5c258adfa71fba77d9.bundle
+  - BundleGUID: 79ad1e7a1a2586727701a5a5951f1f0e
+    FileName: defaultpackage_assets_gameasset_effect_gamer_wheel_prefab_79ad1e7a1a2586727701a5a5951f1f0e.bundle
+  - BundleGUID: 21f7b22bbaa4441a666b2dc81dc6b574
+    FileName: defaultpackage_assets_gameasset_effect_gamer_wheel_tex_21f7b22bbaa4441a666b2dc81dc6b574.bundle
+  - BundleGUID: ed457cd9f9b64abbc0826db9efd408d5
+    FileName: defaultpackage_assets_gameasset_gamer_gamer_car_mesh_ed457cd9f9b64abbc0826db9efd408d5.bundle
+  - BundleGUID: 5051b3ea91fc9f24b44c4e0fffd52d1e
+    FileName: defaultpackage_assets_gameasset_gamer_gamer_car_prefab_gamer_car_5051b3ea91fc9f24b44c4e0fffd52d1e.bundle
+  - BundleGUID: 97d0de0c8ebee188e56363aac25a8484
+    FileName: defaultpackage_assets_gameasset_gamer_path_prefab_gamerpath_97d0de0c8ebee188e56363aac25a8484.bundle
+  - BundleGUID: f95b22231f65a54050fc3a2a59efe2d4
+    FileName: defaultpackage_assets_gameasset_map_buildings_building_stadium_mesh_f95b22231f65a54050fc3a2a59efe2d4.bundle
+  - BundleGUID: 3054e8bcb7d56f7131f7e01b6a5c876d
+    FileName: defaultpackage_assets_gameasset_map_buildings_building_stadium_prefab_3054e8bcb7d56f7131f7e01b6a5c876d.bundle
+  - BundleGUID: c95897e8258a544a2fc2a0dfb8b2ab8e
+    FileName: defaultpackage_assets_gameasset_map_maps_common_materials_c95897e8258a544a2fc2a0dfb8b2ab8e.bundle
+  - BundleGUID: 6d7fae88ed0c99195f41363a5f8c5229
+    FileName: defaultpackage_assets_gameasset_map_maps_common_prefabs_6d7fae88ed0c99195f41363a5f8c5229.bundle
+  - BundleGUID: 0f32992618adc91370b49090f543f272
+    FileName: defaultpackage_assets_gameasset_map_maps_common_prefabs_grid_0f32992618adc91370b49090f543f272.bundle
+  - BundleGUID: a1e15d3b6d6b1ec452d0e1e3670c2e83
+    FileName: defaultpackage_assets_gameasset_map_maps_common_textures_a1e15d3b6d6b1ec452d0e1e3670c2e83.bundle
+  - BundleGUID: 577cf35b369d8a13d09d54ebe27695cd
+    FileName: defaultpackage_assets_gameasset_map_maps_single_577cf35b369d8a13d09d54ebe27695cd.bundle
+  - BundleGUID: 7c361674a2543e5410ef20d1d1990336
+    FileName: defaultpackage_assets_gameasset_ui_prefabs_fight_fightpanel_7c361674a2543e5410ef20d1d1990336.bundle
+  - BundleGUID: 4a2f7bf8280dc83665b602e17f5686a8
+    FileName: defaultpackage_assets_gameasset_ui_prefabs_gameend_gameendpanel_4a2f7bf8280dc83665b602e17f5686a8.bundle
+  - BundleGUID: 4edafe538a449176293b6849d12e1f1f
+    FileName: defaultpackage_assets_gameasset_ui_prefabs_gamesetting_gamesettingpanel_4edafe538a449176293b6849d12e1f1f.bundle
+  - BundleGUID: 3f04534d79a4611b0e7fe675fb907e25
+    FileName: defaultpackage_assets_gameasset_ui_prefabs_levelloading_levelloadingpanel_3f04534d79a4611b0e7fe675fb907e25.bundle
+  - BundleGUID: 5a3ab5eecdaed651dcc376a093114f01
+    FileName: defaultpackage_assets_gameasset_ui_prefabs_maingame_maingamepanel_5a3ab5eecdaed651dcc376a093114f01.bundle
+  - BundleGUID: eea86239b25553991b5221cc8dcfef8a
+    FileName: defaultpackage_assets_gameasset_ui_prefabs_room_roompanel_eea86239b25553991b5221cc8dcfef8a.bundle
+  - BundleGUID: 32a39a1bcf48926a18823e634393616b
+    FileName: defaultpackage_assets_gameasset_ui_prefabs_test_32a39a1bcf48926a18823e634393616b.bundle
+  - BundleGUID: 743cd24cdbd60b6bcbf6830f5fee1d24
+    FileName: defaultpackage_assets_gameasset_ui_prefabs_test_checkaudiopanel_743cd24cdbd60b6bcbf6830f5fee1d24.bundle
+  - BundleGUID: 99f8a1d78ee7fb35fc358778aae5a680
+    FileName: defaultpackage_share_assets_aaa_temp_99f8a1d78ee7fb35fc358778aae5a680.bundle
+  - BundleGUID: fe56976f987db1f57c69b239377be0d8
+    FileName: defaultpackage_share_assets_art_temp_simplepoly_city_-_low_poly_assets_models_fe56976f987db1f57c69b239377be0d8.bundle
+  - BundleGUID: 814d4f4883687c2a2e0e5379596631eb
+    FileName: defaultpackage_share_assets_gameasset_ui_textures_static_bg_814d4f4883687c2a2e0e5379596631eb.bundle
+  - BundleGUID: 140730e39a667840c744babef32de504
+    FileName: defaultpackage_share_packages_com_unity_render-pipelines_universal_runtime_materials_140730e39a667840c744babef32de504.bundle
+  - BundleGUID: 83575e8ed59c00a3720bb5458b8d9354
+    FileName: defaultpackage_unityshaders_83575e8ed59c00a3720bb5458b8d9354.bundle
