@@ -1,6 +1,9 @@
 {
   "dependencies": {
+    "com.cysharp.memorypack": "file:../IA-Packages/com.third.memorypack",
+    "com.cysharp.unitask": "file:../IA-Packages/com.third.unitask",
     "com.cysharp.zstring": "file:../IA-Packages/com.third.zstring",
+    "com.ia.config": "file:../IA-Packages/com.ia.config",
     "com.ia.engine": "file:../IA-Packages/com.ia.engine",
     "com.ia.nodegraph": "file:../IA-Packages/com.ia.nodegraph",
     "com.ia.server": "file:../IA-Packages/com.ia.server",

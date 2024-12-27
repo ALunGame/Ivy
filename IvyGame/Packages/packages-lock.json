@@ -1,10 +1,30 @@
 {
   "dependencies": {
+    "com.cysharp.memorypack": {
+      "version": "file:../IA-Packages/com.third.memorypack",
+      "depth": 0,
+      "source": "local",
+      "dependencies": {}
+    },
+    "com.cysharp.unitask": {
+      "version": "file:../IA-Packages/com.third.unitask",
+      "depth": 0,
+      "source": "local",
+      "dependencies": {}
+    },
     "com.cysharp.zstring": {
       "version": "file:../IA-Packages/com.third.zstring",
       "depth": 0,
       "source": "local",
       "dependencies": {}
+    },
+    "com.ia.config": {
+      "version": "file:../IA-Packages/com.ia.config",
+      "depth": 0,
+      "source": "local",
+      "dependencies": {
+        "com.cysharp.memorypack": "1.10.0"
+      }
     },
     "com.ia.engine": {
       "version": "file:../IA-Packages/com.ia.engine",

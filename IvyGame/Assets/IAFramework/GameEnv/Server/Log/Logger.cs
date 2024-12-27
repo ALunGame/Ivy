@@ -1,222 +1,229 @@
-//#nullable enable
+﻿using Cysharp.Text;
+using IAFramework.Log;
+using System;
+using System.Collections.Generic;
+using UnityEngine;
 
-//using ClassifiedConsole;
-//using Cysharp.Text;
-//using System;
-//using System.Collections.Generic;
-//using UnityEngine;
+public static class Logger
+{
+    //日志系统
+    public static LogSystem logSystem = new LogSystem();
 
-//// 日志分类
-//[CDebugSubSystem]
-//public enum LoggerType
-//{
-//    Default,
+    //日志模块数据
+    public struct LoggerData
+    {
+        private bool openLog;
+        private bool openLogWarning;
+        private bool openLogError;
 
-//    [CDebugSubSystemLabel("UI")]
-//    UI,
+        public LogModule Module { get; private set; }
 
-//    [CDebugSubSystemLabel("客户端")]
-//    Client,
+        public LoggerData(LogModule pModule)
+        {
+            Module = pModule;
+            openLog = true;
+            openLogWarning = true;
+            openLogError = true;
+        }
 
-//    [CDebugSubSystemLabel("服务器")]
-//    Server,
-//}
+        #region 日志等级开启
 
-//public class Logger111
-//{
-//    //private static UnityEngine.Logger? _Instance = null;
-//    //public static UnityEngine.Logger Instance
-//    //{
-//    //    get
-//    //    {
-//    //        if (_Instance == null)
-//    //        {
-//    //            _Instance = new UnityEngine.Logger();
-//    //        }
-//    //        return _Instance;
-//    //    }
-//    //}
+        public void SetOpenLog(bool pIsOpen)
+        { openLogWarning = pIsOpen; }
+        public bool GetOpenLog()
+        { return openLog; }
 
-//    //日志开关
-//    private Dictionary<LoggerType, bool> logableDict = new Dictionary<LoggerType, bool>();
+        public void SetOpenLogWarning(bool pIsOpen)
+        { openLogWarning = pIsOpen; }
+        public bool GetOpenLogWarning()
+        { return openLogWarning; }
 
-//    //一个分类日志数据
-//    public class _Logger
-//    {
-//        public LoggerType loggerType;
+        public void SetOpenLogError(bool pIsOpen)
+        { openLogError = pIsOpen; }
+        public bool GetOpenLogError()
+        { return openLogError; }
 
-//        public bool OpenLog = true;
-//        public bool OpenLogWarning = true;
-//        public bool OpenLogError = true;
+        #endregion
 
-//        public void Log(string pMsg, UnityEngine.Object context = null)
-//        {
-//            if (!OpenLog)
-//                return;
-//            CDebug.Log(1, pMsg, context, (int)loggerType);
-//        }
+        /// <summary>
+        /// 日志（真机不输出）
+        /// </summary>
+        /// <param name="pMsgs"></param>
+        public void Log(params object[] pMsgs)
+        {
+            if (!openLog)
+                return;
+            Logger.logSystem.Log(Module, pMsgs);
+        }
 
-//        public void Log(params object[] pMsgs)
-//        {
-//            if (!OpenLog)
-//                return;
-//            CDebug.Log(1, ZString.Concat(pMsgs), null, (int)loggerType);
-//        }
+        /// <summary>
+        /// 日志真机输出
+        /// </summary>
+        /// <param name="pLogModule"></param>
+        /// <param name="pMsgs"></param>
+        public void RuntimeLog(params object[] pMsgs)
+        {
+            if (!openLog)
+                return;
+            Logger.logSystem.RuntimeLog(Module, pMsgs);
+        }
 
-//        public void LogWarning(string pMsg, UnityEngine.Object context = null)
-//        {
-//            if (!OpenLogWarning)
-//                return;
-//            CDebug.LogWarning(1, pMsg, context, (int)loggerType);
-//        }
+        /// <summary>
+        /// 警告（真机不输出）
+        /// </summary>
+        /// <param name="pLogModule"></param>
+        /// <param name="pMsgs"></param>
+        public void LogWarning(params object[] pMsgs)
+        {
+            if (!openLogWarning)
+                return;
+            Logger.logSystem.LogWarning(Module, pMsgs);
+        }
 
-//        public void LogWarning(params object[] pMsgs)
-//        {
-//            if (!OpenLogWarning)
-//                return;
-//            CDebug.LogWarning(1, ZString.Concat(pMsgs), null, (int)loggerType);
-//        }
+        /// <summary>
+        /// 警告真机输出
+        /// </summary>
+        /// <param name="pLogModule"></param>
+        /// <param name="pMsgs"></param>
+        public void RuntimeWarning(params object[] pMsgs)
+        {
+            if (!openLogWarning)
+                return;
+            Logger.logSystem.LogWarning(Module, pMsgs);
+        }
 
-//        public void LogError(string pMsg, UnityEngine.Object context = null)
-//        {
-//            if (!OpenLogError)
-//                return;
-//            CDebug.LogError(1, pMsg, context, (int)loggerType);
-//        }
+        /// <summary>
+        /// 错误
+        /// </summary>
+        /// <param name="pLogModule"></param>
+        /// <param name="pMsgs"></param>
+        public void LogError(params object[] pMsgs)
+        {
+            if (!openLogError)
+                return;
+            Logger.logSystem.LogError(Module, pMsgs);
+        }
+    }
 
-//        public void LogError(params object[] pMsgs)
-//        {
-//            if (!OpenLogError)
-//                return;
-//            CDebug.LogError(1, ZString.Concat(pMsgs), null, (int)loggerType);
-//        }
-//    }
+    //日志模块开启
+    private static Dictionary<LogModule, bool> logEnableDict = new Dictionary<LogModule, bool>();
+    private static Dictionary<LogModule, LoggerData> logDataDict = new Dictionary<LogModule, LoggerData>();
 
-//    //获得日志模块
-//    public _Logger? this[LoggerType pType]
-//    {
-//        get
-//        {
-//            // 自定义的Log开关
-//            if (this.logableDict.TryGetValue(pType, out bool logable))
-//            {
-//                if (logable)
-//                {
-//                    if (pType == LoggerType.Default)
-//                    {
-//                        PrintSystemInfo();
-//                    }
-//                    return new _Logger() { loggerType = pType };
-//                }
-//            }
-//            // Editor下，默认Log全开
-//            if (Application.isEditor)
-//            {
-//                if (pType == LoggerType.Default)
-//                {
-//                    PrintSystemInfo();
-//                }
-//                return new _Logger() { loggerType = pType };
-//            }
+    static Logger()
+    {
+        Application.quitting += OnApplocationQuit;
+    }
 
-//            return null;
-//        }
-//    }
+    private static void OnApplocationQuit()
+    {
+        Debug.Log("OnApplocationQuit");
+        logEnableDict.Clear();
+        logDataDict.Clear();
+        logSystem.Clear();
+    }
 
-//    /// <summary>
-//    /// 开启某个分类日志
-//    /// </summary>
-//    /// <param name="pLoggerType"></param>
-//    /// <param name="isOpen"></param>
-//    public void SetOpen(LoggerType pLoggerType, bool isOpen)
-//    {
-//        if (!logableDict.ContainsKey(pLoggerType))
-//            logableDict.Add(pLoggerType, false);
-//        logableDict[pLoggerType] = isOpen;
-//    }
+    private static LoggerData? GetLoggerData(LogModule pModule) 
+    {
+        // 自定义的Log开关
+        if (logEnableDict.TryGetValue(pModule, out bool logable))
+        {
+            if (logable)
+            {
+                if (!logDataDict.ContainsKey(pModule))
+                {
+                    LoggerData loggerData = new LoggerData(pModule);
+                    logSystem.AddLogIO(pModule);
+                    logDataDict.Add(pModule, loggerData);
+                    if (pModule == LogModule.Default)
+                        PrintSystemInfo();
+                }
+                return logDataDict[pModule];
+            }
+        }
+        // Editor下，默认Log全开
+        if (Application.isEditor)
+        {
+            if (!logDataDict.ContainsKey(pModule))
+            {
+                LoggerData loggerData = new LoggerData(pModule);
+                logSystem.AddLogIO(pModule);
+                logDataDict.Add(pModule, loggerData);
+                if (pModule == LogModule.Default)
+                    PrintSystemInfo();
+            }
+            return logDataDict[pModule];
+        }
 
-//    /// <summary>
-//    /// 打印设备信息
-//    /// </summary>
-//    private static void PrintSystemInfo()
-//    {
-//        Utf8ValueStringBuilder systemInfo = ZString.CreateUtf8StringBuilder();
+        return null;
+    }
 
-//        systemInfo.AppendLine("*********************************************************************************************************start");
-//        systemInfo.AppendLine("By: " + SystemInfo.deviceName);
-//        DateTime now = DateTime.Now;
-//        systemInfo.AppendLine(string.Concat(new object[] { now.Year.ToString(), "年", now.Month.ToString(), "月", now.Day, "日  ", now.Hour.ToString(), ":", now.Minute.ToString(), ":", now.Second.ToString() }));
-//        systemInfo.AppendLine();
-//        systemInfo.AppendLine("操作系统:  " + SystemInfo.operatingSystem);
-//        systemInfo.AppendLine("系统内存大小:  " + SystemInfo.systemMemorySize);
-//        systemInfo.AppendLine("设备模型:  " + SystemInfo.deviceModel);
-//        systemInfo.AppendLine("设备唯一标识符:  " + SystemInfo.deviceUniqueIdentifier);
-//        systemInfo.AppendLine("处理器数量:  " + SystemInfo.processorCount);
-//        systemInfo.AppendLine("处理器类型:  " + SystemInfo.processorType);
-//        systemInfo.AppendLine("显卡标识符:  " + SystemInfo.graphicsDeviceID);
-//        systemInfo.AppendLine("显卡名称:  " + SystemInfo.graphicsDeviceName);
-//        systemInfo.AppendLine("显卡标识符:  " + SystemInfo.graphicsDeviceVendorID);
-//        systemInfo.AppendLine("显卡厂商:  " + SystemInfo.graphicsDeviceVendor);
-//        systemInfo.AppendLine("显卡版本:  " + SystemInfo.graphicsDeviceVersion);
-//        systemInfo.AppendLine("显存大小:  " + SystemInfo.graphicsMemorySize);
-//        systemInfo.AppendLine("显卡着色器级别:  " + SystemInfo.graphicsShaderLevel);
-//        systemInfo.AppendLine("是否支持内置阴影:  " + SystemInfo.supportsShadows);
-//        systemInfo.AppendLine("*********************************************************************************************************end");
-//        systemInfo.AppendLine();
-//        systemInfo.AppendLine();
+    /// <summary>
+    /// 打印设备信息
+    /// </summary>
+    private static void PrintSystemInfo()
+    {
+        Utf8ValueStringBuilder systemInfo = ZString.CreateUtf8StringBuilder();
 
-//        Default?.Log(systemInfo);
-//    }
+        systemInfo.AppendLine("*********************************************************************************************************start");
+        systemInfo.AppendLine("By: " + SystemInfo.deviceName);
+        DateTime now = DateTime.Now;
+        systemInfo.AppendLine(string.Concat(new object[] { now.Year.ToString(), "年", now.Month.ToString(), "月", now.Day, "日  ", now.Hour.ToString(), ":", now.Minute.ToString(), ":", now.Second.ToString() }));
+        systemInfo.AppendLine();
+        systemInfo.AppendLine("操作系统:  " + SystemInfo.operatingSystem);
+        systemInfo.AppendLine("系统内存大小:  " + SystemInfo.systemMemorySize);
+        systemInfo.AppendLine("设备模型:  " + SystemInfo.deviceModel);
+        systemInfo.AppendLine("设备唯一标识符:  " + SystemInfo.deviceUniqueIdentifier);
+        systemInfo.AppendLine("处理器数量:  " + SystemInfo.processorCount);
+        systemInfo.AppendLine("处理器类型:  " + SystemInfo.processorType);
+        systemInfo.AppendLine("显卡标识符:  " + SystemInfo.graphicsDeviceID);
+        systemInfo.AppendLine("显卡名称:  " + SystemInfo.graphicsDeviceName);
+        systemInfo.AppendLine("显卡标识符:  " + SystemInfo.graphicsDeviceVendorID);
+        systemInfo.AppendLine("显卡厂商:  " + SystemInfo.graphicsDeviceVendor);
+        systemInfo.AppendLine("显卡版本:  " + SystemInfo.graphicsDeviceVersion);
+        systemInfo.AppendLine("显存大小:  " + SystemInfo.graphicsMemorySize);
+        systemInfo.AppendLine("显卡着色器级别:  " + SystemInfo.graphicsShaderLevel);
+        systemInfo.AppendLine("是否支持内置阴影:  " + SystemInfo.supportsShadows);
+        systemInfo.AppendLine("*********************************************************************************************************end");
+        systemInfo.AppendLine();
+        systemInfo.AppendLine();
 
-//    /// <summary>
-//    /// 默认日志
-//    /// </summary>
-//    public static _Logger? Default => UnityEngine.Logger.Instance[LoggerType.Default];
+    }
 
-//    /// <summary>
-//    /// UI日志
-//    /// </summary>
-//    public static _Logger? UI => UnityEngine.Logger.Instance[LoggerType.UI];
+    /// <summary>
+    /// 设置日志模块开启
+    /// </summary>
+    /// <param name="pModule"></param>
+    /// <param name="pIsOpen"></param>
+    public static void SetLogModuleOpen(LogModule pModule, bool pIsOpen)
+    {
+        if (!logEnableDict.ContainsKey(pModule))
+            logEnableDict.Add(pModule, pIsOpen);
+        else
+            logEnableDict[pModule] = pIsOpen;
+    }
 
-//    /// <summary>
-//    /// 客户端日志
-//    /// </summary>
-//    public static _Logger? Client => UnityEngine.Logger.Instance[LoggerType.Client];
+    /// <summary>
+    /// 编辑器下日志
+    /// </summary>
+    public static LoggerData? Editor => Logger.GetLoggerData(LogModule.Editor);
 
-//    /// <summary>
-//    /// 服务器日志
-//    /// </summary>
-//    public static _Logger? Server => UnityEngine.Logger.Instance[LoggerType.Server];
-//}
-////static class Test
-////{
-////    public struct data
-////    {
-////        public bool open;
-////    }
+    /// <summary>
+    /// 默认日志
+    /// </summary>
+    public static LoggerData? Default => Logger.GetLoggerData(LogModule.Default);
 
-////    private static data tt = new data();
-////    public static data? Data => tt;
+    /// <summary>
+    /// UI日志
+    /// </summary>
+    public static LoggerData? UI => Logger.GetLoggerData(LogModule.UI);
 
-////    public static void TestFunc()
-////    {
-////        // 检查 Data 是否为 null
-////        if (Data != null) 
-////        { 
-////            Data.open = true; 
-////        }
-////    }
-////}
+    /// <summary>
+    /// 客户端日志
+    /// </summary>
+    public static LoggerData? Client => Logger.GetLoggerData(LogModule.Client);
 
-////static class TestB
-////{
-////    static TestB()
-////    {
-////        if (Test.Data != null)
-////        {
-////            Test.Data.open = true;
-////        }
-
-////    }
-////}
-
+    /// <summary>
+    /// 服务器日志
+    /// </summary>
+    public static LoggerData? Server => Logger.GetLoggerData(LogModule.Server);
+}

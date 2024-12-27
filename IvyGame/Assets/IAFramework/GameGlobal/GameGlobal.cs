@@ -2,6 +2,7 @@ using Cysharp.Threading.Tasks;
 using Game.Helper;
 using GameContext;
 using IAEngine;
+using IAFramework.Log;
 using IAUI;
 using System;
 using System.Collections.Generic;
@@ -87,7 +88,6 @@ namespace IAFramework
 
         protected override void OnInit()
         {
-            Debug.Log($"资源系统运行模式：{AssetPlayMode}");
             Application.targetFrameRate = 60;
             Application.runInBackground = true;
         }
@@ -99,7 +99,7 @@ namespace IAFramework
 
         private void Update()
         {
-            RemoteMsgHelper.UpdateRequests();
+            RemoteLogHelper.UpdateRequests();
         }
 
         private void OnDestroy()
