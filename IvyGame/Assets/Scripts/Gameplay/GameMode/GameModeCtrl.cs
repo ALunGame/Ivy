@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Gameplay.GameMode
+﻿namespace Gameplay.GameMode
 {
     public class GameModeCtrl : GameplayProcess
     {

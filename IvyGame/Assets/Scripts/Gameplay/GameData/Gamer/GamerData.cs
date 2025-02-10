@@ -3,7 +3,6 @@ using Proto;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Rendering.Universal;
 
 namespace Gameplay.GameData
 {
